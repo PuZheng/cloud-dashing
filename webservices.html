@@ -47,8 +47,8 @@
             
   <div class="section" id="web">
 <h1>公有云项目WEB接口列表<a class="headerlink" href="#web" title="Permalink to this headline">¶</a></h1>
-<div class="section" id="get-viewpoint-list">
-<span id="id1"></span><h2>获取观察点列表<a class="headerlink" href="#get-viewpoint-list" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="i-1">
+<span id="get-viewpoint-list"></span><h2>I-1 获取观察点列表<a class="headerlink" href="#i-1" title="Permalink to this headline">¶</a></h2>
 <p>获取所有的观察点(即数据采集服务器)列表，若提供了观察者的IP，根据IP判断应该选取哪个观察点，规则暂时为:</p>
 <blockquote>
 <div><strong>如果IP所在省有观察点，选择该观察点，否则选择北京</strong></div></blockquote>
@@ -83,8 +83,8 @@
 </li>
 </ul>
 </div>
-<div class="section" id="get-cloud-list">
-<span id="id2"></span><h2>获取被监控云列表<a class="headerlink" href="#get-cloud-list" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="i-2">
+<span id="get-cloud-list"></span><h2>I-2 获取被监控云列表<a class="headerlink" href="#i-2" title="Permalink to this headline">¶</a></h2>
 <p>获取所有被监控的云列表</p>
 <ul>
 <li><p class="first">请求</p>
@@ -109,20 +109,20 @@
 </li>
 </ul>
 </div>
-<div class="section" id="id3">
-<h2>获取所有被监控云状态<a class="headerlink" href="#id3" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="i-3">
+<span id="get-viewpoint-cloud-status-list"></span><h2>I-3 获取某个观察点所有被监控云状态<a class="headerlink" href="#i-3" title="Permalink to this headline">¶</a></h2>
 <p>获取对指定观察点的，某些云的状态</p>
 <ul>
 <li><p class="first">请求</p>
-<div class="highlight-bash"><div class="highlight"><pre>GET /cloud-status-list?viewpoint<span class="o">=</span>&lt;int&gt;&amp;clouds<span class="o">=(</span>&lt;int&gt;,<span class="o">)</span>+&amp;at<span class="o">=</span>&lt;int&gt;<span class="o">[</span>,&lt;int&gt;<span class="o">]</span>
+<div class="highlight-bash"><div class="highlight"><pre>GET /viewpoint-cloud-status-list/&lt;int:viewpoint&gt;?clouds<span class="o">=(</span>&lt;int&gt;,<span class="o">)</span>+&amp;at<span class="o">=</span>&lt;int&gt;<span class="o">[</span>,&lt;int&gt;<span class="o">]</span>
 </pre></div>
 </div>
 </li>
 </ul>
 <blockquote>
 <div><ul class="simple">
-<li>viewpoint - 观察点id, 参见 <a class="reference internal" href="#get-viewpoint-list"><em>获取观察点列表</em></a></li>
-<li>clouds - 云id列表, 例如&#8221;1,2,3&#8221;, 可选项，若提供，只提供这些云的详细信息; 否则提供所有云的详细信息，参见 <a class="reference internal" href="#get-cloud-list"><em>获取被监控云列表</em></a></li>
+<li>viewpoint - 观察点id, 参见 <a class="reference internal" href="#get-viewpoint-list"><em>I-1 获取观察点列表</em></a></li>
+<li>clouds - 云id列表, 例如&#8221;1,2,3&#8221;, 可选项，若提供，只提供这些云的详细信息; 否则提供所有云的详细信息，参见 <a class="reference internal" href="#get-cloud-list"><em>I-2 获取被监控云列表</em></a></li>
 <li>at - 返回某时间点或区间的云状态，值是自epoch time(1970年1月1日0:00)的秒数,
 可选项，若不传，返回当前最近的状态信息. 例如 <em>&#8220;1390301420&#8221;</em> 需要返回离此时刻最近的状态, 而 <em>&#8220;1390301420,1390311420&#8221;</em> 需要返回位于时间段 <em>[1390301420, 1390311420)</em> 的所有状态</li>
 </ul>
@@ -156,6 +156,146 @@
 </li>
 </ul>
 </div>
+<div class="section" id="i-4">
+<h2>I-4 获取某个云在某些观察点的状态<a class="headerlink" href="#i-4" title="Permalink to this headline">¶</a></h2>
+<p><a class="reference internal" href="#get-viewpoint-cloud-status-list"><em>I-3 获取某个观察点所有被监控云状态</em></a> 的正交操作</p>
+<ul>
+<li><p class="first">请求</p>
+<div class="highlight-bash"><div class="highlight"><pre>GET /cloud-status-list/&lt;int:cloud&gt;?viewpoints<span class="o">=(</span>&lt;int&gt;,<span class="o">)</span>+&amp;at<span class="o">=</span>&lt;int&gt;<span class="o">[</span>,&lt;int&gt;<span class="o">]</span>
+</pre></div>
+</div>
+</li>
+</ul>
+<blockquote>
+<div><ul class="simple">
+<li>cloud - 云id, 参见 <a class="reference internal" href="#get-cloud-list"><em>I-2 获取被监控云列表</em></a></li>
+<li>viewpoints - 观察点id列表， 例如&#8221;4,5,6&#8221;, 可选项，若提供，只提供这些观察点的状态信息，否则提供所有云的详细信息， 参见 <a class="reference internal" href="#get-viewpoint-list"><em>I-1 获取观察点列表</em></a></li>
+<li>at - 返回某时间点或区间的云状态，值是自epoch time(1970年1月1日0:00)的秒数,
+可选项，若不传，返回当前最近的状态信息. 例如 <em>&#8220;1390301420&#8221;</em> 需要返回离此时刻最近的状态, 而 <em>&#8220;1390301420,1390311420&#8221;</em> 需要返回位于时间段 <em>[1390301420, 1390311420)</em> 的所有状态</li>
+</ul>
+</div></blockquote>
+<ul>
+<li><p class="first">响应 - http code 200</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="p">{</span>
+   <span class="s">&quot;data&quot;</span><span class="p">:</span> <span class="p">[</span>
+      <span class="p">{</span>
+         <span class="s">&quot;id&quot;</span><span class="p">:</span> <span class="o">&lt;</span><span class="nb">int</span><span class="o">&gt;</span><span class="p">,</span> <span class="c"># 观察点id</span>
+         <span class="s">&quot;status-list&quot;</span><span class="p">:</span>  <span class="c"># 每个时间点的状态信息</span>
+         <span class="p">[</span>
+            <span class="p">{</span>
+               <span class="s">&quot;latency&quot;</span><span class="p">:</span> <span class="o">&lt;</span><span class="nb">int</span><span class="o">&gt;</span><span class="p">,</span>  <span class="c"># 延迟，单位是毫秒(0.001秒)</span>
+               <span class="s">&quot;up&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="o">|</span><span class="mi">1</span><span class="p">,</span>  <span class="c"># 可用? 1: 0</span>
+               <span class="s">&quot;at&quot;</span><span class="p">:</span> <span class="o">&lt;</span><span class="nb">int</span><span class="o">&gt;</span><span class="p">,</span>  <span class="c"># seconds since epoch, 注意!!!, 这里是实际的采集时间点，不是在url参数中传入的时间点</span>
+            <span class="p">}</span>
+            <span class="c"># ...</span>
+         <span class="p">]</span>
+      <span class="p">},</span>
+      <span class="c"># ...</span>
+   <span class="p">]</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</li>
+<li><p class="first">响应 - http code 403, 参数非法</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="o">&lt;</span><span class="nb">str</span><span class="o">&gt;</span>  <span class="c"># 内容是错误原因，例如&quot;不存在的云&quot;</span>
+</pre></div>
+</div>
+</li>
+</ul>
+</div>
+<div class="section" id="i-5">
+<span id="get-cloud-daily-report-list"></span><h2>I-5 获取某个云在各个观察点的日报<a class="headerlink" href="#i-5" title="Permalink to this headline">¶</a></h2>
+<ul>
+<li><p class="first">请求</p>
+<div class="highlight-bash"><div class="highlight"><pre>GET /cloud-daily-report-list/&lt;int:cloud&gt;?viewpoints<span class="o">=(</span>&lt;int&gt;,<span class="o">)</span>+&amp;at<span class="o">=</span>&lt;str&gt;<span class="o">[</span>,&lt;str&gt;<span class="o">]</span>
+</pre></div>
+</div>
+</li>
+</ul>
+<blockquote>
+<div><ul class="simple">
+<li>cloud - 云id, 参见 <a class="reference internal" href="#get-cloud-list"><em>I-2 获取被监控云列表</em></a></li>
+<li>viewpoints - 观察点id列表， 例如&#8221;4,5,6&#8221;, 可选项，若提供，只提供这些观察点的状态信息，否则提供所有云的详细信息， 参见 <a class="reference internal" href="#get-viewpoint-list"><em>I-1 获取观察点列表</em></a></li>
+<li>at - 返回某日或区间的云状态，注意，格式必须是 <em>&#8220;yyyy-mm-dd&#8221;</em>,
+可选项，若不传，返回当日的状态信息. 例如 <em>&#8220;2013-01-16&#8221;</em> 返回2013-01-16日的总结, 而 <em>&#8220;2013-01-01,2013-01-16&#8221;</em> 需要返回位于时间段 <em>[2013-01-01, 2013-01-16)</em> 的所有日报，注意是半开半闭区间</li>
+</ul>
+</div></blockquote>
+<ul>
+<li><p class="first">响应 - http code 200</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="p">{</span>
+   <span class="s">&quot;data&quot;</span><span class="p">:</span> <span class="p">[</span>
+      <span class="p">{</span>
+         <span class="s">&quot;id&quot;</span><span class="p">:</span> <span class="o">&lt;</span><span class="nb">int</span><span class="o">&gt;</span><span class="p">,</span> <span class="c"># 观察点id</span>
+         <span class="s">&quot;report-list&quot;</span><span class="p">:</span>  <span class="c"># 每个时间点的状态信息</span>
+         <span class="p">[</span>
+            <span class="p">{</span>
+               <span class="s">&quot;avg_latency&quot;</span><span class="p">:</span> <span class="o">&lt;</span><span class="nb">int</span><span class="o">&gt;</span><span class="p">,</span>  <span class="c"># 平均延迟，单位是毫秒(0.001秒)</span>
+               <span class="s">&quot;crash_num&quot;</span><span class="p">:</span> <span class="o">&lt;</span><span class="nb">int</span><span class="o">&gt;</span><span class="p">,</span>  <span class="c"># crash次数</span>
+               <span class="s">&quot;at&quot;</span><span class="p">:</span> <span class="o">&lt;</span><span class="nb">str</span><span class="o">&gt;</span><span class="p">,</span>  <span class="c"># yyyy-mm-dd</span>
+            <span class="p">}</span>
+            <span class="c"># ...</span>
+         <span class="p">]</span>
+      <span class="p">},</span>
+      <span class="c"># ...</span>
+   <span class="p">]</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</li>
+<li><p class="first">响应 - http code 403, 参数非法</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="o">&lt;</span><span class="nb">str</span><span class="o">&gt;</span>  <span class="c"># 内容是错误原因，例如&quot;不存在的云&quot;</span>
+</pre></div>
+</div>
+</li>
+</ul>
+</div>
+<div class="section" id="i-6">
+<h2>I-6 获取某个观察点上各个云的日报<a class="headerlink" href="#i-6" title="Permalink to this headline">¶</a></h2>
+<p><a class="reference internal" href="#get-cloud-daily-report-list"><em>I-5 获取某个云在各个观察点的日报</em></a> 的正交操作</p>
+<ul>
+<li><p class="first">请求</p>
+<div class="highlight-bash"><div class="highlight"><pre>GET /viewpoint-cloud-daily-report-list/&lt;int:viewpoint&gt;?clouds<span class="o">=(</span>&lt;int&gt;,<span class="o">)</span>+&amp;at<span class="o">=</span>&lt;str&gt;<span class="o">[</span>,&lt;str&gt;<span class="o">]</span>
+</pre></div>
+</div>
+</li>
+</ul>
+<blockquote>
+<div><ul class="simple">
+<li>viewpoint - 观察点id, 参见 <a class="reference internal" href="#get-viewpoint-list"><em>I-1 获取观察点列表</em></a></li>
+<li>clouds - 云id列表, 例如&#8221;1,2,3&#8221;, 可选项，若提供，只提供这些云的详细信息; 否则提供所有云的详细信息，参见 <a class="reference internal" href="#get-cloud-list"><em>I-2 获取被监控云列表</em></a></li>
+<li>at - 返回某日或区间的云状态，注意，格式必须是 <em>&#8220;yyyy-mm-dd&#8221;</em>,
+可选项，若不传，返回当日的状态信息. 例如 <em>&#8220;2013-01-16&#8221;</em> 返回2013-01-16日的总结, 而 <em>&#8220;2013-01-01,2013-01-16&#8221;</em> 需要返回位于时间段 <em>[2013-01-01, 2013-01-16)</em> 的所有日报，注意是半开半闭区间</li>
+</ul>
+</div></blockquote>
+<ul>
+<li><p class="first">响应 - http code 200</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="p">{</span>
+   <span class="s">&quot;data&quot;</span><span class="p">:</span> <span class="p">[</span>
+      <span class="p">{</span>
+         <span class="s">&quot;id&quot;</span><span class="p">:</span> <span class="o">&lt;</span><span class="nb">int</span><span class="o">&gt;</span><span class="p">,</span> <span class="c"># 云id</span>
+         <span class="s">&quot;report-list&quot;</span><span class="p">:</span>  <span class="c"># 每个时间点的状态信息</span>
+         <span class="p">[</span>
+            <span class="p">{</span>
+               <span class="s">&quot;avg_latency&quot;</span><span class="p">:</span> <span class="o">&lt;</span><span class="nb">int</span><span class="o">&gt;</span><span class="p">,</span>  <span class="c"># 平均延迟，单位是毫秒(0.001秒)</span>
+               <span class="s">&quot;crash_num&quot;</span><span class="p">:</span> <span class="o">&lt;</span><span class="nb">int</span><span class="o">&gt;</span><span class="p">,</span>  <span class="c"># crash次数</span>
+               <span class="s">&quot;at&quot;</span><span class="p">:</span> <span class="o">&lt;</span><span class="nb">str</span><span class="o">&gt;</span><span class="p">,</span>  <span class="c"># yyyy-mm-dd</span>
+            <span class="p">}</span>
+            <span class="c"># ...</span>
+         <span class="p">]</span>
+      <span class="p">},</span>
+      <span class="c"># ...</span>
+   <span class="p">]</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</li>
+<li><p class="first">响应 - http code 403, 参数非法</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="o">&lt;</span><span class="nb">str</span><span class="o">&gt;</span>  <span class="c"># 内容是错误原因，例如&quot;不存在的云&quot;</span>
+</pre></div>
+</div>
+</li>
+</ul>
+</div>
 </div>
 
 
@@ -167,9 +307,12 @@
   <h3><a href="index.html">Table Of Contents</a></h3>
   <ul>
 <li><a class="reference internal" href="#">公有云项目WEB接口列表</a><ul>
-<li><a class="reference internal" href="#get-viewpoint-list">获取观察点列表</a></li>
-<li><a class="reference internal" href="#get-cloud-list">获取被监控云列表</a></li>
-<li><a class="reference internal" href="#id3">获取所有被监控云状态</a></li>
+<li><a class="reference internal" href="#i-1">I-1 获取观察点列表</a></li>
+<li><a class="reference internal" href="#i-2">I-2 获取被监控云列表</a></li>
+<li><a class="reference internal" href="#i-3">I-3 获取某个观察点所有被监控云状态</a></li>
+<li><a class="reference internal" href="#i-4">I-4 获取某个云在某些观察点的状态</a></li>
+<li><a class="reference internal" href="#i-5">I-5 获取某个云在各个观察点的日报</a></li>
+<li><a class="reference internal" href="#i-6">I-6 获取某个观察点上各个云的日报</a></li>
 </ul>
 </li>
 </ul>
