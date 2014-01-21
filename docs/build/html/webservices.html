@@ -1,0 +1,219 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>公有云项目WEB接口列表 &mdash; 公有云监控 0.1.0 documentation</title>
+    
+    <link rel="stylesheet" href="_static/default.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '0.1.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="top" title="公有云监控 0.1.0 documentation" href="index.html" />
+    <link rel="prev" title="Welcome to 公有云监控’s documentation!" href="index.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="index.html" title="Welcome to 公有云监控’s documentation!"
+             accesskey="P">previous</a> |</li>
+        <li><a href="index.html">公有云监控 0.1.0 documentation</a> &raquo;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="web">
+<h1>公有云项目WEB接口列表<a class="headerlink" href="#web" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="get-viewpoint-list">
+<span id="id1"></span><h2>获取观察点列表<a class="headerlink" href="#get-viewpoint-list" title="Permalink to this headline">¶</a></h2>
+<p>获取所有的观察点(即数据采集服务器)列表，若提供了观察者的IP，根据IP判断应该选取哪个观察点，规则暂时为:</p>
+<blockquote>
+<div><strong>如果IP所在省有观察点，选择该观察点，否则选择北京</strong></div></blockquote>
+<p><tt class="docutils literal"><span class="pre">注:</span> <span class="pre">由于目前仅仅有一个观察点（即北京），直接返回该观察点即可</span></tt></p>
+<ul>
+<li><p class="first">请求</p>
+<div class="highlight-bash"><div class="highlight"><pre>GET /viewpoint-list?ip<span class="o">=</span>&lt;str&gt;
+</pre></div>
+</div>
+</li>
+</ul>
+<blockquote>
+<div><ul class="simple">
+<li>ip - 观察者的ip，可选项，如果不传，直接选择北京</li>
+</ul>
+</div></blockquote>
+<ul>
+<li><p class="first">响应 - http code 200</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="p">{</span>
+   <span class="s">&quot;data&quot;</span><span class="p">:</span> <span class="p">[</span>
+      <span class="p">{</span>
+         <span class="s">&quot;id&quot;</span><span class="p">:</span> <span class="o">&lt;</span><span class="nb">int</span><span class="o">&gt;</span><span class="p">,</span>  <span class="c"># 观察点的唯一编号，后续会使用该观察点ID获取数据</span>
+         <span class="s">&quot;name&quot;</span><span class="p">:</span> <span class="o">&lt;</span><span class="nb">str</span><span class="o">&gt;</span><span class="p">,</span>
+         <span class="s">&quot;latitude&quot;</span><span class="p">:</span> <span class="o">&lt;</span><span class="nb">float</span><span class="o">&gt;</span><span class="p">,</span> <span class="c"># 后台手工写入即可，没必要非常精确</span>
+         <span class="s">&quot;longitude&quot;</span><span class="p">:</span> <span class="o">&lt;</span><span class="nb">float</span><span class="o">&gt;</span><span class="p">,</span> <span class="c"># 同longitude</span>
+         <span class="s">&quot;prefered&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="o">|</span><span class="mi">1</span><span class="p">,</span> <span class="c"># 是默认观察点? 1:0</span>
+      <span class="p">}</span>
+   <span class="p">]</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</li>
+</ul>
+</div>
+<div class="section" id="get-cloud-list">
+<span id="id2"></span><h2>获取被监控云列表<a class="headerlink" href="#get-cloud-list" title="Permalink to this headline">¶</a></h2>
+<p>获取所有被监控的云列表</p>
+<ul>
+<li><p class="first">请求</p>
+<div class="highlight-bash"><div class="highlight"><pre>GET /cloud-list
+</pre></div>
+</div>
+</li>
+<li><p class="first">响应 - http code 200</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="p">{</span>
+   <span class="s">&quot;data&quot;</span><span class="p">:</span> <span class="p">[</span>
+      <span class="p">{</span>
+         <span class="s">&quot;id&quot;</span><span class="p">:</span> <span class="o">&lt;</span><span class="nb">int</span><span class="o">&gt;</span><span class="p">,</span> <span class="c"># 监控云的唯一编号，后续会使用该编号获取数据</span>
+         <span class="s">&quot;name&quot;</span><span class="p">:</span> <span class="o">&lt;</span><span class="nb">str</span><span class="o">&gt;</span><span class="p">,</span>
+         <span class="s">&quot;latitude&quot;</span><span class="p">:</span> <span class="o">&lt;</span><span class="nb">float</span><span class="o">&gt;</span><span class="p">,</span> <span class="c"># 后台手工写入即可，没必要非常精确</span>
+         <span class="s">&quot;longitude&quot;</span><span class="p">:</span> <span class="o">&lt;</span><span class="nb">float</span><span class="o">&gt;</span><span class="p">,</span> <span class="c"># 同longitude</span>
+      <span class="p">},</span>
+      <span class="c"># ...</span>
+   <span class="p">]</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</li>
+</ul>
+</div>
+<div class="section" id="id3">
+<h2>获取所有被监控云状态<a class="headerlink" href="#id3" title="Permalink to this headline">¶</a></h2>
+<p>获取对指定观察点的，某些云的状态</p>
+<ul>
+<li><p class="first">请求</p>
+<div class="highlight-bash"><div class="highlight"><pre>GET /cloud-status-list?viewpoint<span class="o">=</span>&lt;int&gt;&amp;clouds<span class="o">=(</span>&lt;int&gt;,<span class="o">)</span>+&amp;at<span class="o">=</span>&lt;int&gt;<span class="o">[</span>,&lt;int&gt;<span class="o">]</span>
+</pre></div>
+</div>
+</li>
+</ul>
+<blockquote>
+<div><ul class="simple">
+<li>viewpoint - 观察点id, 参见 <a class="reference internal" href="#get-viewpoint-list"><em>获取观察点列表</em></a></li>
+<li>clouds - 云id列表, 例如&#8221;1,2,3&#8221;, 可选项，若提供，只提供这些云的详细信息; 否则提供所有云的详细信息，参见 <a class="reference internal" href="#get-cloud-list"><em>获取被监控云列表</em></a></li>
+<li>at - 返回某时间点或区间的云状态，值是自epoch time(1970年1月1日0:00)的秒数,
+可选项，若不传，返回当前最近的状态信息. 例如 <em>&#8220;1390301420&#8221;</em> 需要返回离此时刻最近的状态, 而 <em>&#8220;1390301420,1390311420&#8221;</em> 需要返回位于时间段 <em>[1390301420, 1390311420)</em> 的所有状态</li>
+</ul>
+</div></blockquote>
+<ul>
+<li><p class="first">响应 - http code 200</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="p">{</span>
+   <span class="s">&quot;data&quot;</span><span class="p">:</span> <span class="p">[</span>
+      <span class="p">{</span>
+         <span class="s">&quot;id&quot;</span><span class="p">:</span> <span class="o">&lt;</span><span class="nb">int</span><span class="o">&gt;</span><span class="p">,</span> <span class="c"># 云id</span>
+         <span class="s">&quot;status-list&quot;</span><span class="p">:</span>  <span class="c"># 每个时间点的状态信息</span>
+         <span class="p">[</span>
+            <span class="p">{</span>
+               <span class="s">&quot;latency&quot;</span><span class="p">:</span> <span class="o">&lt;</span><span class="nb">int</span><span class="o">&gt;</span><span class="p">,</span>  <span class="c"># 延迟，单位是毫秒(0.001秒)</span>
+               <span class="s">&quot;up&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="o">|</span><span class="mi">1</span><span class="p">,</span>  <span class="c"># 可用? 1: 0</span>
+               <span class="s">&quot;at&quot;</span><span class="p">:</span> <span class="o">&lt;</span><span class="nb">int</span><span class="o">&gt;</span><span class="p">,</span>  <span class="c"># seconds since epoch, 注意!!!, 这里是实际的采集时间点，不是在url参数中传入的时间点</span>
+            <span class="p">}</span>
+            <span class="c"># ...</span>
+         <span class="p">]</span>
+      <span class="p">},</span>
+      <span class="c"># ...</span>
+   <span class="p">]</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</li>
+<li><p class="first">响应 - http code 403, 参数非法</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="o">&lt;</span><span class="nb">str</span><span class="o">&gt;</span>  <span class="c"># 内容是错误原因，例如&quot;不存在的观察点&quot;</span>
+</pre></div>
+</div>
+</li>
+</ul>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">公有云项目WEB接口列表</a><ul>
+<li><a class="reference internal" href="#get-viewpoint-list">获取观察点列表</a></li>
+<li><a class="reference internal" href="#get-cloud-list">获取被监控云列表</a></li>
+<li><a class="reference internal" href="#id3">获取所有被监控云状态</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="index.html"
+                        title="previous chapter">Welcome to 公有云监控&#8217;s documentation!</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="_sources/webservices.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="index.html" title="Welcome to 公有云监控’s documentation!"
+             >previous</a> |</li>
+        <li><a href="index.html">公有云监控 0.1.0 documentation</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2014, xiechao06@gmail.com.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2.1.
+    </div>
+  </body>
+</html>
