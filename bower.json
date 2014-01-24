@@ -1,5 +1,5 @@
 {
-    "name": "__package_name__", 
+    "name": "cloud_dashing", 
     "version": "0.1.0", 
     "dependencies": {
         "bootstrap": "latest",
