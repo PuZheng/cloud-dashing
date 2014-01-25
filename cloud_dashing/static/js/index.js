@@ -19,24 +19,94 @@
     map.setMapStyle(mapStyle);
     map.addControl(new BMap.NavigationControl());
 
-    var beiJing = new BMap.Point(116.404, 39.915);
-    var marker = new BMap.Marker(beiJing);
-    map.addOverlay(marker);
-    marker.setAnimation(BMAP_ANIMATION_BOUNCE); 
-    window.setTimeout(function () {
-        map.removeOverlay(marker);
-    }, 2000);
-
     function getViewpoints(handler) {
+        // TODO not implemented
         handler([
-                    {name: "北京"},
-                    {name: "上海"}
+                    {name: "北京", cannonical_name: "北京市"},
+                    {name: "上海", cannonical_name: "上海市"}
                 ]); 
     }
-
+    var viewpointSwitcher = null;
     getViewpoints(function(viewpoints) {
-        var viewPointSwitcher = new ViewPointSwitcher(viewpoints);   
-        map.addControl(viewPointSwitcher);
+        viewpointSwitcher = new ViewPointSwitcher(viewpoints, map);   
+        map.addControl(viewpointSwitcher);
     });
 
+    getUserLocation(function (viewpoint) {
+        viewpointSwitcher.setViewpoint(viewpoint); 
+    });
+
+    var currentTime = new Date();
+    var start = new Date(currentTime.getFullYear(), currentTime.getMonth(), 
+            currentTime.getDate(), 0, 0, 0);
+    var end = new Date(start.getTime() + 24 * 60 * 60 * 1000);
+    getStatusList(viewpointSwitcher.getCurrentViewPoint(), start, end,
+            function (cloudList, start) {
+                var container = document.getElementById('timeline');
+                var options = null;
+                var graph = null;
+                var x = null, y = null, o = null; 
+
+                var start = start.getTime();
+                var data = [];
+                for (var i=0; i < cloudList.length; ++i) {
+                    var a = [];
+                    var cloud = cloudList[i];
+                    for (var j = 0; j < cloud.cloudStatusList.length; j++) {
+                        var cloudStatus = cloud.cloudStatusList[j];
+                        x = cloudStatus.at - start;
+                        y = cloudStatus.latency;
+                        a.push([x, y]);
+                    }
+                    data.push({data: a, label: cloud.name});
+                }
+                options = {
+                    xaxis : {
+                        mode : 'time', 
+                        labelsAngle : 45,
+                        noTicks: 48, 
+                    },
+                    HtmlText : false,
+                    mouse : {
+                        track           : true, // Enable mouse tracking
+                        trackY          : false, // Enable mouse tracking
+                        lineColor       : null,
+                        relative        : true,
+                        position        : 'ne',
+                        sensibility     : 1,
+                        trackDecimals   : 2,
+                        trackFormatter  : function (o) { 
+                            var date = new Date(Math.floor(o.x + start));
+                            return date.getUTCHours() + ":" + date.getUTCMinutes();
+                        }
+                    },
+                    crosshair : {
+                        mode : 'x',
+                        color: 'gray',
+                    }
+                };
+
+
+                // Draw graph with default options, overwriting with passed options
+                function drawGraph (opts) {
+
+                    // Clone the options, so the 'options' variable always keeps intact.
+                    o = Flotr._.extend(Flotr._.clone(options), opts || {});
+
+                    // Return a new graph.
+                    return Flotr.draw(
+                            container,
+                            data,
+                            o);
+                }
+
+                graph = drawGraph();      
+                // When graph is clicked, draw the graph with default area.
+                Flotr.EventAdapter.observe(container, 'flotr:click', 
+                        function (e) { 
+                            var date = new Date(Math.floor(e.hit.x + start));
+                            // TODO show status
+                            
+                        });
+            }); 
 })();

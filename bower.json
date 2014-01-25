@@ -11,6 +11,6 @@
         "modernizr": "latest",
         "html5shiv": "latest",
         "Font-Awesome": "latest",
-        "handlebars": "latest"
+        "handlebars": "latest",
     }
 }
