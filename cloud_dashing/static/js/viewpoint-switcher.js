@@ -6,11 +6,12 @@
     '</div>';
     var tmpl = Handlebars.compile(source);
     var div = null;    
-    ViewPointSwitcher = function (viewpoints, map) {  
+    ViewPointSwitcher = function (viewpoints, map, viewpointChanged) {  
         this.defaultAnchor = BMAP_ANCHOR_TOP_LEFT;
         this.defaultOffset = new BMap.Size(70, 5);  
         this._viewpoints = viewpoints;
         this._map = map;
+        this._viewpointChanged = viewpointChanged;
     };
     ViewPointSwitcher.prototype = new BMap.Control();  
     ViewPointSwitcher.prototype.initialize = function (map) {  
@@ -57,6 +58,7 @@
                 btn.find('i').remove();
             }
         });
+        this._viewpointChanged(this);
     }
 
     ViewPointSwitcher.prototype.getCurrentViewPoint = function () {

@@ -24,26 +24,38 @@
         map.addControl(new BMap.NavigationControl());
         var viewpointSwitcher = null;
         getViewpoints(function(viewpoints) {
-            viewpointSwitcher = new ViewPointSwitcher(viewpoints, map);   
+            viewpointSwitcher = new ViewPointSwitcher(viewpoints, map, 
+                function(viewpointSwitcher) {
+                    var currentTime = new Date();
+                    var start = new Date(currentTime.getFullYear(), currentTime.getMonth(), 
+                            currentTime.getDate(), 0, 0, 0);
+                    var end = new Date(start.getTime() + 24 * 60 * 60 * 1000);
+                    getStatusList(viewpointSwitcher.getCurrentViewPoint(), start, end,
+                            function (statusList, start) {
+                                drawTimeLine($('#timeline'), statusList, start);
+                            }); 
+                });   
             map.addControl(viewpointSwitcher);
+            getClouds(function (clouds) {
+                var myGeo = new BMap.Geocoder();
+                for (var i=0; i < clouds.length; ++i) {
+                    var cloud = clouds[i];
+                    cloudsMap[cloud.id]  = cloud;
+                    (function (aCloud) {
+                        myGeo.getPoint(aCloud.location, function(point){
+                            if (point) {
+                                aCloud.point = point;
+                                var marker = new BMap.Marker(point);
+                                map.addOverlay(marker);
+                            }
+                        }, cloud.location);
+                    })(cloud);
+                }
+                getUserLocation(viewpoints, function (viewpoint) {
+                    viewpointSwitcher.setViewpoint(viewpoint); 
+                });
+            });
         });
-        getUserLocation(function (viewpoint) {
-            viewpointSwitcher.setViewpoint(viewpoint); 
-        });
-        getClouds(function (clouds) {
-            for (var i=0; i < clouds.length; ++i) {
-                var cloud = clouds[i];
-                cloudsMap[cloud.id]  = cloud;
-            }
-        })
-        var currentTime = new Date();
-        var start = new Date(currentTime.getFullYear(), currentTime.getMonth(), 
-                currentTime.getDate(), 0, 0, 0);
-        var end = new Date(start.getTime() + 24 * 60 * 60 * 1000);
-        getStatusList(viewpointSwitcher.getCurrentViewPoint(), start, end,
-                function (statusList, start) {
-                    drawTimeLine($('#timeline'), statusList, start);
-                }); 
         return map;
     }
     var map = initMap();
@@ -52,24 +64,22 @@
         var date = date.getTime();
         var report = null;
         for (var i=0; i < reports.length; ++i) {
-            if (reports[i].at >= date) {
+            if (reports[i].at > date) {
                 report = reports[i - 1];
                 break;
             }
         }
         if (!report) {
-            report = reports[i];
+            report = reports[reports.length - 1];
         }
         if (report) {
             for (var i=0; i < report.statusList.length; ++i) {
                 var cloudStatus = report.statusList[i];
-                alert(cloudsMap[cloudStatus.id].name + " - " + cloudStatus.latency + "ms");
             }
         }
     }
 
-
-    function drawTimeLine(container, reports, start) {
+    drawTimeLine = function(container, reports, start) {
         var data = [];
         var start = start.getTime();
         var seriesMap = {};
@@ -91,6 +101,7 @@
             });
         }
 		var latestPosition = {x: reports[reports.length-1].at - start, y: null};
+        var markedPosition = latestPosition;
         var plot = $.plot(container, data, {
             xaxis: {
                 mode: 'time',
@@ -118,8 +129,8 @@
                         },
                         lineWidth: 3,
                         xaxis: {
-                            from: latestPosition.x,
-                            to: latestPosition.x,
+                            from: markedPosition.x,
+                            to: markedPosition.x,
                         },
                         color: "red"
                     }]
@@ -154,38 +165,35 @@
                 left: pos.pageX,
                 top: pos.pageY - 50,
             }).show();
+            updateLegends(pos);
+		}
 
+        function updateLegends(pos) {
 			var i, j, dataset = plot.getData();
 			for (i = 0; i < dataset.length; ++i) {
 				var series = dataset[i];
 				// Find the nearest points, x-wise
+                var p = null;
 				for (j = 0; j < series.data.length; ++j) {
 					if (series.data[j][0] > pos.x) {
+                        p = series.data[j - 1];
 						break;
 					}
 				}
 				// Now Interpolate
-
-				var y,
-					p1 = series.data[j - 1],
-					p2 = series.data[j];
-
-				if (p1 == null) {
-					y = p2[1];
-				} else if (p2 == null) {
-					y = p1[1];
-				} else {
-					y = p1[1] + (p2[1] - p1[1]) * (pos.x - p1[0]) / (p2[0] - p1[0]);
-				}
-
-				container.find('.legendLabel').eq(i).text(series.label.replace(/-.*/, "- " + Math.floor(y) + "ms"));
+                if (!p) {
+                    p = series.data[series.data.length - 1];
+                }
+				container.find('.legendLabel').eq(i).text(series.label.replace(/-.*/, "- " + p[1] + "ms"));
 			}
-		}
+        }
 
         container.bind("mouseout", 
                 function onMouseOut(e) {
                     currentTimeTag.hide();
+                    updateLegends(markedPosition)
                 });
+
 		container.bind("plothover",  function (event, pos, item) {
 			latestPosition = pos;
             if (!updating) {
@@ -193,9 +201,11 @@
                 updating = true;
             }
 		});
+
         container.bind('plotclick', function (event, pos, item){
             var date = new Date(pos.x + start);
             showClouds(reports, date);
+            markedPosition = latestPosition;
             plot.draw();
         });
         showClouds(reports, new Date(reports[reports.length - 1].at));
