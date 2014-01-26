@@ -45,8 +45,8 @@
                         myGeo.getPoint(aCloud.location, function(point){
                             if (point) {
                                 aCloud.point = point;
-                                var marker = new BMap.Marker(point);
-                                map.addOverlay(marker);
+                                aCloud.marker = new CloudMarker(aCloud.id, point);
+                                map.addOverlay(aCloud.marker);
                             }
                         }, cloud.location);
                     })(cloud);
@@ -75,6 +75,8 @@
         if (report) {
             for (var i=0; i < report.statusList.length; ++i) {
                 var cloudStatus = report.statusList[i];
+                var cloud = cloudsMap[cloudStatus.id];
+                cloud.marker.update(cloudStatus.latency);
             }
         }
     }
@@ -96,7 +98,7 @@
         for (var id in seriesMap) {
             var series = seriesMap[id];
             data.push({
-                label: cloudsMap[id].name + ' - ' + series[series.length-1][1] + "ms",
+                label: id + "." + cloudsMap[id].name + ' - ' + series[series.length-1][1] + "ms",
                 data: seriesMap[id]
             });
         }
