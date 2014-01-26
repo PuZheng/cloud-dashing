@@ -21,17 +21,18 @@ function getUserLocation(handler) {
 }
 
 function getStatusList(viewpoint, start, end, callback) {
+    // TODO not implemented
     var startTime = start.getTime();
     var reports = [];
     for (var i=0; i < 24 * 60 / 5; ++i) {
         var statusList = [
         {
             id: 1, 
-            latency: 20 + Math.abs(Math.random()*30+Math.sin(i/20+Math.random()*2)*20+Math.sin(i/10+Math.random())*10)
+            latency: 20 + Math.abs(Math.floor(Math.random()*30+Math.sin(i/20+Math.random()*2)*20+Math.sin(i/10+Math.random())*10))
         }, 
         {
             id: 2,
-            latency: 40 + Math.abs(Math.random()*30+Math.sin(i/20+Math.random()*2)*20+Math.sin(i/10+Math.random())*10)
+            latency: 40 + Math.abs(Math.floor(Math.random()*30+Math.sin(i/20+Math.random()*2)*20+Math.sin(i/10+Math.random())*10))
         }
         ];
         reports.push({at: startTime + i * 5 * 60 * 1000, statusList: statusList});

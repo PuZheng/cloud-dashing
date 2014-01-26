@@ -84,8 +84,9 @@
             }
         }
         for (var id in seriesMap) {
+            var series = seriesMap[id];
             data.push({
-                label: cloudsMap[id].name,
+                label: cloudsMap[id].name + ' - ' + series[series.length-1][1] + "ms",
                 data: seriesMap[id]
             });
         }
@@ -122,10 +123,20 @@
                         },
                         color: "red"
                     }]
-                }
+                },
+                margin: {
+                    top: 25,
+                    right: 10,
+                    bottom: 10,
+                    left: 10
+                } 
             },
         });
 
+        var yaxisLabel = $("<span class='axisLabel yaxisLabel'></span>")
+            .text("延迟(ms)")
+            .appendTo(container);
+        yaxisLabel.css("margin-top", yaxisLabel.width() / 2 - 20);
         var currentTimeTag = $("#currentTime").hide();
         var updating = false;
 
@@ -143,6 +154,32 @@
                 left: pos.pageX,
                 top: pos.pageY - 50,
             }).show();
+
+			var i, j, dataset = plot.getData();
+			for (i = 0; i < dataset.length; ++i) {
+				var series = dataset[i];
+				// Find the nearest points, x-wise
+				for (j = 0; j < series.data.length; ++j) {
+					if (series.data[j][0] > pos.x) {
+						break;
+					}
+				}
+				// Now Interpolate
+
+				var y,
+					p1 = series.data[j - 1],
+					p2 = series.data[j];
+
+				if (p1 == null) {
+					y = p2[1];
+				} else if (p2 == null) {
+					y = p1[1];
+				} else {
+					y = p1[1] + (p2[1] - p1[1]) * (pos.x - p1[0]) / (p2[0] - p1[0]);
+				}
+
+				container.find('.legendLabel').eq(i).text(series.label.replace(/-.*/, "- " + Math.floor(y) + "ms"));
+			}
 		}
 
         container.bind("mouseout", 
