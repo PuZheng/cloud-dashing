@@ -21,3 +21,15 @@
     width: 960px;
     height: 220px;
 }
+
+#currentTime {
+    background: #fff;
+    z-index: 100;
+    padding: 0.4em 0.6em;
+    border-radius: 0.5em;
+    font-size: 0.8em;
+    border: 1px solid #111;
+    display: none;
+    white-space: nowrap;
+    position: absolute;
+}

@@ -1,6 +1,9 @@
 {% extends "layout.html" %}
 {% block head_block %}
   {{ super() }}
+    <!--[if lte IE 8]>
+    <script type="text/javascript" src="{{ url_for('static', filename='components/flot/excanvas.min.js') }}"></script>
+    <![endif]-->
   <link rel="stylesheet" href="{{ url_for('static', filename='css/index.css') }}" />
 {% endblock %}
 {% block main %}
@@ -10,6 +13,7 @@
         <div id="map">
         </div>
       </div>
+      <span id="currentTime"></span>
       <div id="timeline">
       </div>
 
@@ -34,7 +38,10 @@
   {{ super() }}
   <script type="text/javascript" src="http://api.map.baidu.com/api?v=2.0&ak=SwpHSZo7lxB794VNXA9U2d5q"></script>
   <script type="text/javascript" src="{{url_for('static', filename='js/viewpoint-switcher.js')}}" ></script>
-  <script type="text/javascript" src="{{url_for('static', filename='js/flotr2.min.js')}}" ></script>
+  <script type="text/javascript" src="{{url_for('static', filename='components/flot/jquery.flot.min.js')}}" ></script>
+  <script type="text/javascript" src="{{url_for('static', filename='components/flot/jquery.flot.time.min.js')}}" ></script>
+  <script type="text/javascript" src="{{url_for('static', filename='components/flot/jquery.flot.crosshair.min.js')}}" ></script>
+  <script type="text/javascript" src="{{url_for('static', filename='components/flot.tooltip/js/jquery.flot.tooltip.min.js')}}" ></script>
   <script type="text/javascript" src="{{url_for('static', filename='js/functions.js')}}" ></script>
   <script type="text/javascript" src="{{url_for('static', filename='js/index.js')}}" ></script>
 {% endblock %}

@@ -10,103 +10,158 @@
         }  
     }
     checkhHtml5();  
-    var chinaGeoCenter = new BMap.Point(103.336594, 35.849248);
-    var map = new BMap.Map("map");
-    map.centerAndZoom(chinaGeoCenter, 5); 
-    var  mapStyle ={ 
-        features: ["water", "land"]
-    };
-    map.setMapStyle(mapStyle);
-    map.addControl(new BMap.NavigationControl());
+    
+    var cloudsMap = {};
 
-    function getViewpoints(handler) {
-        // TODO not implemented
-        handler([
-                    {name: "北京", cannonical_name: "北京市"},
-                    {name: "上海", cannonical_name: "上海市"}
-                ]); 
+    function initMap() {
+        var chinaGeoCenter = new BMap.Point(103.336594, 35.849248);
+        var map = new BMap.Map("map");
+        map.centerAndZoom(chinaGeoCenter, 5); 
+        var  mapStyle ={ 
+            features: ["water", "land"]
+        };
+        map.setMapStyle(mapStyle);
+        map.addControl(new BMap.NavigationControl());
+        var viewpointSwitcher = null;
+        getViewpoints(function(viewpoints) {
+            viewpointSwitcher = new ViewPointSwitcher(viewpoints, map);   
+            map.addControl(viewpointSwitcher);
+        });
+        getUserLocation(function (viewpoint) {
+            viewpointSwitcher.setViewpoint(viewpoint); 
+        });
+        getClouds(function (clouds) {
+            for (var i=0; i < clouds.length; ++i) {
+                var cloud = clouds[i];
+                cloudsMap[cloud.id]  = cloud;
+            }
+        })
+        var currentTime = new Date();
+        var start = new Date(currentTime.getFullYear(), currentTime.getMonth(), 
+                currentTime.getDate(), 0, 0, 0);
+        var end = new Date(start.getTime() + 24 * 60 * 60 * 1000);
+        getStatusList(viewpointSwitcher.getCurrentViewPoint(), start, end,
+                function (statusList, start) {
+                    drawTimeLine($('#timeline'), statusList, start);
+                }); 
+        return map;
     }
-    var viewpointSwitcher = null;
-    getViewpoints(function(viewpoints) {
-        viewpointSwitcher = new ViewPointSwitcher(viewpoints, map);   
-        map.addControl(viewpointSwitcher);
-    });
+    var map = initMap();
 
-    getUserLocation(function (viewpoint) {
-        viewpointSwitcher.setViewpoint(viewpoint); 
-    });
+    function showClouds(reports, date) {
+        var date = date.getTime();
+        var report = null;
+        for (var i=0; i < reports.length; ++i) {
+            if (reports[i].at >= date) {
+                report = reports[i - 1];
+                break;
+            }
+        }
+        if (!report) {
+            report = reports[i];
+        }
+        if (report) {
+            for (var i=0; i < report.statusList.length; ++i) {
+                var cloudStatus = report.statusList[i];
+                alert(cloudsMap[cloudStatus.id].name + " - " + cloudStatus.latency + "ms");
+            }
+        }
+    }
 
-    var currentTime = new Date();
-    var start = new Date(currentTime.getFullYear(), currentTime.getMonth(), 
-            currentTime.getDate(), 0, 0, 0);
-    var end = new Date(start.getTime() + 24 * 60 * 60 * 1000);
-    getStatusList(viewpointSwitcher.getCurrentViewPoint(), start, end,
-            function (cloudList, start) {
-                var container = document.getElementById('timeline');
-                var options = null;
-                var graph = null;
-                var x = null, y = null, o = null; 
 
-                var start = start.getTime();
-                var data = [];
-                for (var i=0; i < cloudList.length; ++i) {
-                    var a = [];
-                    var cloud = cloudList[i];
-                    for (var j = 0; j < cloud.cloudStatusList.length; j++) {
-                        var cloudStatus = cloud.cloudStatusList[j];
-                        x = cloudStatus.at - start;
-                        y = cloudStatus.latency;
-                        a.push([x, y]);
-                    }
-                    data.push({data: a, label: cloud.name});
+    function drawTimeLine(container, reports, start) {
+        var data = [];
+        var start = start.getTime();
+        var seriesMap = {};
+        for (var i=0; i < reports.length; ++i) {
+            var report = reports[i];
+            for (var j=0; j < report.statusList.length; ++j) {
+                var cloudStatus = report.statusList[j];
+                if (!(cloudStatus.id in seriesMap)) {
+                    seriesMap[cloudStatus.id] = [];
                 }
-                options = {
-                    xaxis : {
-                        mode : 'time', 
-                        labelsAngle : 45,
-                        noTicks: 48, 
-                    },
-                    HtmlText : false,
-                    mouse : {
-                        track           : true, // Enable mouse tracking
-                        trackY          : false, // Enable mouse tracking
-                        lineColor       : null,
-                        relative        : true,
-                        position        : 'ne',
-                        sensibility     : 1,
-                        trackDecimals   : 2,
-                        trackFormatter  : function (o) { 
-                            var date = new Date(Math.floor(o.x + start));
-                            return date.getUTCHours() + ":" + date.getUTCMinutes();
-                        }
-                    },
-                    crosshair : {
-                        mode : 'x',
-                        color: 'gray',
-                    }
-                };
-
-
-                // Draw graph with default options, overwriting with passed options
-                function drawGraph (opts) {
-
-                    // Clone the options, so the 'options' variable always keeps intact.
-                    o = Flotr._.extend(Flotr._.clone(options), opts || {});
-
-                    // Return a new graph.
-                    return Flotr.draw(
-                            container,
-                            data,
-                            o);
+                seriesMap[cloudStatus.id].push([report.at - start, cloudStatus.latency]);
+            }
+        }
+        for (var id in seriesMap) {
+            data.push({
+                label: cloudsMap[id].name,
+                data: seriesMap[id]
+            });
+        }
+		var latestPosition = {x: reports[reports.length-1].at - start, y: null};
+        var plot = $.plot(container, data, {
+            xaxis: {
+                mode: 'time',
+            },
+            crosshair: {
+                mode: "x",
+                color: "gray",
+                lineWidth: 1
+            },
+            grid: {
+                clickable: true,
+                hoverable: true,
+                autoHighlight: false,
+                borderWidth: {
+                    top: 0,
+                    right: 0,
+                    bottom: 1,
+                    left: 1
+                },
+                markings: function (axes) {
+                    return [{
+                        yaxis: {
+                            from: 1000000,
+                            to: 0
+                        },
+                        lineWidth: 3,
+                        xaxis: {
+                            from: latestPosition.x,
+                            to: latestPosition.x,
+                        },
+                        color: "red"
+                    }]
                 }
+            },
+        });
 
-                graph = drawGraph();      
-                // When graph is clicked, draw the graph with default area.
-                Flotr.EventAdapter.observe(container, 'flotr:click', 
-                        function (e) { 
-                            var date = new Date(Math.floor(e.hit.x + start));
-                            // TODO show status
-                            
-                        });
-            }); 
+        var currentTimeTag = $("#currentTime").hide();
+        var updating = false;
+
+		function updateTime() {
+            updating = false;
+			var pos = latestPosition;
+			var axes = plot.getAxes();
+			if (pos.x < axes.xaxis.min || pos.x > axes.xaxis.max ||
+				pos.y < axes.yaxis.min || pos.y > axes.yaxis.max) {
+				return;
+			}
+            var date = new Date(pos.x + start);
+            currentTimeTag.text(date.getHours() + ":" + date.getMinutes());
+            currentTimeTag.css({
+                left: pos.pageX,
+                top: pos.pageY - 50,
+            }).show();
+		}
+
+        container.bind("mouseout", 
+                function onMouseOut(e) {
+                    currentTimeTag.hide();
+                });
+		container.bind("plothover",  function (event, pos, item) {
+			latestPosition = pos;
+            if (!updating) {
+                setTimeout(updateTime, 50);
+                updating = true;
+            }
+		});
+        container.bind('plotclick', function (event, pos, item){
+            var date = new Date(pos.x + start);
+            showClouds(reports, date);
+            plot.draw();
+        });
+        showClouds(reports, new Date(reports[reports.length - 1].at));
+    }
+
 })();

@@ -1,3 +1,19 @@
+function getViewpoints(handler) {
+    // TODO not implemented
+    handler([
+                {name: "北京", cannonical_name: "北京市"},
+                {name: "上海", cannonical_name: "上海市"}
+            ]); 
+}
+
+function getClouds(handler) {
+    var clouds = [
+            {id: 1, name: "百度云", location: "北京市"},
+            {id: 2, name: "阿里云", location: "杭州市"},
+        ];
+    handler(clouds);
+}
+
 function getUserLocation(handler) {
     // TODO not implemented
     var viewpoint = {name: "北京", cannonical_name: "北京市"};
@@ -5,20 +21,21 @@ function getUserLocation(handler) {
 }
 
 function getStatusList(viewpoint, start, end, callback) {
-    // TODO lnot implemented
-    var clouds = [
-    {name: "百度云", address: "北京市", color: "#ff0000"},
-    {name: "阿里云", address: "杭州市", color: "#0000ff"}];
-
-    for (var i=0; i < clouds.length; ++i) {
-        var cloud = clouds[i];
-        var cloudStatusList = [];
-        var startTime = start.getTime();
-        for (var j=0; j < 24 * 60 / 5; ++j) {
-            cloudStatusList.push({at:startTime + j * 5 * 60 * 1000, 
-                latency: i*20 + Math.abs(Math.random()*30+Math.sin(j/20+Math.random()*2)*20+Math.sin(j/10+Math.random())*10)});
+    var startTime = start.getTime();
+    var reports = [];
+    for (var i=0; i < 24 * 60 / 5; ++i) {
+        var statusList = [
+        {
+            id: 1, 
+            latency: 20 + Math.abs(Math.random()*30+Math.sin(i/20+Math.random()*2)*20+Math.sin(i/10+Math.random())*10)
+        }, 
+        {
+            id: 2,
+            latency: 40 + Math.abs(Math.random()*30+Math.sin(i/20+Math.random()*2)*20+Math.sin(i/10+Math.random())*10)
         }
-        cloud.cloudStatusList = cloudStatusList;
+        ];
+        reports.push({at: startTime + i * 5 * 60 * 1000, statusList: statusList});
     }
-    callback(clouds, start);
+
+    callback(reports, start);
 }
