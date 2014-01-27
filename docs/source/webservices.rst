@@ -21,8 +21,9 @@ I-1 获取观察点列表
       {
          "data": [
             {
+               "id": # viewpoint id
                "name": <str>, # 用于展示的名称， 例如"上海"
-               "cannonical_name": <str>, # 观察点的正式名称，例如"上海市"
+               "location": <str>, # 观察点的正式名称，例如"上海市"，用于地址反解析
             }
          ]
       }
@@ -47,9 +48,8 @@ I-2 获取被监控云列表
          "data": [
             {
                "id": <int>, # 监控云的唯一编号，后续会使用该编号获取数据
-               "name": <str>, 
-               "latitude": <float>, # 后台手工写入即可，没必要非常精确
-               "longitude": <float>, # 同longitude
+               "name": <str>, # 云名称 
+               "location": <str>,  # 云地址，用于地址反解析 
             },
             # ...
          ]
