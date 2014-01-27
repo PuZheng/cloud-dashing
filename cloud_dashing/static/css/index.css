@@ -14,7 +14,19 @@
 }
 
 .fa-eye {
+    color: blue;
+}
+
+.fa-smile-o {
     color: green;
+}
+
+.fa-frown-o {
+    color: brown;
+}
+
+.fa-warning {
+    color: red;
 }
 
 #timeline {
