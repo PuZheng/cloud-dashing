@@ -2,8 +2,8 @@ function getViewpoints(handler) {
     // TODO not implemented
     setTimeout(function () {
         handler([
-                    {id: 1, name: "北京", cannonical_name: "北京市"},
-                    {id: 2, name: "上海", cannonical_name: "上海市"}
+                    {id: 1, name: "北京", location: "北京市"},
+                    {id: 2, name: "上海", location: "上海市"}
                 ]); 
     }, 100);
 }
@@ -18,7 +18,7 @@ function getClouds(handler) {
 
 function getUserLocation(viewpoints, handler) {
     // TODO not implemented
-    var viewpoint = {id: 1, name: "北京", cannonical_name: "北京市"};
+    var viewpoint = {id: 1, name: "北京", location: "北京市"};
     setTimeout(function () {handler(viewpoint);}, 100);
 }
 

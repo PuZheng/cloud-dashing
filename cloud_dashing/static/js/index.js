@@ -23,14 +23,16 @@
         map.setMapStyle(mapStyle);
         map.addControl(new BMap.NavigationControl());
         var viewpointSwitcher = null;
+        // 首先获取观察点列表， 再获取云列表，再获取当前用户的位置，然后获取
+        // 各个云的状态信息
         getViewpoints(function(viewpoints) {
-            viewpointSwitcher = new ViewPointSwitcher(viewpoints, map, 
+            viewpointSwitcher = new ViewpointSwitcher(viewpoints, map, 
                 function(viewpointSwitcher) {
                     var currentTime = new Date();
                     var start = new Date(currentTime.getFullYear(), currentTime.getMonth(), 
                             currentTime.getDate(), 0, 0, 0);
                     var end = new Date(start.getTime() + 24 * 60 * 60 * 1000);
-                    getStatusList(viewpointSwitcher.getCurrentViewPoint(), start, end,
+                    getStatusList(viewpointSwitcher.getCurrentViewpoint(), start, end,
                             function (statusList, start) {
                                 drawTimeLine($('#timeline'), statusList, start);
                             }); 
@@ -48,12 +50,18 @@
                                 aCloud.marker = new CloudMarker(aCloud.id, point);
                                 map.addOverlay(aCloud.marker);
                             }
+                            var marksAllSet = true;
+                            for (var cid in cloudsMap) {
+                                marksAllSet = marksAllSet && cloudsMap[cid].marker;
+                            }
+                            if (marksAllSet) {
+                                getUserLocation(viewpoints, function (viewpoint) {
+                                    viewpointSwitcher.setViewpoint(viewpoint); 
+                                });
+                            }
                         }, cloud.location);
                     })(cloud);
                 }
-                getUserLocation(viewpoints, function (viewpoint) {
-                    viewpointSwitcher.setViewpoint(viewpoint); 
-                });
             });
         });
         return map;
