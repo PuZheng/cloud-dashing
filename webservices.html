@@ -49,32 +49,20 @@
 <h1>公有云项目WEB接口列表<a class="headerlink" href="#web" title="Permalink to this headline">¶</a></h1>
 <div class="section" id="i-1">
 <span id="get-viewpoint-list"></span><h2>I-1 获取观察点列表<a class="headerlink" href="#i-1" title="Permalink to this headline">¶</a></h2>
-<p>获取所有的观察点(即数据采集服务器)列表，若提供了观察者的IP，根据IP判断应该选取哪个观察点，规则暂时为:</p>
+<p>获取所有的观察点(即数据采集服务器)列表，* 请求</p>
 <blockquote>
-<div><strong>如果IP所在省有观察点，选择该观察点，否则选择北京</strong></div></blockquote>
-<p><tt class="docutils literal"><span class="pre">注:</span> <span class="pre">由于目前仅仅有一个观察点（即北京），直接返回该观察点即可</span></tt></p>
-<ul>
-<li><p class="first">请求</p>
-<div class="highlight-bash"><div class="highlight"><pre>GET /viewpoint-list?ip<span class="o">=</span>&lt;str&gt;
+<div><div class="highlight-bash"><div class="highlight"><pre>GET /viewpoint-list
 </pre></div>
 </div>
-</li>
-</ul>
-<blockquote>
-<div><ul class="simple">
-<li>ip - 观察者的ip，可选项，如果不传，直接选择北京</li>
-</ul>
 </div></blockquote>
 <ul>
 <li><p class="first">响应 - http code 200</p>
 <div class="highlight-python"><div class="highlight"><pre><span class="p">{</span>
    <span class="s">&quot;data&quot;</span><span class="p">:</span> <span class="p">[</span>
       <span class="p">{</span>
-         <span class="s">&quot;id&quot;</span><span class="p">:</span> <span class="o">&lt;</span><span class="nb">int</span><span class="o">&gt;</span><span class="p">,</span>  <span class="c"># 观察点的唯一编号，后续会使用该观察点ID获取数据</span>
-         <span class="s">&quot;name&quot;</span><span class="p">:</span> <span class="o">&lt;</span><span class="nb">str</span><span class="o">&gt;</span><span class="p">,</span>
-         <span class="s">&quot;latitude&quot;</span><span class="p">:</span> <span class="o">&lt;</span><span class="nb">float</span><span class="o">&gt;</span><span class="p">,</span> <span class="c"># 后台手工写入即可，没必要非常精确</span>
-         <span class="s">&quot;longitude&quot;</span><span class="p">:</span> <span class="o">&lt;</span><span class="nb">float</span><span class="o">&gt;</span><span class="p">,</span> <span class="c"># 同longitude</span>
-         <span class="s">&quot;prefered&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="o">|</span><span class="mi">1</span><span class="p">,</span> <span class="c"># 是默认观察点? 1:0</span>
+         <span class="s">&quot;id&quot;</span><span class="p">:</span> <span class="c"># viewpoint id</span>
+         <span class="s">&quot;name&quot;</span><span class="p">:</span> <span class="o">&lt;</span><span class="nb">str</span><span class="o">&gt;</span><span class="p">,</span> <span class="c"># 用于展示的名称， 例如&quot;上海&quot;</span>
+         <span class="s">&quot;location&quot;</span><span class="p">:</span> <span class="o">&lt;</span><span class="nb">str</span><span class="o">&gt;</span><span class="p">,</span> <span class="c"># 观察点的正式名称，例如&quot;上海市&quot;，用于地址反解析</span>
       <span class="p">}</span>
    <span class="p">]</span>
 <span class="p">}</span>
@@ -97,9 +85,8 @@
    <span class="s">&quot;data&quot;</span><span class="p">:</span> <span class="p">[</span>
       <span class="p">{</span>
          <span class="s">&quot;id&quot;</span><span class="p">:</span> <span class="o">&lt;</span><span class="nb">int</span><span class="o">&gt;</span><span class="p">,</span> <span class="c"># 监控云的唯一编号，后续会使用该编号获取数据</span>
-         <span class="s">&quot;name&quot;</span><span class="p">:</span> <span class="o">&lt;</span><span class="nb">str</span><span class="o">&gt;</span><span class="p">,</span>
-         <span class="s">&quot;latitude&quot;</span><span class="p">:</span> <span class="o">&lt;</span><span class="nb">float</span><span class="o">&gt;</span><span class="p">,</span> <span class="c"># 后台手工写入即可，没必要非常精确</span>
-         <span class="s">&quot;longitude&quot;</span><span class="p">:</span> <span class="o">&lt;</span><span class="nb">float</span><span class="o">&gt;</span><span class="p">,</span> <span class="c"># 同longitude</span>
+         <span class="s">&quot;name&quot;</span><span class="p">:</span> <span class="o">&lt;</span><span class="nb">str</span><span class="o">&gt;</span><span class="p">,</span> <span class="c"># 云名称</span>
+         <span class="s">&quot;location&quot;</span><span class="p">:</span> <span class="o">&lt;</span><span class="nb">str</span><span class="o">&gt;</span><span class="p">,</span>  <span class="c"># 云地址，用于地址反解析</span>
       <span class="p">},</span>
       <span class="c"># ...</span>
    <span class="p">]</span>
