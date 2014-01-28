@@ -1,0 +1,14 @@
+{
+  "name": "echarts",
+  "homepage": "https://github.com/open-node/echarts",
+  "version": "1.3.6",
+  "_release": "1.3.6",
+  "_resolution": {
+    "type": "version",
+    "tag": "1.3.6",
+    "commit": "b41e33c2c8bbbc7ecd9b0b56b2df05cc71cdb207"
+  },
+  "_source": "git://github.com/open-node/echarts.git",
+  "_target": "*",
+  "_originalSource": "echarts"
+}
