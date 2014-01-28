@@ -14,5 +14,6 @@
         "handlebars": "latest",
         "flot": "latest",
         "flot.tooltip": "latest",
+        "echarts": "latest"
     }
 }
