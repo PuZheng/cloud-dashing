@@ -1,4 +1,4 @@
-(function () {
+define(function () {
     var acceptableThreshhold = 50; // 可以接受的网络延迟门槛
     var badThreshhold = 80; // 不可接受的网络延迟门槛
 
@@ -38,4 +38,7 @@
             tag.html(tag.text() + '<i class="fa fa-smile-o"/>');
         }
     }
-})();
+    return {
+        CloudMarker: CloudMarker
+    }
+});
