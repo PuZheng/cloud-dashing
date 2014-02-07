@@ -46,11 +46,11 @@ API.txt for details.
 		var isAM = hours < 12;
 
 		if (monthNames == null) {
-			monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+			monthNames = ["一月", "二月", "三月", "四月", "五月", "六月", "七月", "八月", "九月", "十月", "十一月", "十二月"];
 		}
 
 		if (dayNames == null) {
-			dayNames = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+			dayNames = ["日", "一", "二", "三", "四", "五", "六"];
 		}
 
 		var hours12;
@@ -131,10 +131,14 @@ API.txt for details.
 
 		var props = ["Date", "Day", "FullYear", "Hours", "Milliseconds", "Minutes", "Month", "Seconds"];
 
-		for (var p = 0; p < props.length; p++) {
-			addProxyMethod(utc, "get" + props[p], d, "getUTC" + props[p]);
-			addProxyMethod(utc, "set" + props[p], d, "setUTC" + props[p]);
-		}
+		//for (var p = 0; p < props.length; p++) {
+			//addProxyMethod(utc, "get" + props[p], d, "getUTC" + props[p]);
+			//addProxyMethod(utc, "set" + props[p], d, "setUTC" + props[p]);
+		//}
+        for (var p = 0; p < props.length; p++) {
+            addProxyMethod(utc, "get" + props[p], d, "get" + props[p]);
+            addProxyMethod(utc, "set" + props[p], d, "set" + props[p]);
+        }
 
 		return utc;
 	};

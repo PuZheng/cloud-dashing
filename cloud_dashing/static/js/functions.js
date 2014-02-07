@@ -33,8 +33,8 @@ define(['jquery'], function () {
         var deferred = $.Deferred();
         setTimeout(function () { 
             var clouds = [
-                {id: 1, name: "百度云", location: "北京市"},
-                {id: 2, name: "阿里云", location: "杭州市"},
+                {id: 1, name: "百度云", location: "北京市", color: "blue"},
+                {id: 2, name: "阿里云", location: "杭州市", color: "green"},
             ];
 
             var myGeo = new BMap.Geocoder();
@@ -65,31 +65,65 @@ define(['jquery'], function () {
         return deferred.promise();
     }
 
-    function getStatusList(viewpoint, start, end, callback) {
+    function getCloudReports(viewpoint, start, end) {
         // TODO not implemented
+        var deferred = $.Deferred();
         var startTime = start.getTime();
         var reports = [];
-        for (var i=0; i < 24 * 60 / 5; ++i) {
+        if (end > new Date()) {
+            end  = new Date().getTime();
+        }
+        for (var i=0; i < end - start; i += 20 * 60 * 1000) {
             var statusList = [
             {
                 id: 1, 
-                latency: viewpoint.id * 20 + Math.abs(Math.floor(Math.random()*30+Math.sin(i/20+Math.random()*2)*20+Math.sin(i/10+Math.random())*10))
+                //latency: viewpoint.id * 20 + Math.abs(Math.floor(Math.random()*30+Math.sin(i/20+Math.random()*2)*20+Math.sin(i/10+Math.random())*10))
+                latency: viewpoint.id * 20 + Math.abs(Math.floor(15+Math.sin(i/20+1)*20+Math.sin(i/10+0.5)*10))
             }, 
             {
                 id: 2,
-                latency: viewpoint.id * 40 + Math.abs(Math.floor(Math.random()*30+Math.sin(i/20+Math.random()*2)*20+Math.sin(i/10+Math.random())*10))
+                //latency: viewpoint.id * 40 + Math.abs(Math.floor(Math.random()*30+Math.sin(i/20+Math.random()*2)*20+Math.sin(i/10+Math.random())*10))
+                latency: viewpoint.id * 40 + Math.abs(Math.floor(15+Math.sin(i/20+1)*20+Math.sin(i/10+0.5)*10))
             }
             ];
-        reports.push({at: startTime + i * 5 * 60 * 1000, statusList: statusList});
+            if (i % (20 * 60 * 1000 * 100) == 0) {
+                statusList[(i % (20 * 60 * 1000 * 2) == 0)? 1: 0].latency = null;
+            }
+            reports.push({at: startTime + i, statusList: statusList});
         }
 
-        setTimeout(function () {callback(reports, start);}, 100);
+        setTimeout(function () { deferred.resolve(reports); }, 100);
+        return deferred.promise();
+    }
+
+    function getDailyReport(viewpoint, start, end) {
+        var deferred = $.Deferred();
+        var reports = []
+        start = start.getTime();
+        end = end.getTime();
+        var ret = [];
+        for (var i=0; i < end-start; i+= 24 * 60 * 60 * 1000) {
+            var data = [
+            {
+                id: 1,
+                    latency: viewpoint.id * 20 + Math.abs(Math.floor(15+Math.sin(i/20+1)*20+Math.sin(i/10+0.5)*10))
+            },
+            {
+                id: 2,
+                latency: viewpoint.id * 40 + Math.abs(Math.floor(15+Math.sin(i/20+1)*20+Math.sin(i/10+0.5)*10))
+            }
+            ]
+            reports.push({at: start + i, data: data});
+        }
+        setTimeout(function () { deferred.resolve(reports); }, 100);
+        return deferred.promise();
     }
 
     return {
         getViewpoints: getViewpoints,
         getClouds: getClouds,
         getUserLocation: getUserLocation,
-        getStatusList: getStatusList,
+        getCloudReports: getCloudReports,
+        getDailyReport: getDailyReport,
     }
 });

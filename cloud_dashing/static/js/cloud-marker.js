@@ -34,6 +34,10 @@ define(function () {
             tag.html(tag.text() + '<i class="fa fa-warning"/>');
         } else if (latency >= acceptableThreshhold) {
             tag.html(tag.text() + '<i class="fa fa-frown-o"/>');
+        } else if (latency === null) {
+            tag.html(tag.text() + '<i class="fa fa-ban"/>');
+        } else if (latency == -1) {
+            tag.html(tag.text() + '<i class="fa fa-question"/>');
         } else {
             tag.html(tag.text() + '<i class="fa fa-smile-o"/>');
         }

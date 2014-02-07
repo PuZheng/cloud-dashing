@@ -26,12 +26,22 @@
 }
 
 .fa-warning {
+    color: orange;
+}
+
+.fa-ban {
     color: red;
+}
+
+.fa-question {
+    color: gray;
 }
 
 #timeline {
     width: 960px;
     height: 220px;
+    margin-bottom: 100px;
+    margin-left: 50px;
 }
 
 #currentTime {
@@ -60,4 +70,13 @@
 	-ms-transform-origin: 0 0;
 	-moz-transform-origin: 0 0;
 	-webkit-transform-origin: 0 0;
+}
+
+.legendLabel {
+    color: black;
+}
+
+.daily-avg-latency-bar {
+    width: 960px;
+    height: 220px;
 }

@@ -15,6 +15,7 @@
       <link rel="stylesheet" href="{{ url_for('static', filename='components/select2/select2.css') }}" />
       <link rel="stylesheet" href="{{ url_for('static', filename='components/Font-Awesome/css/font-awesome.min.css') }}" />
       <link rel="stylesheet" href="{{ url_for('static', filename='css/custom.css') }}"/>
+      <link rel="stylesheet" href="{{ url_for('static', filename='components/toastr/toastr.min.css') }}"/>
       <!--[if lt IE 9]>
           <script src="{{ url_for('static', filename='components/html5shiv/dist/html5shiv.js') }}"></script>
       <![endif]-->
@@ -29,9 +30,8 @@
   <!--put your main block here -->
   {% endblock %}
   {% block tail_block %}
-    <!--<script type="text/javascript" src="{{ url_for('static', filename='components/jquery/jquery.min.js') }}"></script>-->
-    <!--<script type="text/javascript" src="{{ url_for('static', filename='components/jquery/jquery-migrate.min.js') }}"></script>-->
-    <!--<script type="text/javascript" src="{{ url_for('static', filename='components/bootstrap/dist/js/bootstrap.min.js') }}"></script>-->
+    <script type="text/javascript" src="{{ url_for('static', filename='components/jquery/jquery.min.js') }}"></script>
+    <script type="text/javascript" src="{{ url_for('static', filename='components/bootstrap/dist/js/bootstrap.min.js') }}"></script>
     <!--<script type="text/javascript" src="{{ url_for('static', filename='components/fancybox/source/jquery.fancybox.pack.js') }}"></script>-->
     <script type="text/javascript" src="{{ url_for('static', filename='components/holderjs/holder.js') }}"></script>
     <!--<script type="text/javascript" src="{{ url_for('static', filename='components/select2/select2.min.js') }}"></script>-->
