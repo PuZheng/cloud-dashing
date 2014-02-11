@@ -16,6 +16,8 @@
     "flot.tooltip": "latest",
     "echarts": "latest",
     "moment": "~2.5.1",
-    "toastr": "~2.0.1"
+    "toastr": "~2.0.1",
+    "backbone": "~1.1.0",
+    "underscore": "~1.6.0"
   }
 }

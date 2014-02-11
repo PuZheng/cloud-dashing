@@ -1,4 +1,4 @@
-define(function () {
+define(['baiduMap'], function (BMap) {
     var source = '<div class="btn-group">' + 
     '{{#each viewpoints}}' + 
     '<button type="button" class="btn btn-default" data-location={{ this.location }}>{{ this.name }}</button>' + 
