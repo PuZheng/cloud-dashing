@@ -3,7 +3,9 @@ require.config({
     paths: {
         jquery: 'jquery/jquery.min',
         underscore: 'underscore/underscore',
-        backbone: 'backbone/backbone-min',
+        backbone: 'backbone/backbone',
+        handlebars: 'handlebars/handlebars.amd.min',
+        select2: 'select2/select2.min',
         //functions: '/static/js/functions',
         //utils: '/static/js/utils',
         //viewpointSwitcher: '/static/js/viewpoint-switcher',
@@ -18,6 +20,10 @@ require.config({
         //utils: '/static/js/utils',
         'views/app-view': '/static/js/views/app-view',
         'views/map-view': '/static/js/views/map-view',
+        'views/control-panel': '/static/js/views/control-panel',
+        'collections/agents': '/static/js/collections/agents',
+        'models/agent': '/static/js/models/agent',
+        'text': 'text/text',
     },
     urlArgs: "bust=" + (new Date()).getTime(),
     shim:{
@@ -36,6 +42,10 @@ require.config({
         'backbone': {
             deps: ['jquery', 'underscore'],
             exports: 'Backbone',
+        },
+        'select2': {
+            deps: ['jquery'],
+            exports: '$.fn.select2',
         }
     }
 });

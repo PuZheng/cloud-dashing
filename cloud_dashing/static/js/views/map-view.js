@@ -1,4 +1,4 @@
-define(['backbone'], function (Backbone) {
+define(['backbone'], function (Backbone, ViewpointSwitcher) {
     
     var MapView = Backbone.View.extend({
         render: function () {
