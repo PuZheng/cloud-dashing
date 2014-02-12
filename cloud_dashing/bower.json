@@ -2,7 +2,7 @@
   "name": "cloud_dashing",
   "version": "0.1.0",
   "dependencies": {
-    "bootstrap": "latest",
+    "bootstrap": "~3.1.0",
     "fancybox": "latest",
     "select2": "~3.4.5",
     "requirejs": "latest",

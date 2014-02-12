@@ -32,3 +32,17 @@ TemplateSyntaxError: expected token ',', got 'static'
   File "/home/xc/work/cloud-dashing-env/cloud-dashing/cloud_dashing/templates/layout.html", line 20, in template
     <script src="{{ url_for('static', filename='components/html5shiv/dist/html5shiv.js') }}"></script>
 TemplateSyntaxError: expected token ',', got 'static'
+2014-02-11 16:38:40,865 - ERROR: GET http://127.0.0.1:5000/agents
+2014-02-11 16:38:40,866 - ERROR: Traceback (most recent call last):
+  File "/home/xc/work/cloud-dashing-env/env/lib/python2.7/site-packages/Flask-0.10.1-py2.7.egg/flask/app.py", line 1461, in dispatch_request
+    return self.view_functions[rule.endpoint](**req.view_args)
+  File "/home/xc/work/cloud-dashing-env/cloud-dashing/cloud_dashing/portal/index.py", line 15, in agents_view
+    ret = make_response(json.dumps([
+NameError: global name 'make_response' is not defined
+2014-02-12 15:11:37,491 - ERROR: GET http://127.0.0.1:5000/api/reports
+2014-02-12 15:11:37,543 - ERROR: Traceback (most recent call last):
+  File "/home/xc/work/cloud-dashing-env/env/lib/python2.7/site-packages/Flask-0.10.1-py2.7.egg/flask/app.py", line 1461, in dispatch_request
+    return self.view_functions[rule.endpoint](**req.view_args)
+  File "/home/xc/work/cloud-dashing-env/cloud-dashing/cloud_dashing/portal/index.py", line 57, in reports_view
+    ret = [_makeSlice(i) for i in xrange(start, end, step)]
+TypeError: an integer is required
