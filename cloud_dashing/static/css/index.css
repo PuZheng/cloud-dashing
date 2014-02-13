@@ -9,7 +9,7 @@
 /*}*/
 
 .map {
-    height: 720px;
+    height: 360px;
 }
 
 .fa-eye {
@@ -36,7 +36,7 @@
     color: gray;
 }
 
-#timeline {
+.timeline-plot {
     width: 960px;
     height: 220px;
     margin-bottom: 100px;

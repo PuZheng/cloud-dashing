@@ -1,6 +1,25 @@
-<select id="viewpoint" name="viewpoint">
-  {{#each agents}}
-    <option value="{{this.name}}">{{this.name}}</option> 
-  {{/each}}
-</select>
+<div class='panel panel-default'>
+  <div class="panel-body">
+    <i class="fa fa-eye"></i>
+    <select id="viewpoint" name="viewpoint">
+      {{#each agents}}
+      <option value="{{this.id}}">{{this.name}}</option> 
+      {{/each}}
+    </select>
+  </div>
+</div>
+<div class="panel panel-default">
+  <div class="panel-body">
+    <ul class="list-group">
+      {{#each agents}}
+      <li class="list-group-item list-group-item-success text-center" value="{{this.id}}" data-enabled='true'>
+        <i class="fa fa-check"></i>
+        {{this.name}} - 
+        <em><small></small></em>
+      </li>
+      {{/each}}
+    </ul>
+  </div>
+</div>
+
 

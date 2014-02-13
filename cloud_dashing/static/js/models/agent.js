@@ -3,10 +3,9 @@ define(['backbone'], function (Backbone) {
         defaults: {
             name: '',
             location: '',
+            color: '',
+            selected: true,
         }, 
-        parse: function (response) {
-            return response;
-        }
     });
     return Agent;
 });

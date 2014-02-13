@@ -4,5 +4,5 @@ define(['jquery', 'backbone', 'models/agent'], function ($, Backbone, Agent) {
         url: 'api/agents',
     });
 
-    return Agents;
+    return new Agents();
 });
