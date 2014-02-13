@@ -190,8 +190,8 @@ define(['jquery', 'underscore','backbone', 'handlebars', 'text!/static/templates
                             if (point1[0] == point2[0]) {
                                 timespot = new TimeSpot({id: series.agentId, available: point1[2], latency: Math.floor(point1[1]), db: point1[3], name: agentName})
                             } else {
-                                latency = Math.floor(point1[1] + (point2[1] - point1[1]) * (pos.x - point1[0]) / (point2[0] - point1[0]));
-                                timespot = new TimeSpot({id: series.agentId, available: point1[2] && point2[2], latency: latency, db: point1[3] && point1[3], name:agentName})
+                                var latency = Math.floor(point1[1] + (point2[1] - point1[1]) * (pos.x - point1[0]) / (point2[0] - point1[0]));
+                                timespot = new TimeSpot({id: series.agentId, available: point1[2] && point2[2], latency: latency, db: point1[3] && point2[3], name:agentName})
                             }
                         }
                     }
