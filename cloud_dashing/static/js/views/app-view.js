@@ -1,6 +1,6 @@
-define(['backbone', 'views/map-view', 'views/control-panel', 'views/timeline', 'views/table-view', 'models/timespot',
+define(['backbone', 'views/map-view', 'views/control-panel', 'views/timeline', 'views/table-view',
     'collections/agents', 'collections/timespots', 'router/app-router'],
-    function (Backbone, MapView, ControlPanel, Timeline, tableView, TimeSpot, agents, timespots, AppRouter) {
+    function (Backbone, MapView, ControlPanel, Timeline, tableView,  agents, timespots, AppRouter) {
         var router = new AppRouter();
         Backbone.history.start();
         var AppView = Backbone.View.extend({
@@ -38,7 +38,7 @@ define(['backbone', 'views/map-view', 'views/control-panel', 'views/timeline', '
                 this._tl.on('time-changed', function (data) {
                     this._cp.updateLatency(data);
                     this._map.updateLatency(data);
-                    this.updateLatency(data);
+                    this._table.updateLatency(data);
                 }, this);
                 this._cp.on('viewpoint-set', this._onViewpointSet, this);
                 this._cp.on('agent-toggle', this._onAgentToggle, this);
@@ -54,13 +54,6 @@ define(['backbone', 'views/map-view', 'views/control-panel', 'views/timeline', '
                 this._map.toggleAgent(agent);
             },
 
-            // 由于backgrid不能绑定方法，所以将table的update放在这里
-            updateLatency: function (data) {
-                timespots.reset();
-                $.each(data, function (idx, value) {
-                    timespots.add(new TimeSpot({name: agents.models[idx].get("name"), latency: value, db: value > 0, available: value > 0}));
-                })
-            }
         });
         return AppView;
     });

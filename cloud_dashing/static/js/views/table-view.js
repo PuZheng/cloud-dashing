@@ -1,4 +1,4 @@
-define(['jquery', 'backbone', 'backgrid', 'collections/timespots'], function ($, Backbone, Backgrid, timespots) {
+define(['jquery', 'backbone', 'backgrid', 'collections/timespots', 'collections/agents', 'models/timespot'], function ($, Backbone, Backgrid, timespots, agents, TimeSpot) {
     var columns = [
         {
             name: "name",
@@ -11,8 +11,8 @@ define(['jquery', 'backbone', 'backgrid', 'collections/timespots'], function ($,
             // It's possible to render an option group or use a
             // function to provide option values too.
             optionValues: [
-                ["可用", true],
-                ["离线", false]
+                ["<i class='fa-check fa' />", true],
+                ["<i class='fa-times fa text-danger' />", false]
             ]
         })
         },
@@ -30,16 +30,22 @@ define(['jquery', 'backbone', 'backgrid', 'collections/timespots'], function ($,
                 // It's possible to render an option group or use a
                 // function to provide option values too.
                 optionValues: [
-                    ["可用", true],
-                    ["离线", false]
+                    ["<i class='fa-check fa' />", true],
+                    ["<i class='fa-times fa text-danger' />", false]
                 ]})
         }
     ];
 
-    var tableView = new Backgrid.Grid({
-        columns: columns,
-        collection: timespots
+    var TableView = Backgrid.Grid.extend({
+
+        updateLatency: function (data) {
+            timespots.reset();
+            $.each(data, function (idx, value) {
+                timespots.add(new TimeSpot({name: agents.models[idx].get("name"), latency: value, db: value > 0, available: value > 0}));
+            })
+        }
     });
 
-    return tableView;
+    return new TableView({columns: columns,
+        collection: timespots});
 });
