@@ -6,7 +6,8 @@ define(['backbone'], function (Backbone) {
         available: true,
         name: "",
         latency: 0,
-        db: ""
+        db: "",
+        id: ""
     });
     return TimeSpot;
 });
