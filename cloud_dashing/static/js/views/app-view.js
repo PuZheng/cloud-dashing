@@ -38,7 +38,7 @@ define(['backbone', 'views/map-view', 'views/control-panel', 'views/timeline', '
                 this._tl.on('time-changed', function (data) {
                     this._cp.updateLatency(data);
                     this._map.updateLatency(data);
-                    this._table.updateLatency(data);
+                    this._table.updateStatus(data);
                 }, this);
                 this._cp.on('viewpoint-set', this._onViewpointSet, this);
                 this._cp.on('agent-toggle', this._onAgentToggle, this);

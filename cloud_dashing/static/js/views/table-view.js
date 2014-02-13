@@ -37,8 +37,7 @@ define(['jquery', 'backbone', 'backgrid', 'collections/timespots', 'collections/
     ];
 
     var TableView = Backgrid.Grid.extend({
-
-        updateLatency: function (data) {
+        updateStatus: function (data) {
             timespots.reset();
             $.each(data, function (idx, value) {
                 timespots.add(new TimeSpot({name: agents.models[idx].get("name"), latency: value, db: value > 0, available: value > 0}));
