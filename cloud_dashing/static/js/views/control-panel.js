@@ -40,7 +40,8 @@ define(['jquery', 'backbone', 'handlebars', 'text',
             },
 
             updateLatency: function (data) {
-                _.each(data, function (latency, i) {
+                _.each(data, function (val, i) {
+                    var latency = val.get("latency");
                     if (latency === null) {
                         latency = '??';
                     } else if (latency === -1) {

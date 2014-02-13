@@ -31,7 +31,8 @@ define(function () {
          this._tag.style.top = position.y - this._length / 2 + "px";  
     }
 
-    AgentMarker.prototype.update = function(latency) {
+    AgentMarker.prototype.update = function(data) {
+        var latency = data.get("latency");
         var tag = $(this._tag);
         tag.find('i').remove();
         if (latency >= badThreshhold) {
