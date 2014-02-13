@@ -14,7 +14,6 @@
     "handlebars": "latest",
     "flot": "latest",
     "flot.tooltip": "latest",
-    "echarts": "latest",
     "moment": "~2.5.1",
     "toastr": "~2.0.1",
     "backbone": "~1.1.0",

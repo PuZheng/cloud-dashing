@@ -21,14 +21,15 @@ define(['jquery', 'backbone', 'handlebars', 'text!/static/templates/timeline.hbs
                 'plotclick .timeline-plot': function (e, pos, item) {
                     this._markedPosition = pos;
                     this._plot.draw();
-                    var reports = this._getReportsByX(pos.x);
-                    this.trigger('time-selected', reports[0], reports[1], pos, this);
+                    //var reports = this._getReportsByX(pos.x);
+                    //this.trigger('time-selected', reports[0], reports[1], pos, this);
                 },
             },
 
             render: function () {
                 this.$el.html(this._template());
-                this._currentTimeTag = $('<span id="currentTime"></span>').insertBefore(this.$('.timeline-plot')).hide();
+                this.$container = this.$('.timeline-plot');
+                this._currentTimeTag = $('<span id="currentTime"></span>').insertBefore(this.$container).hide();
                 return this;
             },
 
@@ -142,11 +143,11 @@ define(['jquery', 'backbone', 'handlebars', 'text!/static/templates/timeline.hbs
                         data: seriesMap[id],
                     });
                 }
-                this._plot = $.plot(this.$('.timeline-plot'), this._hideDisabledClouds(data), this._options());
+                this._plot = $.plot(this.$container, this._hideDisabledAgents(data), this._options());
                 this._updateLatency(this._markedPosition);
             },
 
-            _hideDisabledClouds: function (data) {
+            _hideDisabledAgents: function (data) {
                 for (var i=0; i < data.length; ++i) {
                     var series = data[i]
                     var agent = agents.get(series.agentId);
@@ -226,7 +227,9 @@ define(['jquery', 'backbone', 'handlebars', 'text!/static/templates/timeline.hbs
                 return [report1 && report1.toJSON(), report2 && report2.toJSON()];
             },
 
-
+            toggleAgent: function (agent) {
+                this._plot = $.plot(this.$container, this._hideDisabledAgents(this._plot.getData()), this._options());         
+            }
         });
         return Timeline;
     });

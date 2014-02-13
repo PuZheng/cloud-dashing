@@ -28,6 +28,7 @@ require.config({
         'models/agent': '/static/js/models/agent',
         'models/report': '/static/js/models/report',
         'text': 'text/text',
+        'widgets/agent-marker': '/static/js/widgets/agent-marker',
     },
     urlArgs: "bust=" + (new Date()).getTime(),
     shim:{

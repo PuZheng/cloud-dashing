@@ -15,14 +15,14 @@ define(['jquery', 'backbone', 'handlebars', 'text',
 
             events: {
                 'change select': '_onViewpointSet',
-                'click ul li': '_toggleCloud',
+                'click li.list-group-item': '_toggleAgent',
             },
 
             _onViewpointSet: function (e) {
                 this.trigger('viewpoint-set', agents.get(this.$('select').val()).toJSON());
             },
 
-            _toggleCloud: function (e) {
+            _toggleAgent: function (e) {
                 var el = $(e.target);
                 var enabled = !el.attr('data-enabled');
                 el.attr('data-enabled', enabled? 'true': '');
@@ -34,12 +34,22 @@ define(['jquery', 'backbone', 'handlebars', 'text',
                 } else {
                     el.css('text-decoration', 'line-through');
                 }
-                this.trigger('cloud-toggle', enabled);
+                var agent = agents.get(el.val());
+                agent.set('selected', enabled);
+                this.trigger('agent-toggle', agent.toJSON());
             },
 
             updateLatency: function (data) {
                 _.each(data, function (latency, i) {
-                    this.$('ul li').eq(i).find('small').text(latency? latency + 'ms': '??');
+                    if (latency === null) {
+                        latency = '??';
+                    } else if (latency === -1) {
+                        latency = '当机';
+                    } else {
+                        latency += 'ms';
+                    }
+                    var el = this.$('li.list-group-item').eq(i);
+                    el.text(el.text().replace(/-.*/, '- ' + latency));
                 });
             }
         });
