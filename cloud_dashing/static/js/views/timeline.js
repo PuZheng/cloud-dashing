@@ -356,7 +356,6 @@ define(['jquery', 'underscore','backbone', 'handlebars', 'text!/static/templates
                     top: this._plot.offset().top + this._plot.height() / 2
                 }).show();
                 var data = report.statusList.map(function (status_) {
-                    debugger;
                     var agent = _.find(agents.models, function (agent) {
                         return agent.get("id") == status_.id;
                     });
