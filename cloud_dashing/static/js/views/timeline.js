@@ -53,6 +53,7 @@ define(['jquery', 'underscore','backbone', 'handlebars', 'text!/static/templates
                 return {
                     xaxis: {
                         mode: 'time',
+                        timezone: 'browser',
                         min: this._start,
                         max: this._end,
                     },
