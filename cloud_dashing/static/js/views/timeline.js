@@ -9,6 +9,11 @@ define(['jquery', 'underscore','backbone', 'handlebars', 'text!/static/templates
                 this._start = new Date(start.getFullYear(), start.getMonth(),
                     start.getDate()).getTime();
                 this._end = this._start + common.MS_A_DAY;
+                toastr.options = {
+                    "positionClass": "toast-bottom-full-width",
+                    "timeOut": "1000",
+                }
+                this._playing = false;
                 this.render();
             },
 
@@ -23,6 +28,9 @@ define(['jquery', 'underscore','backbone', 'handlebars', 'text!/static/templates
                     this._plot.draw();
                 },
                 'click .mode-btn': '_changeMode',
+                'click .backward-btn': '_backward',
+                'click .forward-btn': '_forward',
+                'click .play-btn': '_playPause'
             },
 
             render: function () {
@@ -264,6 +272,7 @@ define(['jquery', 'underscore','backbone', 'handlebars', 'text!/static/templates
                     this._end = this._start + common.MS_A_DAY;
                 }
                 // keep the current date
+                this._pause();
                 this.makePlot(this._viewpoint, this.getCurrentDate());
             },
 
@@ -271,6 +280,79 @@ define(['jquery', 'underscore','backbone', 'handlebars', 'text!/static/templates
                 return new Date(this._markedPosition.x);
             },
 
+            _backward: function (e) {
+                if (this._getMode() == 'day') {
+                    var start = new Date(this._markedPosition.x - common.MS_A_DAY);
+                    this._start = new Date(start.getFullYear(), start.getMonth(), start.getDate()).getTime();
+                    this._end = this._start + common.MS_A_DAY;
+                } else {
+                    this._start = new Date(utils.getMonday(this._markedPosition.x - common.MS_A_WEEK)).getTime();
+                    this._end = this._start + common.MS_A_WEEK;
+                }
+                this._pause();
+                this.makePlot(this._viewpoint);
+            },
+            
+            _forward: function (e) {
+                if (this._getMode() == 'day') {
+                    var today = new Date();
+                    today = new Date(today.getFullYear(), today.getMonth(), today.getDate());
+                    if (this.getCurrentDate() >= today) {
+                        toastr.warning('已经是今天了!'); 
+                        return;
+                    }
+                    var start = new Date(this._markedPosition.x + common.MS_A_DAY);
+                    this._start = new Date(start.getFullYear(), start.getMonth(), start.getDate()).getTime();
+                    this._end = this._start + common.MS_A_DAY;
+                } else {
+                    if (this.getCurrentDate() >= utils.getMonday(new Date())) {
+                        toastr.warning('已经是最后一周了!'); 
+                        return;
+                    }
+                    this._start = new Date(utils.getMonday(this._markedPosition.x + common.MS_A_WEEK)).getTime();
+                    this._end = this._start + common.MS_A_WEEK;
+                }
+                this._pause();
+                this.makePlot(this._viewpoint);
+            
+            },
+
+            _pause: function (e) {
+                clearInterval(this._ti);
+                this._playing = false;
+                this.$('.play-btn i').removeClass('fa-pause').addClass('fa-play');
+            },
+
+            _playPause: function (e) {
+                if (!this._playing) {
+                    var pivot = this._markedPosition.x;
+                    for (var reportIdx = 0;
+                        reportIdx < this._reports.length && this._reports.at(reportIdx).get('at') < pivot; 
+                    ++reportIdx) {
+                    }
+                    var that = this;
+                    this._ti = setInterval(
+                        function () {
+                            reportIdx = (reportIdx + 1) % that._reports.length;
+                            var report = that._reports.at(reportIdx);
+                            that._displayReport(report.toJSON());
+                        }, 500);
+                } else {
+                    clearInterval(this._ti);
+                }
+                this._playing = !this._playing;
+            },
+
+            _displayReport: function (report) {
+                this._markedPosition.x = report.at;
+                this._plot.draw();
+                var date = new Date(report.at)
+                this._currentTimeTag.text(date.getHours() + ":" + date.getMinutes());
+                this._currentTimeTag.css({
+                    left: this._plot.pointOffset({x: this._markedPosition.x, y: 0}).left + this.$container.offset().left,
+                    top: this._plot.offset().top + this._plot.height() / 2,
+                }).show();
+            },
         });
         return Timeline;
     });

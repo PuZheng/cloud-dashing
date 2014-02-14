@@ -1,7 +1,7 @@
 require.config({
     baseUrl: '/static/components',
     paths: {
-        jquery: 'jquery/dist/jquery.min',
+        jquery: 'jquery/jquery.min',
         underscore: 'underscore/underscore',
         backbone: 'backbone/backbone',
         handlebars: 'handlebars/handlebars.amd.min',
