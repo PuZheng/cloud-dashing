@@ -61,8 +61,8 @@ def reports_view():
                         {
                             'id': 2,
                             'latency': latency2,
-                            'available': True if 0 < latency1 < 100 else False,
-                            'db': True if 0 < latency1 < 50 else False
+                            'available': True if 0 < latency2 < 100 else False,
+                            'db': True if 0 < latency2 < 50 else False
                         }])
     ret = [_makeSlice(i) for i in xrange(0, end - start, step)]
 
