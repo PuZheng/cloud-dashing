@@ -1,7 +1,7 @@
 require.config({
     baseUrl: '/static/components',
     paths: {
-        jquery: 'jquery/jquery.min',
+        jquery: 'jquery/dist/jquery.min',
         underscore: 'underscore/underscore',
         backbone: 'backbone/backbone',
         handlebars: 'handlebars/handlebars.amd.min',
@@ -37,12 +37,12 @@ require.config({
     },
     urlArgs: "bust=" + (new Date()).getTime(),
     shim:{
-        'jquery.flot': {
+        'jquery.plot': {
             deps: ['jquery'],
             exports:'$.plot'
         },
-        'jquery.flot.crosshair': ['jquery.flot'],
-        'jquery.flot.time': ['jquery.flot'],
+        'jquery.plot.crosshair': ['jquery.plot'],
+        'jquery.plot.time': ['jquery.plot'],
         'toastr': {
             exports: 'toastr',
         },
