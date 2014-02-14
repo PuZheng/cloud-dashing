@@ -14,7 +14,7 @@ require.config({
         //dailyAvgLatencyBar: '/static/js/daily-avg-latency-bar',
         'jquery.plot': 'flot/jquery.flot',
         'jquery.plot.crosshair': 'flot/jquery.flot.crosshair',
-        'jquery.plot.time': 'flot/jquery.flot.time',
+        'jquery.plot.time': '/static/js/misc/jquery.flot.time',
         //'moment': 'moment/min/moment.min',
         'toastr': 'toastr/toastr.min',
         //utils: '/static/js/utils',
