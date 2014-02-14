@@ -4,10 +4,10 @@
 define(['backbone'], function (Backbone) {
     var TimeSpot = Backbone.Model.extend({
         available: true,
-        name: "",
+        agent:null,
         latency: 0,
         db: "",
-        id: ""
+        name: ""
     });
     return TimeSpot;
 });

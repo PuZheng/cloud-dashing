@@ -196,16 +196,16 @@ define(['jquery', 'underscore','backbone', 'handlebars', 'text!/static/templates
                         if (point1[1] && point2[1]) {
                             var agent = _.find(agents.models, function (agent) {
                                 return agent.get("id") == series.agentId
-                            })
+                            });
                             var agentName = "";
                             if(agent){
                                 agentName = agent.get("name");
                             }
                             if (point1[0] == point2[0]) {
-                                timespot = new TimeSpot({id: series.agentId, available: point1[2], latency: Math.floor(point1[1]), db: point1[3], name: agentName})
+                                timespot = new TimeSpot({agent: agent, available: point1[2], latency: Math.floor(point1[1]), db: point1[3], name: agentName})
                             } else {
                                 var latency = Math.floor(point1[1] + (point2[1] - point1[1]) * (pos.x - point1[0]) / (point2[0] - point1[0]));
-                                timespot = new TimeSpot({id: series.agentId, available: point1[2] && point2[2], latency: latency, db: point1[3] && point2[3], name:agentName})
+                                timespot = new TimeSpot({agent: agent, available: point1[2] && point2[2], latency: latency, db: point1[3] && point2[3], name: agentName})
                             }
                         }
                     }
@@ -348,22 +348,27 @@ define(['jquery', 'underscore','backbone', 'handlebars', 'text!/static/templates
             _displayReport: function (report) {
                 this._markedPosition.x = report.at;
                 this._plot.draw();
-                var date = new Date(report.at)
+                var date = new Date(report.at);
                 this._currentTimeTag.text(date.getHours() + ":" + date.getMinutes());
                 this._currentTimeTag.css({
                     left: this._plot.pointOffset({x: this._markedPosition.x, y: 0}).left + this.$container.offset().left,
-                    top: this._plot.offset().top + this._plot.height() / 2,
+                    top: this._plot.offset().top + this._plot.height() / 2
                 }).show();
                 var data = report.statusList.map(function (status_) {
+                    debugger;
+                    var agent = _.find(agents.models, function (agent) {
+                        return agent.get("id") == status_.id;
+                    });
                     return new TimeSpot({
-                        id: status_.id,
+                        agent: agent,
+                        name: agent.get("name"),
                         available: status_.available,
                         latency: status_.latency, 
-                        db: status_.db,
+                        db: status_.db
                     });
                 });
                 this.trigger('time-changed', data);
-            },
+            }
         });
         return Timeline;
     });
