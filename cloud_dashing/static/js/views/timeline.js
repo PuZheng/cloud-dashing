@@ -1,16 +1,16 @@
-define(['jquery', 'backbone', 'handlebars', 'text!/static/templates/timeline.hbs', 'collections/reports', 'collections/agents', 'common', 'jquery.plot', 'jquery.plot.crosshair', 
-'jquery.plot.time'], 
-    function($, Backbone, Handlebars, timelineTemplate, Reports, agents, common) {
+define(['jquery', 'underscore','backbone', 'handlebars', 'text!/static/templates/timeline.hbs', 'collections/reports', 'collections/agents', 'models/timespot', 'common', 'jquery.plot', 'jquery.plot.crosshair',
+'jquery.plot.time'],
+    function($, _, Backbone, Handlebars, timelineTemplate, Reports, agents, TimeSpot, common) {
         var Timeline = Backbone.View.extend({
             _template: Handlebars.default.compile(timelineTemplate),
 
             initialize: function () {
                 var start = new Date();
-                this._start = new Date(start.getFullYear(), start.getMonth(), 
+                this._start = new Date(start.getFullYear(), start.getMonth(),
                     start.getDate()).getTime();
                 this._end = this._start + common.MS_A_DAY;
                 this.render();
-            }, 
+            },
 
             events: {
                 'plothover .timeline-plot': '_updateTime',
@@ -115,14 +115,14 @@ define(['jquery', 'backbone', 'handlebars', 'text!/static/templates/timeline.hbs
                             right: 10,
                             bottom: 10,
                             left: 10
-                        } 
+                        }
                     },
                 }
             },
 
             _renderPlot: function () {
                 this._markedPosition = {
-                    x: this._reports.last().get('at'), 
+                    x: this._reports.last().get('at'),
                     y: null,
                 }
                 var data = [];
@@ -133,7 +133,7 @@ define(['jquery', 'backbone', 'handlebars', 'text!/static/templates/timeline.hbs
                         if (!(agentStatus.id in seriesMap)) {
                             seriesMap[agentStatus.id] = [];
                         }
-                        seriesMap[agentStatus.id].push([report.get('at'), agentStatus.latency]);
+                        seriesMap[agentStatus.id].push([report.get('at'), agentStatus.latency, agentStatus.available, agentStatus.db]);
                     }
                 });
                 for (var id in seriesMap) {
@@ -144,12 +144,12 @@ define(['jquery', 'backbone', 'handlebars', 'text!/static/templates/timeline.hbs
                     });
                 }
                 this._plot = $.plot(this.$container, this._hideDisabledAgents(data), this._options());
-                this._updateLatency(this._markedPosition);
+                this._updateTimeSpot(this._markedPosition);
             },
 
             _hideDisabledAgents: function (data) {
                 for (var i=0; i < data.length; ++i) {
-                    var series = data[i]
+                    var series = data[i];
                     var agent = agents.get(series.agentId);
                     var selected = agent.get('selected');
                     series.lines = {show: selected};
@@ -158,7 +158,7 @@ define(['jquery', 'backbone', 'handlebars', 'text!/static/templates/timeline.hbs
                 return data;
             },
 
-            _updateLatency: function (pos) {
+            _updateTimeSpot: function (pos) {
                 var i, j, dataset = this._plot.getData();
                 var data = [];
                 for (i = 0; i < dataset.length; ++i) {
@@ -177,17 +177,25 @@ define(['jquery', 'backbone', 'handlebars', 'text!/static/templates/timeline.hbs
                             break;
                         }
                     }
-                    var latency = null;
+                    var timespot = null;
                     if (point1) {
                         if (point1[1] && point2[1]) {
+                            var agent = _.find(agents.models, function (agent) {
+                                return agent.get("id") == series.agentId
+                            })
+                            var agentName = "";
+                            if(agent){
+                                agentName = agent.get("name");
+                            }
                             if (point1[0] == point2[0]) {
-                                latency = Math.floor(point1[1]);
+                                timespot = new TimeSpot({id: series.agentId, available: point1[2], latency: Math.floor(point1[1]), db: point1[3], name: agentName})
                             } else {
-                                latency = Math.floor(point1[1] + (point2[1] - point1[1]) * (pos.x - point1[0]) / (point2[0] - point1[0]));
+                                var latency = Math.floor(point1[1] + (point2[1] - point1[1]) * (pos.x - point1[0]) / (point2[0] - point1[0]));
+                                timespot = new TimeSpot({id: series.agentId, available: point1[2] && point2[2], latency: latency, db: point1[3] && point2[3], name:agentName})
                             }
                         }
                     }
-                    data.push(latency);
+                    data.push(timespot);
                 }
                 this.trigger('time-changed', data);
             },

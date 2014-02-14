@@ -23,12 +23,17 @@ require.config({
         'views/map-view': '/static/js/views/map-view',
         'views/control-panel': '/static/js/views/control-panel',
         'views/timeline': '/static/js/views/timeline',
+        'views/table-view': '/static/js/views/table-view',
         'collections/agents': '/static/js/collections/agents',
         'collections/reports': '/static/js/collections/reports',
+        'collections/timespots': '/static/js/collections/timespots',
         'models/agent': '/static/js/models/agent',
         'models/report': '/static/js/models/report',
+        'models/timespot': '/static/js/models/timespot',
+        'backgrid':'backgrid/lib/backgrid',
         'text': 'text/text',
         'widgets/agent-marker': '/static/js/widgets/agent-marker',
+        'router/app-router': '/static/js/router/app-router'
     },
     urlArgs: "bust=" + (new Date()).getTime(),
     shim:{
@@ -51,6 +56,10 @@ require.config({
         'select2': {
             deps: ['jquery'],
             exports: '$.fn.select2',
+        },
+        'backgrid':{
+            deps:['backbone'],
+            exports:'Backgrid'
         }
     }
 });

@@ -1,6 +1,8 @@
-define(['jquery', 'backbone', 'views/map-view', 'views/control-panel', 'views/timeline', 
-'collections/agents'], 
-    function ($, Backbone, MapView, ControlPanel, Timeline, agents) {
+define(['backbone', 'views/map-view', 'views/control-panel', 'views/timeline', 'views/table-view',
+    'collections/agents', 'collections/timespots', 'router/app-router'],
+    function (Backbone, MapView, ControlPanel, Timeline, tableView,  agents, timespots, AppRouter) {
+        var router = new AppRouter();
+        Backbone.history.start();
         var AppView = Backbone.View.extend({
             el: '#main',
 
@@ -15,8 +17,7 @@ define(['jquery', 'backbone', 'views/map-view', 'views/control-panel', 'views/ti
                         collection.each(function (agent) {
                             myGeo.getPoint(agent.get('location'), function (point) {
                                 agent.set('point', point);
-                                var pointsAllSet = collection.every(function (agent, 
-                                index, array) {
+                                var pointsAllSet = collection.every(function (agent, index, array) {
                                     return !!agent.get('point');
                                 });
                                 if (pointsAllSet) {
@@ -25,16 +26,19 @@ define(['jquery', 'backbone', 'views/map-view', 'views/control-panel', 'views/ti
                             });
                         });
                     }
-                }); 
+                });
             },
 
             _render: function () {
                 this._map = new MapView({el: this.$('.map')}).render();
+                this._table = tableView.render();
+                this.$(".table").append(this._table.el);
                 this._tl = new Timeline({el: this.$('.timeline')});
                 this._cp = new ControlPanel({el: this.$('.control-panel')});
-                this._tl.on('time-changed', function (data) { 
-                    this._cp.updateLatency(data); 
+                this._tl.on('time-changed', function (data) {
+                    this._cp.updateLatency(data);
                     this._map.updateLatency(data);
+                    this._table.updateStatus(data);
                 }, this);
                 this._cp.on('viewpoint-set', this._onViewpointSet, this);
                 this._cp.on('agent-toggle', this._onAgentToggle, this);
@@ -42,11 +46,11 @@ define(['jquery', 'backbone', 'views/map-view', 'views/control-panel', 'views/ti
             },
 
             _onViewpointSet: function (viewpoint) {
-                this._tl.makePlot(viewpoint); 
+                this._tl.makePlot(viewpoint);
             },
 
             _onAgentToggle: function (agent) {
-                this._tl.toggleAgent(); 
+                this._tl.toggleAgent();
                 this._map.toggleAgent(agent);
             },
 
