@@ -4,6 +4,7 @@
 define(["backbone", "jquery"], function(Backbone, $){
     var AppRouter = Backbone.Router.extend({
         routes: {
+            "": "renderMap",
             "map": "renderMap",
             "table": "renderTable",
         },
