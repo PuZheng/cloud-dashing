@@ -39,7 +39,7 @@ define(['jquery', 'backbone', 'backgrid', 'collections/timespots', 'collections/
     var TableView = Backgrid.Grid.extend({
         updateStatus: function (data) {
             this._timespots = data;
-            this._updateTimeSpot(this._timespots);
+            this._updateTimeSpot();
         },
         toggleAgent: function(){
             this._updateTimeSpot();
