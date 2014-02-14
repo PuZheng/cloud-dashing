@@ -16,7 +16,7 @@ define(['jquery', 'underscore','backbone', 'handlebars', 'text!/static/templates
                 'plothover .timeline-plot': '_updateTime',
                 'mouseout .timeline-plot': function (e) {
                     this._currentTimeTag.hide();
-                    this._updateLatency(this._markedPosition)
+                    this._updateTimeSpot(this._markedPosition)
                 },
                 'plotclick .timeline-plot': function (e, pos, item) {
                     this._markedPosition = pos;
@@ -216,7 +216,7 @@ define(['jquery', 'underscore','backbone', 'handlebars', 'text!/static/templates
                     left: pos.pageX,
                     top: pos.pageY - 50,
                 }).show();
-                this._updateLatency(pos);
+                this._updateTimeSpot(pos);
             },
 
             _getReportsByX: function (x) {
