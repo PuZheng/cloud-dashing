@@ -144,7 +144,7 @@ define(['jquery', 'underscore','backbone', 'handlebars', 'text!/static/templates
                     });
                 }
                 this._plot = $.plot(this.$container, this._hideDisabledAgents(data), this._options());
-                this._updateLatency(this._markedPosition);
+                this._updateTimeSpot(this._markedPosition);
             },
 
             _hideDisabledAgents: function (data) {
@@ -158,7 +158,7 @@ define(['jquery', 'underscore','backbone', 'handlebars', 'text!/static/templates
                 return data;
             },
 
-            _updateLatency: function (pos) {
+            _updateTimeSpot: function (pos) {
                 var i, j, dataset = this._plot.getData();
                 var data = [];
                 for (i = 0; i < dataset.length; ++i) {
