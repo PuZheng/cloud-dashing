@@ -52,6 +52,7 @@ define(['backbone', 'views/map-view', 'views/control-panel', 'views/timeline', '
             _onAgentToggle: function (agent) {
                 this._tl.toggleAgent();
                 this._map.toggleAgent(agent);
+                this._table.toggleAgent();
             },
 
         });

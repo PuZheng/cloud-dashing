@@ -42,6 +42,18 @@ define(['jquery', 'backbone', 'backgrid', 'collections/timespots', 'collections/
             $.each(data, function (idx, value) {
                 timespots.add(value);
             });
+            this._timespots = _.clone(timespots);
+        },
+
+        toggleAgent: function() {
+            timespots.reset();
+            $.each(this._timespots.models, function (idx, timespot) {
+                $.each(agents.models, function(a_idx, agent){
+                    if (agent.get("id") == timespot.get("id") && agent.get("selected")) {
+                        timespots.add(timespot);
+                    }
+                })
+            });
         }
     });
 
