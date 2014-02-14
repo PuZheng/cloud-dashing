@@ -1,6 +1,6 @@
-define(['jquery', 'underscore','backbone', 'handlebars', 'text!/static/templates/timeline.hbs', 'collections/reports', 'collections/agents', 'models/timespot', 'common', 'jquery.plot', 'jquery.plot.crosshair',
+define(['jquery', 'underscore','backbone', 'handlebars', 'text!/static/templates/timeline.hbs', 'collections/reports', 'collections/agents', 'models/timespot', 'common', 'utils', 'toastr', 'jquery.plot', 'jquery.plot.crosshair',
 'jquery.plot.time'],
-    function($, _, Backbone, Handlebars, timelineTemplate, Reports, agents, TimeSpot, common) {
+    function($, _, Backbone, Handlebars, timelineTemplate, Reports, agents, TimeSpot, common, utils, toastr) {
         var Timeline = Backbone.View.extend({
             _template: Handlebars.default.compile(timelineTemplate),
 
@@ -9,6 +9,11 @@ define(['jquery', 'underscore','backbone', 'handlebars', 'text!/static/templates
                 this._start = new Date(start.getFullYear(), start.getMonth(),
                     start.getDate()).getTime();
                 this._end = this._start + common.MS_A_DAY;
+                toastr.options = {
+                    "positionClass": "toast-bottom-full-width",
+                    "timeOut": "1000",
+                }
+                this._playing = false;
                 this.render();
             },
 
@@ -21,9 +26,11 @@ define(['jquery', 'underscore','backbone', 'handlebars', 'text!/static/templates
                 'plotclick .timeline-plot': function (e, pos, item) {
                     this._markedPosition = pos;
                     this._plot.draw();
-                    //var reports = this._getReportsByX(pos.x);
-                    //this.trigger('time-selected', reports[0], reports[1], pos, this);
                 },
+                'click .mode-btn': '_changeMode',
+                'click .backward-btn': '_backward',
+                'click .forward-btn': '_forward',
+                'click .play-btn': '_playPause'
             },
 
             render: function () {
@@ -33,7 +40,9 @@ define(['jquery', 'underscore','backbone', 'handlebars', 'text!/static/templates
                 return this;
             },
 
-            makePlot: function (viewpoint) {
+            makePlot: function (viewpoint, initDate) {
+                this._viewpoint = viewpoint;
+                this._initDate = initDate;
                 this._reports = new Reports(viewpoint, this._start, this._end);
                 this._reports.fetch({reset: true});
                 this._reports.on('reset', this._renderPlot, this);
@@ -125,6 +134,11 @@ define(['jquery', 'underscore','backbone', 'handlebars', 'text!/static/templates
                     x: this._reports.last().get('at'),
                     y: null,
                 }
+                if (!!this._initDate && this._markedPosition.x > 
+                        this._initDate.getTime()) {
+                    this._markedPosition.x = this._initDate.getTime();
+                }
+                this._initDate = new Date(this._markedPosition.x);
                 var data = [];
                 var seriesMap = {};
                 this._reports.each(function (report) {
@@ -182,16 +196,16 @@ define(['jquery', 'underscore','backbone', 'handlebars', 'text!/static/templates
                         if (point1[1] && point2[1]) {
                             var agent = _.find(agents.models, function (agent) {
                                 return agent.get("id") == series.agentId
-                            })
+                            });
                             var agentName = "";
                             if(agent){
                                 agentName = agent.get("name");
                             }
                             if (point1[0] == point2[0]) {
-                                timespot = new TimeSpot({id: series.agentId, available: point1[2], latency: Math.floor(point1[1]), db: point1[3], name: agentName})
+                                timespot = new TimeSpot({agent: agent, available: point1[2], latency: Math.floor(point1[1]), db: point1[3], name: agentName})
                             } else {
                                 var latency = Math.floor(point1[1] + (point2[1] - point1[1]) * (pos.x - point1[0]) / (point2[0] - point1[0]));
-                                timespot = new TimeSpot({id: series.agentId, available: point1[2] && point2[2], latency: latency, db: point1[3] && point2[3], name:agentName})
+                                timespot = new TimeSpot({agent: agent, available: point1[2] && point2[2], latency: latency, db: point1[3] && point2[3], name: agentName})
                             }
                         }
                     }
@@ -237,6 +251,123 @@ define(['jquery', 'underscore','backbone', 'handlebars', 'text!/static/templates
 
             toggleAgent: function (agent) {
                 this._plot = $.plot(this.$container, this._hideDisabledAgents(this._plot.getData()), this._options());         
+            },
+
+            _getMode: function () {
+                return this.$(".mode-btn").text() === '日'? 'day': 'week';
+            },
+
+            _changeMode: function (e) {
+                var start = null;
+                var end = null;
+                if (this._getMode() === 'day') {
+                    this.$('.mode-btn').text('周');
+                    this._start = utils.getMonday(this.getCurrentDate()).getTime();
+                    this._end = this._start + common.MS_A_WEEK;
+                } else {
+                    this.$('.mode-btn').text('日');
+                    var start = this.getCurrentDate();
+                    this._start = new Date(start.getFullYear(), start.getMonth(), 
+                            start.getDate()).getTime();
+                    this._end = this._start + common.MS_A_DAY;
+                }
+                // keep the current date
+                this._pause();
+                this.makePlot(this._viewpoint, this.getCurrentDate());
+            },
+
+            getCurrentDate: function () {
+                return new Date(this._markedPosition.x);
+            },
+
+            _backward: function (e) {
+                if (this._getMode() == 'day') {
+                    var start = new Date(this._markedPosition.x - common.MS_A_DAY);
+                    this._start = new Date(start.getFullYear(), start.getMonth(), start.getDate()).getTime();
+                    this._end = this._start + common.MS_A_DAY;
+                } else {
+                    this._start = new Date(utils.getMonday(this._markedPosition.x - common.MS_A_WEEK)).getTime();
+                    this._end = this._start + common.MS_A_WEEK;
+                }
+                this._pause();
+                this.makePlot(this._viewpoint);
+            },
+            
+            _forward: function (e) {
+                if (this._getMode() == 'day') {
+                    var today = new Date();
+                    today = new Date(today.getFullYear(), today.getMonth(), today.getDate());
+                    if (this.getCurrentDate() >= today) {
+                        toastr.warning('已经是今天了!'); 
+                        return;
+                    }
+                    var start = new Date(this._markedPosition.x + common.MS_A_DAY);
+                    this._start = new Date(start.getFullYear(), start.getMonth(), start.getDate()).getTime();
+                    this._end = this._start + common.MS_A_DAY;
+                } else {
+                    if (this.getCurrentDate() >= utils.getMonday(new Date())) {
+                        toastr.warning('已经是最后一周了!'); 
+                        return;
+                    }
+                    this._start = new Date(utils.getMonday(this._markedPosition.x + common.MS_A_WEEK)).getTime();
+                    this._end = this._start + common.MS_A_WEEK;
+                }
+                this._pause();
+                this.makePlot(this._viewpoint);
+            
+            },
+
+            _pause: function (e) {
+                clearInterval(this._ti);
+                this._playing = false;
+                this.$('.play-btn i').removeClass('fa-pause').addClass('fa-play');
+            },
+
+            _playPause: function (e) {
+                if (!this._playing) {
+                    var pivot = this._markedPosition.x;
+                    for (var reportIdx = 0;
+                        reportIdx < this._reports.length && this._reports.at(reportIdx).get('at') < pivot; 
+                    ++reportIdx) {
+                    }
+                    var that = this;
+                    this._ti = setInterval(
+                        function () {
+                            reportIdx = (reportIdx + 1) % that._reports.length;
+                            var report = that._reports.at(reportIdx);
+                            that._displayReport(report.toJSON());
+                        }, 500);
+                    this.$('.play-btn i').removeClass('fa-play').addClass('fa-pause');
+                } else {
+                    this.$('.play-btn i').removeClass('fa-pause').addClass('fa-play');
+                    clearInterval(this._ti);
+                }
+                this._playing = !this._playing;
+            },
+
+            _displayReport: function (report) {
+                this._markedPosition.x = report.at;
+                this._plot.draw();
+                var date = new Date(report.at);
+                this._currentTimeTag.text(date.getHours() + ":" + date.getMinutes());
+                this._currentTimeTag.css({
+                    left: this._plot.pointOffset({x: this._markedPosition.x, y: 0}).left + this.$container.offset().left,
+                    top: this._plot.offset().top + this._plot.height() / 2
+                }).show();
+                var data = report.statusList.map(function (status_) {
+                    debugger;
+                    var agent = _.find(agents.models, function (agent) {
+                        return agent.get("id") == status_.id;
+                    });
+                    return new TimeSpot({
+                        agent: agent,
+                        name: agent.get("name"),
+                        available: status_.available,
+                        latency: status_.latency, 
+                        db: status_.db
+                    });
+                });
+                this.trigger('time-changed', data);
             }
         });
         return Timeline;

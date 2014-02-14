@@ -7,7 +7,7 @@ require.config({
         handlebars: 'handlebars/handlebars.amd.min',
         select2: 'select2/select2.min',
         //functions: '/static/js/functions',
-        //utils: '/static/js/utils',
+        utils: '/static/js/utils',
         //viewpointSwitcher: '/static/js/viewpoint-switcher',
         //cloudMarker: '/static/js/cloud-marker',
         //timeline: '/static/js/timeline',
