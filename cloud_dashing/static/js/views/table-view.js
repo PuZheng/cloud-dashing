@@ -38,10 +38,21 @@ define(['jquery', 'backbone', 'backgrid', 'collections/timespots', 'collections/
 
     var TableView = Backgrid.Grid.extend({
         updateStatus: function (data) {
-            timespots.reset();
-            $.each(data, function (idx, value) {
-                timespots.add(value);
-            });
+            this._timespots = data;
+            this._updateTimeSpot(this._timespots);
+        },
+        toggleAgent: function(){
+            this._updateTimeSpot();
+        },
+        _updateTimeSpot: function () {
+            if (this._timespots) {
+                timespots.reset();
+                $.each(this._timespots, function (idx, value) {
+                    if (value.get("agent").get("selected")) {
+                        timespots.add(value);
+                    }
+                });
+            }
         }
     });
 
