@@ -1,13 +1,13 @@
 require.config({
     baseUrl: '/static/components',
     paths: {
-        jquery: 'jquery/jquery.min',
+        jquery: 'jquery/dist/jquery.min',
         underscore: 'underscore/underscore',
         backbone: 'backbone/backbone',
         handlebars: 'handlebars/handlebars.amd.min',
         select2: 'select2/select2.min',
         //functions: '/static/js/functions',
-        //utils: '/static/js/utils',
+        utils: '/static/js/utils',
         //viewpointSwitcher: '/static/js/viewpoint-switcher',
         //cloudMarker: '/static/js/cloud-marker',
         //timeline: '/static/js/timeline',

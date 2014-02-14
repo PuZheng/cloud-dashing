@@ -1,6 +1,6 @@
-define(['jquery', 'underscore','backbone', 'handlebars', 'text!/static/templates/timeline.hbs', 'collections/reports', 'collections/agents', 'models/timespot', 'common', 'jquery.plot', 'jquery.plot.crosshair',
+define(['jquery', 'underscore','backbone', 'handlebars', 'text!/static/templates/timeline.hbs', 'collections/reports', 'collections/agents', 'models/timespot', 'common', 'utils', 'jquery.plot', 'jquery.plot.crosshair',
 'jquery.plot.time'],
-    function($, _, Backbone, Handlebars, timelineTemplate, Reports, agents, TimeSpot, common) {
+    function($, _, Backbone, Handlebars, timelineTemplate, Reports, agents, TimeSpot, common, utils) {
         var Timeline = Backbone.View.extend({
             _template: Handlebars.default.compile(timelineTemplate),
 
@@ -21,9 +21,8 @@ define(['jquery', 'underscore','backbone', 'handlebars', 'text!/static/templates
                 'plotclick .timeline-plot': function (e, pos, item) {
                     this._markedPosition = pos;
                     this._plot.draw();
-                    //var reports = this._getReportsByX(pos.x);
-                    //this.trigger('time-selected', reports[0], reports[1], pos, this);
                 },
+                'click .mode-btn': '_changeMode',
             },
 
             render: function () {
@@ -33,7 +32,9 @@ define(['jquery', 'underscore','backbone', 'handlebars', 'text!/static/templates
                 return this;
             },
 
-            makePlot: function (viewpoint) {
+            makePlot: function (viewpoint, initDate) {
+                this._viewpoint = viewpoint;
+                this._initDate = initDate;
                 this._reports = new Reports(viewpoint, this._start, this._end);
                 this._reports.fetch({reset: true});
                 this._reports.on('reset', this._renderPlot, this);
@@ -125,6 +126,11 @@ define(['jquery', 'underscore','backbone', 'handlebars', 'text!/static/templates
                     x: this._reports.last().get('at'),
                     y: null,
                 }
+                if (!!this._initDate && this._markedPosition.x > 
+                        this._initDate.getTime()) {
+                    this._markedPosition.x = this._initDate.getTime();
+                }
+                this._initDate = new Date(this._markedPosition.x);
                 var data = [];
                 var seriesMap = {};
                 this._reports.each(function (report) {
@@ -237,7 +243,34 @@ define(['jquery', 'underscore','backbone', 'handlebars', 'text!/static/templates
 
             toggleAgent: function (agent) {
                 this._plot = $.plot(this.$container, this._hideDisabledAgents(this._plot.getData()), this._options());         
-            }
+            },
+
+            _getMode: function () {
+                return this.$(".mode-btn").text() === '日'? 'day': 'week';
+            },
+
+            _changeMode: function (e) {
+                var start = null;
+                var end = null;
+                if (this._getMode() === 'day') {
+                    this.$('.mode-btn').text('周');
+                    this._start = utils.getMonday(this.getCurrentDate()).getTime();
+                    this._end = this._start + common.MS_A_WEEK;
+                } else {
+                    this.$('.mode-btn').text('日');
+                    var start = this.getCurrentDate();
+                    this._start = new Date(start.getFullYear(), start.getMonth(), 
+                            start.getDate()).getTime();
+                    this._end = this._start + common.MS_A_DAY;
+                }
+                // keep the current date
+                this.makePlot(this._viewpoint, this.getCurrentDate());
+            },
+
+            getCurrentDate: function () {
+                return new Date(this._markedPosition.x);
+            },
+
         });
         return Timeline;
     });
