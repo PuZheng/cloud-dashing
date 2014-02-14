@@ -1,6 +1,6 @@
-define(['jquery', 'underscore','backbone', 'handlebars', 'text!/static/templates/timeline.hbs', 'collections/reports', 'collections/agents', 'models/timespot', 'common', 'utils', 'jquery.plot', 'jquery.plot.crosshair',
+define(['jquery', 'underscore','backbone', 'handlebars', 'text!/static/templates/timeline.hbs', 'collections/reports', 'collections/agents', 'models/timespot', 'common', 'utils', 'toastr', 'jquery.plot', 'jquery.plot.crosshair',
 'jquery.plot.time'],
-    function($, _, Backbone, Handlebars, timelineTemplate, Reports, agents, TimeSpot, common, utils) {
+    function($, _, Backbone, Handlebars, timelineTemplate, Reports, agents, TimeSpot, common, utils, toastr) {
         var Timeline = Backbone.View.extend({
             _template: Handlebars.default.compile(timelineTemplate),
 
@@ -337,7 +337,9 @@ define(['jquery', 'underscore','backbone', 'handlebars', 'text!/static/templates
                             var report = that._reports.at(reportIdx);
                             that._displayReport(report.toJSON());
                         }, 500);
+                    this.$('.play-btn i').removeClass('fa-play').addClass('fa-pause');
                 } else {
+                    this.$('.play-btn i').removeClass('fa-pause').addClass('fa-play');
                     clearInterval(this._ti);
                 }
                 this._playing = !this._playing;
@@ -352,6 +354,15 @@ define(['jquery', 'underscore','backbone', 'handlebars', 'text!/static/templates
                     left: this._plot.pointOffset({x: this._markedPosition.x, y: 0}).left + this.$container.offset().left,
                     top: this._plot.offset().top + this._plot.height() / 2,
                 }).show();
+                var data = report.statusList.map(function (status_) {
+                    return new TimeSpot({
+                        id: status_.id,
+                        available: status_.available,
+                        latency: status_.latency, 
+                        db: status_.db,
+                    });
+                });
+                this.trigger('time-changed', data);
             },
         });
         return Timeline;
