@@ -40,6 +40,12 @@ define(['backbone', 'collections/agents', 'widgets/agent-marker', 'underscore'],
                     marker.hide();
                 }
             });
+        },
+
+        updateTooltip: function (viewpoint) {
+            this._markers.forEach(function (marker) {
+                marker.updateTooltip(viewpoint);
+            });
         }
         
     });

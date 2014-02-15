@@ -19,12 +19,34 @@ def agents_view():
             'name': '百度云',
             'location': '北京市',
             'color': 'blue',
+            'crash_in_week': 2,
+            'latency_in_week': [
+                (1, 0),
+                (2, 100),
+            ],
+            'crash_in_month': 1,
+            'latency_in_month': [
+                (1, 0),
+                (2, 110),
+            ],
+            'official_site': 'http://www.baidu.com',
         },
         {
             'id': 2,
             'name': '阿里云',
             'location': '杭州市',
             'color': 'green',
+            'crash_in_week': 0,
+            'latency_in_week': [
+                (2, 0),
+                (1, 100),
+            ],
+            'crash_in_month': 1,
+            'latency_in_month': [
+                (2, 0),
+                (1, 110),
+            ],
+            'official_site': 'http://www.taobao.com',
         },
     ]))
     ret.headers['Content-Type'] = 'application/json'

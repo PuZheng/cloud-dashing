@@ -47,6 +47,7 @@ define(['backbone', 'views/map-view', 'views/control-panel', 'views/timeline', '
 
             _onViewpointSet: function (viewpoint) {
                 this._tl.makePlot(viewpoint);
+                this._map.updateTooltip(viewpoint);
             },
 
             _onAgentToggle: function (agent) {

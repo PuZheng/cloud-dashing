@@ -1,11 +1,12 @@
 require.config({
     baseUrl: '/static/components',
     paths: {
-        jquery: 'jquery/dist/jquery.min',
+        jquery: 'jquery/jquery.min',
         underscore: 'underscore/underscore',
         backbone: 'backbone/backbone',
         handlebars: 'handlebars/handlebars.amd.min',
         select2: 'select2/select2.min',
+        bootstrap: 'bootstrap/dist/js/bootstrap.min',
         //functions: '/static/js/functions',
         utils: '/static/js/utils',
         //viewpointSwitcher: '/static/js/viewpoint-switcher',
@@ -36,7 +37,7 @@ require.config({
         'router/app-router': '/static/js/router/app-router'
     },
     urlArgs: "bust=" + (new Date()).getTime(),
-    shim:{
+    shim: {
         'jquery.plot': {
             deps: ['jquery'],
             exports:'$.plot'
@@ -53,6 +54,10 @@ require.config({
             deps: ['jquery', 'underscore'],
             exports: 'Backbone',
         },
+        'bootstrap': {
+            deps: ['jquery'],
+            exports: '$.fn.tooltip',
+        },
         'select2': {
             deps: ['jquery'],
             exports: '$.fn.select2',
@@ -61,7 +66,7 @@ require.config({
             deps:['backbone'],
             exports:'Backgrid'
         }
-    }
+    },
 });
 
 requirejs(['/static/js/app.js'])

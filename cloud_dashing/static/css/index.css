@@ -36,6 +36,10 @@
     color: gray;
 }
 
+.fa-spin {
+    color: white;
+}
+
 .timeline-plot {
     width: 960px;
     height: 220px;
