@@ -1,5 +1,6 @@
 # -*- coding: UTF-8 -*-
 import math
+import random
 from flask import render_template, make_response, request
 from cloud_dashing.basemain import app
 import time
@@ -53,11 +54,10 @@ def agents_view():
     return ret
 
 
-@app.route('/api/reports')
-def reports_view():
+@app.route('/api/reports/<int:viewpoint_id>')
+def reports_view(viewpoint_id):
     start = request.args.get('start', type=int)
     end = request.args.get('end', type=int)
-    viewpoint_id = request.args.get('viewpoint_id', type=int)
 
     if not (start and end and viewpoint_id):
         return 'invalid parameter', 403
@@ -88,6 +88,43 @@ def reports_view():
                         }])
     ret = [_makeSlice(i) for i in xrange(0, end - start, step)]
 
+    ret = make_response(json.dumps(ret))
+    ret.headers['Content-Type'] = 'application/json'
+    return ret
+
+
+@app.route('/api/daily-reports/<int:viewpoint_id>')
+def daily_reports_view(viewpoint_id):
+    start = request.args.get('start', type=int)
+    end = request.args.get('end', type=int)
+
+    if not (start and end and viewpoint_id):
+        return 'invalid parameter', 403
+
+    step = 24 * 60 * 60 * 1000
+
+    def _makeSlice(i):
+        latency1 = viewpoint_id * random.randint(20, 30) + abs(
+            math.floor(15 + math.sin(i / 20 + 1) * 20 +
+                       math.sin(i / 10 + 0.5) * 10))
+        latency2 = viewpoint_id * random.randint(30, 40) + abs(
+            math.floor(15 + math.sin(i / 20 + 1) * 20 +
+                       math.sin(i / 10 + 0.5) * 10))
+        return dict(at=start + i,
+                    statusList=[
+                        {
+                            'id': 1,
+                            'latency': latency1,
+                            'crash_num': random.randint(0, 3),
+                        },
+                        {
+                            'id': 2,
+                            'latency': latency2,
+                            'crash_num': random.randint(0, 3),
+                        },
+                    ])
+
+    ret = [_makeSlice(i) for i in xrange(0, end - start, step)]
     ret = make_response(json.dumps(ret))
     ret.headers['Content-Type'] = 'application/json'
     return ret
