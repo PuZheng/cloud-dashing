@@ -102,12 +102,6 @@ define([
                     });
                     return ret;
                 },
-                margin: {
-                    top: 25,
-                    right: 10,
-                    bottom: 10,
-                    left: 10
-                } 
             },
         }
     }

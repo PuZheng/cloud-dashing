@@ -1,3 +1,5 @@
-define(['views/app-view'], function (AppView) {
-    new AppView();
+define(['views/app-view', 'router/app-router'], function (AppView, AppRouter, common) {
+    var router = new AppRouter();
+    var appView = new AppView(router);
+    Backbone.history.start();
 });
