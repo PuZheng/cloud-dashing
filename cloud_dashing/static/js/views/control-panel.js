@@ -52,6 +52,11 @@ define(['jquery', 'backbone', 'handlebars', 'text',
             },
 
             updateLatency: function (data) {
+                if (!data) {
+                    this.$('li.list-group-item small').each(function () {
+                        $(this).text($(this).text().replace(/-.*/, '- '));
+                    });
+                }
                 _.each(data, function (val, i) {
                     var latency = val.get("latency");
                     if (latency === null) {

@@ -36,13 +36,17 @@ define(['jquery', 'underscore','backbone', 'handlebars', 'text!/static/templates
             render: function () {
                 this.$el.html(this._template());
                 this.$container = this.$('.timeline-plot');
-                this._currentTimeTag = $('<span id="currentTime"></span>').insertBefore(this.$container).hide();
+                this._currentTimeTag = $('<span id="currentTime"></span>').insertBefore(this.$container).css({position: 'absolute'}).hide();
                 return this;
             },
 
             makePlot: function (viewpoint, initDate) {
                 this._viewpoint = viewpoint;
-                this._initDate = initDate;
+                if (!!initDate) {
+                    this._initDate = initDate;
+                } else if (!!this._markedPosition) {
+                    this._initDate = new Date(this._markedPosition.x);
+                }
                 this._reports = new Reports(viewpoint, this._start, this._end);
                 this._reports.fetch({reset: true});
                 this._reports.on('reset', this._renderPlot, this);
@@ -227,7 +231,7 @@ define(['jquery', 'underscore','backbone', 'handlebars', 'text!/static/templates
                 }
                 var date = new Date(pos.x);
                 this._currentTimeTag.text(date.getHours() + ":" + date.getMinutes());
-                this._currentTimeTag.css({
+                this._currentTimeTag.offset({
                     left: pos.pageX,
                     top: pos.pageY - 50,
                 }).show();
@@ -273,7 +277,7 @@ define(['jquery', 'underscore','backbone', 'handlebars', 'text!/static/templates
                     this._end = this._start + common.MS_A_DAY;
                 }
                 // keep the current date
-                this._pause();
+                this.pause();
                 this.makePlot(this._viewpoint, this.getCurrentDate());
             },
 
@@ -290,7 +294,7 @@ define(['jquery', 'underscore','backbone', 'handlebars', 'text!/static/templates
                     this._start = new Date(utils.getMonday(this._markedPosition.x - common.MS_A_WEEK)).getTime();
                     this._end = this._start + common.MS_A_WEEK;
                 }
-                this._pause();
+                this.pause();
                 this.makePlot(this._viewpoint);
             },
             
@@ -313,12 +317,12 @@ define(['jquery', 'underscore','backbone', 'handlebars', 'text!/static/templates
                     this._start = new Date(utils.getMonday(this._markedPosition.x + common.MS_A_WEEK)).getTime();
                     this._end = this._start + common.MS_A_WEEK;
                 }
-                this._pause();
+                this.pause();
                 this.makePlot(this._viewpoint);
             
             },
 
-            _pause: function (e) {
+            pause: function (e) {
                 clearInterval(this._ti);
                 this._playing = false;
                 this.$('.play-btn i').removeClass('fa-pause').addClass('fa-play');
@@ -351,7 +355,7 @@ define(['jquery', 'underscore','backbone', 'handlebars', 'text!/static/templates
                 this._plot.draw();
                 var date = new Date(report.at);
                 this._currentTimeTag.text(date.getHours() + ":" + date.getMinutes());
-                this._currentTimeTag.css({
+                this._currentTimeTag.offset({
                     left: this._plot.pointOffset({x: this._markedPosition.x, y: 0}).left + this.$container.offset().left,
                     top: this._plot.offset().top + this._plot.height() / 2
                 }).show();

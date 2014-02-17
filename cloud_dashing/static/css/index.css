@@ -1,14 +1,4 @@
-/*html {*/
-    /*height:100%*/
-/*} */
-
-/*body {*/
-    /*height:100%;*/
-    /*margin:0px; */
-    /*padding:0px*/
-/*}*/
-
-.map {
+.stat, .map {
     height: 360px;
 }
 
@@ -36,8 +26,12 @@
     color: gray;
 }
 
+.fa-spin {
+    color: white;
+}
+
 .timeline-plot {
-    width: 960px;
+    width: 90%;
     height: 220px;
     margin-bottom: 100px;
     margin-left: 50px;
@@ -82,4 +76,9 @@
 
 .string-cell {
     text-align: center !important;
+}
+
+.avg-latency {
+    /*width: 90%;*/
+    height: 300px;
 }

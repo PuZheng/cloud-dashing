@@ -12,7 +12,7 @@ define(['jquery', 'backbone', 'models/report'], function ($, Backbone, Report) {
         },
 
         url: function () {
-            return 'api/reports?viewpoint_id=' + this.viewpoint.id + '&start=' + this.start + '&end=' + this.end;
+            return 'api/reports/' + this.viewpoint.id + '?start=' + this.start + '&end=' + this.end;
         },
 
     });
