@@ -117,13 +117,11 @@ def daily_reports_view(viewpoint_id):
                             'id': 1,
                             'latency': latency1,
                             'crash_num': random.randint(0, 3),
-                            'stable': bool(random.randint(0, 1))
                         },
                         {
                             'id': 2,
                             'latency': latency2,
                             'crash_num': random.randint(0, 3),
-                            'stable': bool(random.randint(0, 1))
                         },
                     ])
 

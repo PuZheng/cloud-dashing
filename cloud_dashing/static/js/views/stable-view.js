@@ -16,10 +16,6 @@ define(['jquery', 'toastr', 'backbone', 'handlebars', 'collections/daily-reports
                 };
                 return this;
             },
-            events: {
-                'click .backward-btn': 'moveBack',
-                'click .forward-btn': 'moveForward'
-            },
 
             _table: function () {
                 return $("<table></table>").addClass("table table-bordered table-condensed").append(this._thead()).append(this._tbody());
@@ -47,9 +43,15 @@ define(['jquery', 'toastr', 'backbone', 'handlebars', 'collections/daily-reports
                 }
                 var dataColumns = _.map(data, function (value, key) {
                     var html = $("<tr></tr>");
-                    html.append($("<td></td>").text(agents.get(key).get("name")));
+                    html.append($("<td></td>").addClass("text-center").text(agents.get(key).get("name")));
                     _.each(value, function (val) {
-                        html.append($("<td></td>").text(val));
+                        var td = $("<td></td>").addClass("text-center");
+                        if(val > 0){
+                            td.html($("<i></i>").addClass("fa fa-frown-o"));
+                        }else{
+                            td.html($("<i></i>").addClass("fa fa-smile-o"));
+                        }
+                        html.append(td);
                     });
                     return html;
                 });
@@ -121,6 +123,16 @@ define(['jquery', 'toastr', 'backbone', 'handlebars', 'collections/daily-reports
 
             toggleAgent: function (agent) {
                 this._stableTableView.toggleAgent();
+            },
+            events: {
+                'click .backward-btn': 'moveBack',
+                'click .forward-btn': 'moveForward'
+            },
+            moveBack: function(){
+                this._stableTableView.moveBack();
+            },
+            moveForward: function() {
+                this._stableTableView.moveForward();
             }
         });
         return StableView;
