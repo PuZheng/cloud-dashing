@@ -29,16 +29,19 @@ define(['jquery', 'toastr', 'backbone', 'handlebars', 'collections/daily-reports
                 return $("<thead></thead>").append($("<tr></tr>").append(this._columns()));
             },
 
-            _tbody: function() {
+            _tbody: function () {
                 var data = {};
                 if (this._dailyReports) {
                     this._dailyReports.each(function (dailyReport) {
                         for (var i = 0; i < dailyReport.get('statusList').length; ++i) {
                             var status_ = dailyReport.get('statusList')[i];
-                            if (!(status_.id in data)) {
-                                data[status_.id] = [];
+                            var agent = agents.get(status_.id);
+                            if (agent.get("selected") == true) {
+                                if (!(status_.id in data)) {
+                                    data[status_.id] = [];
+                                }
+                                data[status_.id].push(status_.crash_num);
                             }
-                            data[status_.id].push(status_.crash_num);
                         }
                     });
                 }
@@ -96,8 +99,8 @@ define(['jquery', 'toastr', 'backbone', 'handlebars', 'collections/daily-reports
                 this._end = this._start + common.MS_A_WEEK;
                 this.updateViewpoint(this._viewpoint);
             },
-            toggleAgent: function(){
-
+            toggleAgent: function () {
+                this._renderReports();
             }
         });
 
