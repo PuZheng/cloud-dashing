@@ -73,9 +73,6 @@ require.config({
             deps:['backbone'],
             exports:'Backgrid'
         },
-        'backgrid-moment-cell':{
-            deps:['backgrid', 'moment']
-        }
     },
 });
 
