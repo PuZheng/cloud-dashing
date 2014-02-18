@@ -1,6 +1,6 @@
 define(['backbone', 'views/map-view', 'views/control-panel', 'views/timeline', 'views/table-view',
-    'collections/agents', 'collections/timespots', 'router/app-router', 'views/stat-view'],
-    function (Backbone, MapView, ControlPanel, Timeline, tableView,  agents, timespots, router, StatView) {
+    'collections/agents', 'collections/timespots', 'router/app-router', 'views/stat-view', 'views/stable-view'],
+    function (Backbone, MapView, ControlPanel, Timeline, tableView,  agents, timespots, router, StatView, StableView) {
         var AppView = Backbone.View.extend({
             el: '#main',
 
@@ -28,7 +28,7 @@ define(['backbone', 'views/map-view', 'views/control-panel', 'views/timeline', '
                 this._router = router;
                 this._router.on('route:filter', this.route, this);
             },
-            
+
             route: function (param) {
                 param = param || 'map';
                 this.$('ul.view-switcher li').each(function () {
@@ -74,7 +74,7 @@ define(['backbone', 'views/map-view', 'views/control-panel', 'views/timeline', '
                         break;
                 }
             },
-            
+
 
             _render: function () {
                 this._map = new MapView({el: this.$('.map')}).render();
@@ -82,6 +82,7 @@ define(['backbone', 'views/map-view', 'views/control-panel', 'views/timeline', '
                 this.$(".table").append(this._table.el);
                 this._tl = new Timeline({el: this.$('.timeline')});
                 this._stat = new StatView({el: this.$('.stat')});
+                this._stable = new StableView({el: this.$(".stable")}).render();
                 this._cp = new ControlPanel({el: this.$('.control-panel')});
                 this._tl.on('time-changed', function (data) {
                     if (this._filter !== 'stat') {
@@ -93,6 +94,7 @@ define(['backbone', 'views/map-view', 'views/control-panel', 'views/timeline', '
                 this._cp.on('viewpoint-set', this._onViewpointSet, this);
                 this._cp.on('agent-toggle', this._onAgentToggle, this);
                 this._cp.render();
+
             },
 
             _onViewpointSet: function (viewpoint) {
@@ -100,6 +102,7 @@ define(['backbone', 'views/map-view', 'views/control-panel', 'views/timeline', '
                 this._tl.makePlot(viewpoint);
                 this._map.updateTooltip(viewpoint);
                 this._stat.updateViewpoint(viewpoint);
+                this._stable.updateViewpoint(viewpoint);
             },
 
             _onAgentToggle: function (agent) {
@@ -107,7 +110,8 @@ define(['backbone', 'views/map-view', 'views/control-panel', 'views/timeline', '
                 this._map.toggleAgent(agent);
                 this._table.toggleAgent(agent);
                 this._stat.toggleAgent(agent);
-            },
+                this._stable.toggleAgent(agent);
+            }
 
         });
         return AppView;
