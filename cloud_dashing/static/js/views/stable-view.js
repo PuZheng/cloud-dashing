@@ -30,25 +30,30 @@ define(['jquery', 'toastr', 'backbone', 'handlebars', 'collections/daily-reports
                 if (this._dailyReports) {
                     this._dailyReports.each(function (dailyReport) {
                         for (var i = 0; i < dailyReport.get('statusList').length; ++i) {
+                            var at = dailyReport.get("at");
                             var status_ = dailyReport.get('statusList')[i];
                             var agent = agents.get(status_.id);
                             if (agent.get("selected") == true) {
                                 if (!(status_.id in data)) {
-                                    data[status_.id] = [];
+                                    data[status_.id] = {};
                                 }
-                                data[status_.id].push(status_.crash_num);
+                                data[status_.id][at] = status_.crash_num;
                             }
                         }
                     });
                 }
+                var _dateSpans = this._getDateSpans();
                 var dataColumns = _.map(data, function (value, key) {
                     var html = $("<tr></tr>");
                     html.append($("<td></td>").addClass("text-center").text(agents.get(key).get("name")));
-                    _.each(value, function (val) {
+                    _.each(_dateSpans, function (date) {
+                        var val = value[date.getTime()];
                         var td = $("<td></td>").addClass("text-center");
-                        if(val > 0){
+                        if(val == undefined){
+                            td.html("&nbsp;");
+                        }else if (val > 0) {
                             td.html($("<i></i>").addClass("fa fa-frown-o"));
-                        }else{
+                        } else {
                             td.html($("<i></i>").addClass("fa fa-smile-o"));
                         }
                         html.append(td);
@@ -58,17 +63,23 @@ define(['jquery', 'toastr', 'backbone', 'handlebars', 'collections/daily-reports
                 return $("<tbody></tbody>").append(dataColumns);
             },
 
-            _columns: function () {
-                var columns = [$("<th></th>").text("云").addClass("text-center")];
+            _getDateSpans: function () {
+                var dateSpans = [];
                 if (this._start && this._end) {
-                    var timespan = this._start;
-                    while (timespan < this._end) {
-                        var date = new Date(timespan);
-                        columns.push($("<th></th>").text(monthNames[date.getMonth()] + date.getDate()).addClass("text-center"));
-                        timespan += common.MS_A_DAY;
+                    var time = this._start;
+                    while (time < this._end) {
+                        dateSpans.push(new Date(time));
+                        time += common.MS_A_DAY;
                     }
                 }
+                return dateSpans;
+            },
 
+            _columns: function () {
+                var columns = [$("<th></th>").text("云").addClass("text-center")];
+                _.each(this._getDateSpans(), function (date) {
+                    columns.push($("<th></th>").text(monthNames[date.getMonth()] + date.getDate()).addClass("text-center"));
+                });
                 return columns;
             },
 
@@ -128,10 +139,10 @@ define(['jquery', 'toastr', 'backbone', 'handlebars', 'collections/daily-reports
                 'click .backward-btn': 'moveBack',
                 'click .forward-btn': 'moveForward'
             },
-            moveBack: function(){
+            moveBack: function () {
                 this._stableTableView.moveBack();
             },
-            moveForward: function() {
+            moveForward: function () {
                 this._stableTableView.moveForward();
             }
         });
