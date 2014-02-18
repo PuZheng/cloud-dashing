@@ -86,6 +86,7 @@ def reports_view(viewpoint_id):
                             'available': True if 0 < latency1 < 100 else False,
                             'db': True if 0 < latency1 < 50 else False
                         }])
+
     ret = [_makeSlice(i) for i in xrange(0, end - start, step)]
 
     ret = make_response(json.dumps(ret))

@@ -17,7 +17,7 @@ require.config({
         'jquery.plot.crosshair': 'flot/jquery.flot.crosshair',
         'jquery.plot.time': '/static/js/misc/jquery.flot.time',
         'jquery.plot.tooltip': 'flot.tooltip/js/jquery.flot.tooltip.min',
-        //'moment': 'moment/min/moment.min',
+//        'moment': 'moment/min/moment.min',
         'toastr': 'toastr/toastr.min',
         //utils: '/static/js/utils',
         'common': '/static/js/common',
@@ -28,6 +28,7 @@ require.config({
         'views/table-view': '/static/js/views/table-view',
         'views/stat-view': '/static/js/views/stat-view',
         'views/avg-daily-latency': '/static/js/views/avg-daily-latency',
+        'views/stable-view':'/static/js/views/stable-view',
         'collections/agents': '/static/js/collections/agents',
         'collections/reports': '/static/js/collections/reports',
         'collections/timespots': '/static/js/collections/timespots',
@@ -71,7 +72,7 @@ require.config({
         'backgrid':{
             deps:['backbone'],
             exports:'Backgrid'
-        }
+        },
     },
 });
 
