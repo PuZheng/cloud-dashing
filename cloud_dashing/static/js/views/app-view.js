@@ -38,30 +38,30 @@ define(['backbone', 'views/map-view', 'views/control-panel', 'views/timeline', '
                 this._filter = param;
                 switch (param) {
                     case 'map':
-                        this.$('.map').show();
-                        this.$('.timeline').show();
-                        this.$('.table').hide();
-                        this.$('.stat').hide();
+                        this.$('div.map').show();
+                        this.$('div.timeline').show();
+                        this.$('div.table').hide();
+                        this.$('div.stat').hide();
 
                         if (!!this._tl) {
                             this._tl.makePlot(this._viewpoint);
                         }
                         break;
                     case 'table':
-                        this.$('.map').hide();
-                        this.$('.timeline').show();
-                        this.$('.table').show();
-                        this.$('.stat').hide();
+                        this.$('div.map').hide();
+                        this.$('div.timeline').show();
+                        this.$('div.table').show();
+                        this.$('div.stat').hide();
 
                         if (!!this._tl) {
                             this._tl.makePlot(this._viewpoint);
                         }
                         break;
                     case 'stat':
-                        this.$('.map').hide();
-                        this.$('.timeline').hide();
-                        this.$('.table').hide();
-                        this.$('.stat').show();
+                        this.$('div.map').hide();
+                        this.$('div.timeline').hide();
+                        this.$('div.table').hide();
+                        this.$('div.stat').show();
 
                         if (!!this._stat) {
                             // 展示后必须重画
