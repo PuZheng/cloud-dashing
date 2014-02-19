@@ -57,7 +57,10 @@ define(['jquery', 'handlebars', 'text!/static/templates/agent-brief.hbs', 'colle
     }
 
     AgentMarker.prototype.update = function(data) {
-        var latency = data.get("latency");
+        var latency = null;
+        if (!!data) {
+            latency = data.get("latency")
+        }
         this._tag.find('i').remove();
         if (latency >= badThreshhold) {
             this._tag.html(this._tag.text() + '<i class="fa fa-warning"/>');

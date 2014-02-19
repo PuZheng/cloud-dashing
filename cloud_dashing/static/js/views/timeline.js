@@ -1,6 +1,6 @@
-define(['jquery', 'underscore','backbone', 'handlebars', 'text!/static/templates/timeline.hbs', 'collections/reports', 'collections/agents', 'models/timespot', 'common', 'utils', 'toastr', 'jquery.plot', 'jquery.plot.crosshair',
-'jquery.plot.time'],
-    function($, _, Backbone, Handlebars, timelineTemplate, Reports, agents, TimeSpot, common, utils, toastr) {
+define(['jquery', 'underscore', 'backbone', 'handlebars', 'text!/static/templates/timeline.hbs', 'collections/reports', 'collections/agents', 'models/timespot', 'common', 'utils', 'toastr', 'jquery.plot', 'jquery.plot.crosshair',
+    'jquery.plot.time'],
+    function ($, _, Backbone, Handlebars, timelineTemplate, Reports, agents, TimeSpot, common, utils, toastr) {
         var Timeline = Backbone.View.extend({
             _template: Handlebars.default.compile(timelineTemplate),
 
@@ -41,15 +41,21 @@ define(['jquery', 'underscore','backbone', 'handlebars', 'text!/static/templates
             },
 
             makePlot: function (viewpoint, initDate) {
-                this._viewpoint = viewpoint;
-                if (!!initDate) {
-                    this._initDate = initDate;
-                } else if (!!this._markedPosition) {
-                    this._initDate = new Date(this._markedPosition.x);
+                if (this._viewpoint != viewpoint || this._hasChanged == true) {
+                    this._viewpoint = viewpoint;
+                    if (!!initDate) {
+                        this._initDate = initDate;
+                    } else if (!!this._markedPosition) {
+                        var date = new Date(this._markedPosition.x);
+                        this._initDate = new Date(date.getFullYear(), date.getMonth(),
+                            date.getDate());
+                    }
+                    this._reports = new Reports(viewpoint, this._start, this._end);
+                    this._reports.fetch({reset: true});
+                    this._reports.on('reset', this._renderPlot, this);
+                }else{
+                    this._renderPlot();
                 }
-                this._reports = new Reports(viewpoint, this._start, this._end);
-                this._reports.fetch({reset: true});
-                this._reports.on('reset', this._renderPlot, this);
             },
 
             _options: function () {
@@ -79,7 +85,7 @@ define(['jquery', 'underscore','backbone', 'handlebars', 'text!/static/templates
                         markings: function (axes) {
                             ret = [];
                             that._reports.each(function (report, i) {
-                                for (var j=0; j < report.get('statusList').length; ++j) {
+                                for (var j = 0; j < report.get('statusList').length; ++j) {
                                     var status_ = report.get('statusList')[j];
                                     var agent = agents.get(status_.id);
                                     if (agent.selected && status_.latency == null) {
@@ -87,12 +93,12 @@ define(['jquery', 'underscore','backbone', 'handlebars', 'text!/static/templates
                                         if (i == 0) {
                                             from = report.at;
                                         } else {
-                                            from = that._reports.get(i-1).at;
+                                            from = that._reports.get(i - 1).at;
                                         }
 
                                         var to = null;
                                         if (i + 1 < that._reports.length) {
-                                            to = that._reports.get(i+1).at;
+                                            to = that._reports.get(i + 1).at;
                                         } else {
                                             to = new Date().getTime();
                                         }
@@ -139,15 +145,15 @@ define(['jquery', 'underscore','backbone', 'handlebars', 'text!/static/templates
                     x: this._reports.last().get('at'),
                     y: null,
                 }
-                if (!!this._initDate && this._markedPosition.x > 
-                        this._initDate.getTime()) {
+                if (!!this._initDate && this._getMode() === 'week' && this._markedPosition.x > (this._initDate.getTime() + common.MS_A_DAY)) {
                     this._markedPosition.x = this._initDate.getTime();
                 }
-                this._initDate = new Date(this._markedPosition.x);
+                var date = new Date(this._markedPosition.x);
+                this._initDate = new Date(date.getFullYear(), date.getMonth(), date.getDate());
                 var data = [];
                 var seriesMap = {};
                 this._reports.each(function (report) {
-                    for (var j=0; j < report.get('statusList').length; ++j) {
+                    for (var j = 0; j < report.get('statusList').length; ++j) {
                         var agentStatus = report.get('statusList')[j];
                         if (!(agentStatus.id in seriesMap)) {
                             seriesMap[agentStatus.id] = [];
@@ -156,7 +162,6 @@ define(['jquery', 'underscore','backbone', 'handlebars', 'text!/static/templates
                     }
                 });
                 for (var id in seriesMap) {
-                    var series = seriesMap[id];
                     data.push({
                         agentId: id,
                         data: seriesMap[id],
@@ -164,15 +169,16 @@ define(['jquery', 'underscore','backbone', 'handlebars', 'text!/static/templates
                 }
                 this._plot = $.plot(this.$container, this._hideDisabledAgents(data), this._options());
                 this._updateTimeSpot(this._markedPosition);
+                this._hasChanged = false;
             },
 
             _hideDisabledAgents: function (data) {
-                for (var i=0; i < data.length; ++i) {
+                for (var i = 0; i < data.length; ++i) {
                     var series = data[i];
                     var agent = agents.get(series.agentId);
                     var selected = agent.get('selected');
                     series.lines = {show: selected};
-                    series.color = selected? agent.get('color'): '#ccc';
+                    series.color = selected ? agent.get('color') : '#ccc';
                 }
                 return data;
             },
@@ -203,7 +209,7 @@ define(['jquery', 'underscore','backbone', 'handlebars', 'text!/static/templates
                                 return agent.get("id") == series.agentId
                             });
                             var agentName = "";
-                            if(agent){
+                            if (agent) {
                                 agentName = agent.get("name");
                             }
                             if (point1[0] == point2[0]) {
@@ -226,7 +232,7 @@ define(['jquery', 'underscore','backbone', 'handlebars', 'text!/static/templates
                 this._updating = false;
                 var axes = this._plot.getAxes();
                 if (pos.x < axes.xaxis.min || pos.x > axes.xaxis.max ||
-                pos.y < axes.yaxis.min || pos.y > axes.yaxis.max) {
+                    pos.y < axes.yaxis.min || pos.y > axes.yaxis.max) {
                     return;
                 }
                 var date = new Date(pos.x);
@@ -241,7 +247,7 @@ define(['jquery', 'underscore','backbone', 'handlebars', 'text!/static/templates
             _getReportsByX: function (x) {
                 var report1 = null;
                 var report2 = null;
-                for (var i=0; i < this._reports.length; ++i) {
+                for (var i = 0; i < this._reports.length; ++i) {
                     if (this._reports.at(i).at > x) {
                         report1 = this._reports.at(i - 1);
                         report2 = this._reports.at(i);
@@ -255,11 +261,11 @@ define(['jquery', 'underscore','backbone', 'handlebars', 'text!/static/templates
             },
 
             toggleAgent: function (agent) {
-                this._plot = $.plot(this.$container, this._hideDisabledAgents(this._plot.getData()), this._options());         
+                this._plot = $.plot(this.$container, this._hideDisabledAgents(this._plot.getData()), this._options());
             },
 
             _getMode: function () {
-                return this.$(".mode-btn").text() === '日'? 'day': 'week';
+                return this.$(".mode-btn").text() === '日' ? 'day' : 'week';
             },
 
             _changeMode: function (e) {
@@ -272,12 +278,13 @@ define(['jquery', 'underscore','backbone', 'handlebars', 'text!/static/templates
                 } else {
                     this.$('.mode-btn').text('日');
                     var start = this.getCurrentDate();
-                    this._start = new Date(start.getFullYear(), start.getMonth(), 
-                            start.getDate()).getTime();
+                    this._start = new Date(start.getFullYear(), start.getMonth(),
+                        start.getDate()).getTime();
                     this._end = this._start + common.MS_A_DAY;
                 }
                 // keep the current date
                 this.pause();
+                this._hasChanged = true;
                 this.makePlot(this._viewpoint, this.getCurrentDate());
             },
 
@@ -287,39 +294,40 @@ define(['jquery', 'underscore','backbone', 'handlebars', 'text!/static/templates
 
             _backward: function (e) {
                 if (this._getMode() == 'day') {
-                    var start = new Date(this._markedPosition.x - common.MS_A_DAY);
+                    var start = new Date(this._start - common.MS_A_DAY);
                     this._start = new Date(start.getFullYear(), start.getMonth(), start.getDate()).getTime();
                     this._end = this._start + common.MS_A_DAY;
                 } else {
-                    this._start = new Date(utils.getMonday(this._markedPosition.x - common.MS_A_WEEK)).getTime();
+                    this._start = new Date(utils.getMonday(this._start - common.MS_A_WEEK)).getTime();
                     this._end = this._start + common.MS_A_WEEK;
                 }
                 this.pause();
+                this._hasChanged = true;
                 this.makePlot(this._viewpoint);
             },
-            
+
             _forward: function (e) {
                 if (this._getMode() == 'day') {
                     var today = new Date();
                     today = new Date(today.getFullYear(), today.getMonth(), today.getDate());
                     if (this.getCurrentDate() >= today) {
-                        toastr.warning('已经是今天了!'); 
+                        toastr.warning('已经是今天了!');
                         return;
                     }
-                    var start = new Date(this._markedPosition.x + common.MS_A_DAY);
+                    var start = new Date(this._start + common.MS_A_DAY);
                     this._start = new Date(start.getFullYear(), start.getMonth(), start.getDate()).getTime();
                     this._end = this._start + common.MS_A_DAY;
                 } else {
                     if (this.getCurrentDate() >= utils.getMonday(new Date())) {
-                        toastr.warning('已经是最后一周了!'); 
+                        toastr.warning('已经是最后一周了!');
                         return;
                     }
-                    this._start = new Date(utils.getMonday(this._markedPosition.x + common.MS_A_WEEK)).getTime();
+                    this._start = new Date(utils.getMonday(this._start + common.MS_A_WEEK)).getTime();
                     this._end = this._start + common.MS_A_WEEK;
                 }
                 this.pause();
+                this._hasChanged = true;
                 this.makePlot(this._viewpoint);
-            
             },
 
             pause: function (e) {
@@ -332,8 +340,8 @@ define(['jquery', 'underscore','backbone', 'handlebars', 'text!/static/templates
                 if (!this._playing) {
                     var pivot = this._markedPosition.x;
                     for (var reportIdx = 0;
-                        reportIdx < this._reports.length && this._reports.at(reportIdx).get('at') < pivot; 
-                    ++reportIdx) {
+                         reportIdx < this._reports.length && this._reports.at(reportIdx).get('at') < pivot;
+                         ++reportIdx) {
                     }
                     var that = this;
                     this._ti = setInterval(
@@ -367,7 +375,7 @@ define(['jquery', 'underscore','backbone', 'handlebars', 'text!/static/templates
                         agent: agent,
                         name: agent.get("name"),
                         available: status_.available,
-                        latency: status_.latency, 
+                        latency: status_.latency,
                         db: status_.db
                     });
                 });

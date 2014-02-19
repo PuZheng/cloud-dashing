@@ -48,7 +48,7 @@ define(['jquery', 'backbone', 'backgrid', 'collections/timespots', 'collections/
             if (this._timespots) {
                 timespots.reset();
                 $.each(this._timespots, function (idx, value) {
-                    if (value.get("agent").get("selected")) {
+                    if (value && value.get("agent").get("selected")) {
                         timespots.add(value);
                     }
                 });

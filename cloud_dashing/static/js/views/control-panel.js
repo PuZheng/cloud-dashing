@@ -58,7 +58,10 @@ define(['jquery', 'backbone', 'handlebars', 'text',
                     });
                 }
                 _.each(data, function (val, i) {
-                    var latency = val.get("latency");
+                    var latency = null;
+                    if (!!val) {
+                        latency = val.get("latency");
+                    }
                     if (latency === null) {
                         latency = '??';
                     } else if (latency === -1) {
