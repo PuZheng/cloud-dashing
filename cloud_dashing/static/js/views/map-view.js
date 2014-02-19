@@ -2,21 +2,28 @@ define(['backbone', 'collections/agents', 'widgets/agent-marker', 'underscore'],
     
     var MapView = Backbone.View.extend({
         render: function () {
-            var chinaGeoCenter = new BMap.Point(103.336594, 35.849248);
-            var map = new BMap.Map(this.$el[0]);
-            map.centerAndZoom(chinaGeoCenter, 4); 
-            var  mapStyle ={ 
-                features: ["water", "land"]
-            };
-            map.setMapStyle(mapStyle);
-            map.addControl(new BMap.NavigationControl());
-            
-            this._markers = agents.map(function (agent) {
-                var marker = new AgentMarker(agent);
-                map.addOverlay(marker);
-                return marker;
-            }, this);
+            this.drawMap();
             return this;
+        },
+
+        drawMap: function () {
+            if (this.$el.is(":visible") && this._map == undefined) {
+                var chinaGeoCenter = new BMap.Point(103.336594, 35.849248);
+                var map = new BMap.Map(this.$el[0]);
+                map.centerAndZoom(chinaGeoCenter, 4);
+                var mapStyle = {
+                    features: ["water", "land"]
+                };
+                map.setMapStyle(mapStyle);
+                map.addControl(new BMap.NavigationControl());
+
+                this._markers = agents.map(function (agent) {
+                    var marker = new AgentMarker(agent);
+                    map.addOverlay(marker);
+                    return marker;
+                }, this);
+                this._map = map;
+            }
         },
 
         updateLatency: function (data) {
@@ -43,9 +50,11 @@ define(['backbone', 'collections/agents', 'widgets/agent-marker', 'underscore'],
         },
 
         updateTooltip: function (viewpoint) {
-            this._markers.forEach(function (marker) {
-                marker.updateTooltip(viewpoint);
-            });
+            if (!!this._markers) {
+                this._markers.forEach(function (marker) {
+                    marker.updateTooltip(viewpoint);
+                });
+            }
         }
         
     });
