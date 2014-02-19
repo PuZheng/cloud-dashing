@@ -44,11 +44,9 @@ define(['jquery', 'underscore', 'backbone', 'handlebars', 'text!/static/template
                 if (this._viewpoint != viewpoint || this._hasChanged == true) {
                     this._viewpoint = viewpoint;
                     if (!!initDate) {
-                        this._initDate = initDate;
+                        this._initTime = initDate.getTime();
                     } else if (!!this._markedPosition) {
-                        var date = new Date(this._markedPosition.x);
-                        this._initDate = new Date(date.getFullYear(), date.getMonth(),
-                            date.getDate());
+                        this._initTime = this._markedPosition;
                     }
                     this._reports = new Reports(viewpoint, this._start, this._end);
                     this._reports.fetch({reset: true});
@@ -145,11 +143,10 @@ define(['jquery', 'underscore', 'backbone', 'handlebars', 'text!/static/template
                     x: this._reports.last().get('at'),
                     y: null,
                 }
-                if (!!this._initDate && this._getMode() === 'week' && this._markedPosition.x > (this._initDate.getTime() + common.MS_A_DAY)) {
-                    this._markedPosition.x = this._initDate.getTime();
+                if (!!this._initTime && this._getMode() === 'week' && this._markedPosition.x > this._initTime) {
+                    this._markedPosition.x = this._initTime
                 }
-                var date = new Date(this._markedPosition.x);
-                this._initDate = new Date(date.getFullYear(), date.getMonth(), date.getDate());
+                this._initTime = this._markedPosition
                 var data = [];
                 var seriesMap = {};
                 this._reports.each(function (report) {
