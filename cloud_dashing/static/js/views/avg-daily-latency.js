@@ -87,6 +87,7 @@ define(['jquery', 'backbone', 'toastr', 'handlebars', 'common', 'utils', 'collec
                         });
                     });
                     this._plot = $.plot(this.$container, this._hideDisabledAgents(data), this._options());
+                    this._hasChanged = false;
                 },
 
                 _hideDisabledAgents: function (data) {
@@ -106,15 +107,20 @@ define(['jquery', 'backbone', 'toastr', 'handlebars', 'common', 'utils', 'collec
                 },
 
                 updateViewpoint: function (viewpoint) {
-                    this._viewpoint = viewpoint;
-                    this._dailyReports = new DailyReports(this._viewpoint, this._start, this._end);
-                    this._dailyReports.fetch({reset: true});
-                    this._dailyReports.on('reset', this._renderPlot, this);
+                    if (this._viewpoint !=viewpoint || this._hasChanged == true) {
+                        this._viewpoint = viewpoint;
+                        this._dailyReports = new DailyReports(this._viewpoint, this._start, this._end);
+                        this._dailyReports.fetch({reset: true});
+                        this._dailyReports.on('reset', this._renderPlot, this);
+                    }else{
+                        this._renderPlot();
+                    }
                 },
 
                 moveBack: function () {
                     this._end = this._start;
                     this._start = this._start - common.MS_A_WEEK;
+                    this._hasChanged = true;
                     this.updateViewpoint(this._viewpoint);
                 },
                 
@@ -125,6 +131,7 @@ define(['jquery', 'backbone', 'toastr', 'handlebars', 'common', 'utils', 'collec
                     }
                     this._start = this._end;
                     this._end = this._start + common.MS_A_WEEK;
+                    this._hasChanged = true;
                     this.updateViewpoint(this._viewpoint);
                 },
             });

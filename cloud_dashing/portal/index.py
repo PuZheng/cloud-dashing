@@ -65,6 +65,8 @@ def reports_view(viewpoint_id):
     step = 20 * 60 * 1000
 
     def _makeSlice(i):
+        import random
+        i += random.randint(0, 100)
         latency1 = viewpoint_id * 20 + abs(
             math.floor(15 + math.sin(i / 20 + 1) * 20 +
                        math.sin(i / 10 + 0.5) * 10))
