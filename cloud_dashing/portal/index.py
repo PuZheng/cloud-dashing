@@ -11,6 +11,9 @@ import json
 def index():
     return render_template('index.html', time=time.time())
 
+@app.route("/cloud-dashing")
+def cloud_dashing():
+    return render_template('cloud-dashing.html', time=time.time())
 
 @app.route('/api/agents')
 def agents_view():

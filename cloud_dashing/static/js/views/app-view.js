@@ -42,6 +42,7 @@ define(['backbone', 'views/map-view', 'views/control-panel', 'views/timeline', '
                         this.$('div.timeline').show();
                         this.$('div.table').hide();
                         this.$('div.stat').hide();
+                        this.$('div.stable').hide();
                         if(!!this._map) {
                             this._map.drawMap();
                         }
@@ -54,6 +55,7 @@ define(['backbone', 'views/map-view', 'views/control-panel', 'views/timeline', '
                         this.$('div.timeline').show();
                         this.$('div.table').show();
                         this.$('div.stat').hide();
+                        this.$('div.stable').hide();
 
                         if (!!this._tl) {
                             this._tl.makePlot(this._viewpoint);
@@ -64,6 +66,7 @@ define(['backbone', 'views/map-view', 'views/control-panel', 'views/timeline', '
                         this.$('div.timeline').hide();
                         this.$('div.table').hide();
                         this.$('div.stat').show();
+                        this.$('div.stable').show();
 
                         if (!!this._stat) {
                             // 展示后必须重画
