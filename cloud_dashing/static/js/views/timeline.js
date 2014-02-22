@@ -11,7 +11,7 @@ define(['jquery', 'underscore', 'backbone', 'handlebars', 'text!/static/template
                 this._end = this._start + common.MS_A_DAY;
                 toastr.options = {
                     "positionClass": "toast-bottom-full-width",
-                    "timeOut": "1000",
+                    "timeOut": "1000"
                 }
                 this._playing = false;
                 this.render();
@@ -21,7 +21,7 @@ define(['jquery', 'underscore', 'backbone', 'handlebars', 'text!/static/template
                 'plothover .timeline-plot': '_updateTime',
                 'mouseout .timeline-plot': function (e) {
                     this._currentTimeTag.hide();
-                    this._updateTimeSpot(this._markedPosition)
+                    this._updateView(this._markedPosition)
                 },
                 'plotclick .timeline-plot': function (e, pos, item) {
                     this._markedPosition = pos;
@@ -63,7 +63,7 @@ define(['jquery', 'underscore', 'backbone', 'handlebars', 'text!/static/template
                         mode: 'time',
                         timezone: 'browser',
                         min: this._start,
-                        max: this._end,
+                        max: this._end
                     },
                     crosshair: {
                         mode: "x",
@@ -103,13 +103,13 @@ define(['jquery', 'underscore', 'backbone', 'handlebars', 'text!/static/template
                                         ret.push({
                                             yaxis: {
                                                 from: 100000,
-                                                to: 0,
+                                                to: 0
                                             },
                                             xaxis: {
                                                 from: from,
-                                                to: to,
+                                                to: to
                                             },
-                                            color: agent.color,
+                                            color: agent.color
                                         });
                                     }
                                 }
@@ -122,7 +122,7 @@ define(['jquery', 'underscore', 'backbone', 'handlebars', 'text!/static/template
                                 lineWidth: 1,
                                 xaxis: {
                                     from: that._markedPosition.x,
-                                    to: that._markedPosition.x,
+                                    to: that._markedPosition.x
                                 },
                                 color: "red"
                             });
@@ -134,19 +134,19 @@ define(['jquery', 'underscore', 'backbone', 'handlebars', 'text!/static/template
                             bottom: 10,
                             left: 10
                         }
-                    },
+                    }
                 }
             },
 
             _renderPlot: function () {
                 this._markedPosition = {
                     x: this._reports.last().get('at'),
-                    y: null,
+                    y: null
                 }
                 if (!!this._initTime && this._getMode() === 'week' && this._markedPosition.x > this._initTime) {
                     this._markedPosition.x = this._initTime
                 }
-                this._initTime = this._markedPosition
+                this._initTime = this._markedPosition;
                 var data = [];
                 var seriesMap = {};
                 this._reports.each(function (report) {
@@ -161,11 +161,11 @@ define(['jquery', 'underscore', 'backbone', 'handlebars', 'text!/static/template
                 for (var id in seriesMap) {
                     data.push({
                         agentId: id,
-                        data: seriesMap[id],
+                        data: seriesMap[id]
                     });
                 }
                 this._plot = $.plot(this.$container, this._hideDisabledAgents(data), this._options());
-                this._updateTimeSpot(this._markedPosition);
+                this._updateView(this._markedPosition);
                 this._hasChanged = false;
             },
 
@@ -180,9 +180,10 @@ define(['jquery', 'underscore', 'backbone', 'handlebars', 'text!/static/template
                 return data;
             },
 
-            _updateTimeSpot: function (pos) {
+            _updateView: function (pos) {
                 var i, j, dataset = this._plot.getData();
                 var data = [];
+                var at = this._markedPosition.x;
                 for (i = 0; i < dataset.length; ++i) {
                     var series = dataset[i];
                     // Find the nearest points, x-wise
@@ -210,16 +211,18 @@ define(['jquery', 'underscore', 'backbone', 'handlebars', 'text!/static/template
                                 agentName = agent.get("name");
                             }
                             if (point1[0] == point2[0]) {
-                                timespot = new TimeSpot({agent: agent, available: point1[2], latency: Math.floor(point1[1]), db: point1[3], name: agentName})
+                                timespot = new TimeSpot({agent: agent, available: point1[2], latency: Math.floor(point1[1]), db: point1[3], name: agentName});
+                                at = point1[0];
                             } else {
                                 var latency = Math.floor(point1[1] + (point2[1] - point1[1]) * (pos.x - point1[0]) / (point2[0] - point1[0]));
-                                timespot = new TimeSpot({agent: agent, available: point1[2] && point2[2], latency: latency, db: point1[3] && point2[3], name: agentName})
+                                timespot = new TimeSpot({agent: agent, available: point1[2] && point2[2], latency: latency, db: point1[3] && point2[3], name: agentName});
+                                at = (point1[0] + point2[0]) / 2
                             }
                         }
                     }
                     data.push(timespot);
                 }
-                this.trigger('time-changed', data);
+                this.trigger('time-changed', {data: data, at: at, start: this._start, end: this._end});
             },
 
             _updateTime: function (e, pos, item) {
@@ -236,9 +239,9 @@ define(['jquery', 'underscore', 'backbone', 'handlebars', 'text!/static/template
                 this._currentTimeTag.text(date.getHours() + ":" + date.getMinutes());
                 this._currentTimeTag.offset({
                     left: pos.pageX,
-                    top: pos.pageY - 50,
+                    top: pos.pageY - 50
                 }).show();
-                this._updateTimeSpot(pos);
+                this._updateView(pos);
             },
 
             _getReportsByX: function (x) {

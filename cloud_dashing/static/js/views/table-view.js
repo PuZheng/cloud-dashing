@@ -1,4 +1,4 @@
-define(['jquery', 'backbone', 'backgrid', 'collections/timespots', 'collections/agents', 'models/timespot'], function ($, Backbone, Backgrid, timespots, agents, TimeSpot) {
+define(['jquery', 'backbone', 'backgrid', 'collections/timespots', 'collections/agents'], function ($, Backbone, Backgrid, timespots, agents) {
     var columns = [
         {
             name: "name",
@@ -38,16 +38,16 @@ define(['jquery', 'backbone', 'backgrid', 'collections/timespots', 'collections/
 
     var TableView = Backgrid.Grid.extend({
         updateStatus: function (data) {
-            this._timespots = data;
-            this._updateTimeSpot();
+            this._data = data;
+            this._updateView();
         },
         toggleAgent: function(){
-            this._updateTimeSpot();
+            this._updateView();
         },
-        _updateTimeSpot: function () {
-            if (this._timespots) {
+        _updateView: function () {
+            if (this._data) {
                 timespots.reset();
-                $.each(this._timespots, function (idx, value) {
+                $.each(this._data, function (idx, value) {
                     if (value && value.get("agent").get("selected")) {
                         timespots.add(value);
                     }

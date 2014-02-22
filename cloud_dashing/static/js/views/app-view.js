@@ -1,6 +1,6 @@
 define(['backbone', 'views/map-view', 'views/control-panel', 'views/timeline', 'views/table-view',
-    'collections/agents', 'collections/timespots', 'router/app-router', 'views/stat-view', 'views/stable-view'],
-    function (Backbone, MapView, ControlPanel, Timeline, tableView,  agents, timespots, router, StatView, StableView) {
+    'collections/agents', 'collections/timespots', 'router/app-router', 'views/stat-view', 'views/stable-view', 'views/detail-view'],
+    function (Backbone, MapView, ControlPanel, Timeline, tableView,  agents, timespots, router, StatView, StableView, DetailView) {
         var AppView = Backbone.View.extend({
             el: '#main',
 
@@ -43,6 +43,7 @@ define(['backbone', 'views/map-view', 'views/control-panel', 'views/timeline', '
                         this.$('div.table').hide();
                         this.$('div.stat').hide();
                         this.$('div.stable').hide();
+                        this.$('div.detail').hide();
                         if(!!this._map) {
                             this._map.drawMap();
                         }
@@ -56,7 +57,7 @@ define(['backbone', 'views/map-view', 'views/control-panel', 'views/timeline', '
                         this.$('div.table').show();
                         this.$('div.stat').hide();
                         this.$('div.stable').hide();
-
+                        this.$('div.detail').show();
                         if (!!this._tl) {
                             this._tl.makePlot(this._viewpoint);
                         }
@@ -67,7 +68,7 @@ define(['backbone', 'views/map-view', 'views/control-panel', 'views/timeline', '
                         this.$('div.table').hide();
                         this.$('div.stat').show();
                         this.$('div.stable').show();
-
+                        this.$('div.detail').hide();
                         if (!!this._stat) {
                             // 展示后必须重画
                             this._stat.updateViewpoint(this._viewpoint);
@@ -88,13 +89,18 @@ define(['backbone', 'views/map-view', 'views/control-panel', 'views/timeline', '
                 this._tl = new Timeline({el: this.$('.timeline')});
                 this._stat = new StatView({el: this.$('.stat')});
                 this._stable = new StableView({el: this.$(".stable")}).render();
+                this._detail = new DetailView({el: this.$(".detail")}).render();
                 this._cp = new ControlPanel({el: this.$('.control-panel')});
-                this._tl.on('time-changed', function (data) {
-                    if (this._filter !== 'stat') {
-                        this._cp.updateLatency(data);
+                this._tl.on('time-changed', function (result) {
+                    if (result) {
+                        var data = result.data;
+                        if (this._filter !== 'stat') {
+                            this._cp.updateLatency(data);
+                        }
+                        this._map.updateLatency(data);
+                        this._table.updateStatus(data);
                     }
-                    this._map.updateLatency(data);
-                    this._table.updateStatus(data);
+                    this._detail.updateTimeSpot(result);
                 }, this);
                 this._cp.on('viewpoint-set', this._onViewpointSet, this);
                 this._cp.on('agent-toggle', this._onAgentToggle, this);
@@ -108,6 +114,7 @@ define(['backbone', 'views/map-view', 'views/control-panel', 'views/timeline', '
                 this._map.updateTooltip(viewpoint);
                 this._stat.updateViewpoint(viewpoint);
                 this._stable.updateViewpoint(viewpoint);
+                this._detail.updateViewpoint(viewpoint);
             },
 
             _onAgentToggle: function (agent) {
