@@ -4,11 +4,11 @@
 /**
  * Created by Young on 14-2-14.
  */
-define(['jquery', 'backbone', 'models/agent-detail', 'common'],
-    function ($, Backbone, AgentDetail, common) {
+define(['jquery', 'backbone', 'collections/detail-reports', 'common'],
+    function ($, Backbone, DetailReports, common) {
         var DetailView = Backbone.View.extend({
             updateViewpoint: function (viewPoint, timespot) {
-                var changed = !(this._agentDetail && viewPoint == this._agentDetail.agent);
+                var changed = !(this._reports && viewPoint == this._reports.get("agent"));
                 if (!!timespot) {
                     var at = timespot.at;
                     if (this._start > at || this._end < at) {
@@ -18,17 +18,19 @@ define(['jquery', 'backbone', 'models/agent-detail', 'common'],
                 }
 
                 if (changed) {
-                    this._agentDetail = new AgentDetail({agent: viewPoint, start: this._start, end: this._end});
-                    this._agentDetail.fetch();
-                    this._agentDetail.on("change", this._updateView, this);
+                    this._reports = new DetailReports(viewPoint, this._start, this._end);
+                    this._reports.fetch({reset: true});
+                    this._reports.on("reset", this._updateView, this);
+                } else {
+                    this._updateView();
                 }
             },
 
             _getNearestTimePoint: function () {
                 // 如果没有当前时间点的报告，则用与该时间点最相近的报告
                 var _at = this._at;
-                var times = _.map(this._agentDetail.reports, function (report) {
-                    return report.at
+                var times = _.map(this._reports.models, function (report) {
+                    return report.get("at");
                 });
                 times = times.sort();
                 for (var i = 0; i < times.length - 1; i++) {
@@ -46,14 +48,15 @@ define(['jquery', 'backbone', 'models/agent-detail', 'common'],
             },
 
             _getData: function () {
+                debugger;
                 var _at = this._getNearestTimePoint();
-                var data = _.find(this._agentDetail.reports, function (report) {
-                    return report.at == _at;
+                var data = _.find(this._reports.models, function (report) {
+                    return report.get("at") == _at;
                 });
                 if (data) {
                     return data;
                 } else {
-                    return _.first(this._agentDetail.reports);
+                    return _.first(this._reports.models);
                 }
 
             },
@@ -82,9 +85,9 @@ define(['jquery', 'backbone', 'models/agent-detail', 'common'],
 
             _renderAgentDetail: function () {
                 var columns = [];
-                var _agentDetail = this._agentDetail;
+                var _reports = this._reports;
                 var _renderService = this._renderService;
-                if (_agentDetail) {
+                if (_reports) {
                     _.each(this._getData(), function (val, key) {
                         columns.push(_renderService(key, val));
                     });
@@ -93,11 +96,11 @@ define(['jquery', 'backbone', 'models/agent-detail', 'common'],
             },
 
             updateTimeSpot: function (data) {
-                this.updateViewpoint(this._agentDetail.agent, data);
+                this.updateViewpoint(this._reports.get("agent"), data);
             },
 
             _desc: function () {
-                return $("<p></p>").text(this._agentDetail.agent.name + "服务一览表");
+                return $("<p></p>").text(this._reports.get("agent").get("name") + "服务一览表");
             },
             _updateView: function () {
                 this.$el.empty();

@@ -144,7 +144,7 @@ def basic(id_):
     start = request.args.get('start', type=int)
     end = request.args.get('end', type=int)
 
-    step = 24 * 60 * 60 * 1000
+    step = 60 * 60 * 1000
 
     def _makeSlice(i):
         return dict(at=start + i,
