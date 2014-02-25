@@ -7,7 +7,10 @@ define(['backbone'], function (Backbone) {
         agent:null,
         latency: 0,
         db: "",
-        name: ""
+        name: "",
+        at: 0,
+        start: 0,
+        end: 0,
     });
     return TimeSpot;
 });

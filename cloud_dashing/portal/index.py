@@ -11,9 +11,11 @@ import json
 def index():
     return render_template('index.html', time=time.time())
 
+
 @app.route("/cloud-dashing")
 def cloud_dashing():
     return render_template('cloud-dashing.html', time=time.time())
+
 
 @app.route('/api/agents')
 def agents_view():
@@ -69,6 +71,7 @@ def reports_view(viewpoint_id):
 
     def _makeSlice(i):
         import random
+
         i += random.randint(0, 100)
         latency1 = viewpoint_id * 20 + abs(
             math.floor(15 + math.sin(i / 20 + 1) * 20 +
@@ -129,6 +132,26 @@ def daily_reports_view(viewpoint_id):
                             'crash_num': random.randint(0, 3),
                         },
                     ])
+
+    ret = [_makeSlice(i) for i in xrange(0, end - start, step)]
+    ret = make_response(json.dumps(ret))
+    ret.headers['Content-Type'] = 'application/json'
+    return ret
+
+
+@app.route("/basic/<int:id_>")
+def basic(id_):
+    start = request.args.get('start', type=int)
+    end = request.args.get('end', type=int)
+
+    step = 60 * 60 * 1000
+
+    def _makeSlice(i):
+        return dict(at=start + i,
+                    basic={'cpu': {"cpu_score": "%.3f" % random.uniform(0, 100)},
+                           'hd': {"dd_read": "%.2fMB/s" % random.uniform(0, 100),
+                                  "dd_write": "%.2fMB/s" % random.uniform(0, 100)}
+                    })
 
     ret = [_makeSlice(i) for i in xrange(0, end - start, step)]
     ret = make_response(json.dumps(ret))
