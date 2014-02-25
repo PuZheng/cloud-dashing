@@ -8,12 +8,16 @@ define(['jquery', 'backbone', 'collections/detail-reports', 'common'],
     function ($, Backbone, DetailReports, common) {
         var DetailView = Backbone.View.extend({
             updateViewpoint: function (viewPoint, timespot) {
-                var changed = !(this._reports && viewPoint == this._reports.get("agent"));
+                var changed = !(this._reports && viewPoint == this._reports.viewpoint);
                 if (!!timespot) {
                     var at = timespot.at;
                     if (this._start > at || this._end < at) {
                         changed = true;
-                        this._at = at;
+                    }
+                    this._at = at;
+                    if(changed) {
+                        this._start = timespot.start || this._start;
+                        this._end = timespot.end || this._end;
                     }
                 }
 
@@ -48,7 +52,6 @@ define(['jquery', 'backbone', 'collections/detail-reports', 'common'],
             },
 
             _getData: function () {
-                debugger;
                 var _at = this._getNearestTimePoint();
                 var data = _.find(this._reports.models, function (report) {
                     return report.get("at") == _at;
@@ -88,7 +91,8 @@ define(['jquery', 'backbone', 'collections/detail-reports', 'common'],
                 var _reports = this._reports;
                 var _renderService = this._renderService;
                 if (_reports) {
-                    _.each(this._getData(), function (val, key) {
+                    var report = this._getData();
+                    _.each(report.get("basic"), function (val, key) {
                         columns.push(_renderService(key, val));
                     });
                 }
@@ -96,11 +100,11 @@ define(['jquery', 'backbone', 'collections/detail-reports', 'common'],
             },
 
             updateTimeSpot: function (data) {
-                this.updateViewpoint(this._reports.get("agent"), data);
+                this.updateViewpoint(this._reports.viewpoint, data);
             },
 
             _desc: function () {
-                return $("<p></p>").text(this._reports.get("agent").get("name") + "服务一览表");
+                return $("<p></p>").text(this._reports.viewpoint.name + "服务一览表");
             },
             _updateView: function () {
                 this.$el.empty();
