@@ -1,9 +1,6 @@
 /**
  * Created by Young on 14-2-21.
  */
-/**
- * Created by Young on 14-2-14.
- */
 define(['jquery', 'backbone', 'collections/detail-reports', 'common'],
     function ($, Backbone, DetailReports, common) {
         var DetailView = Backbone.View.extend({
