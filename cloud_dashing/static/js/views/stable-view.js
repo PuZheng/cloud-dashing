@@ -29,9 +29,10 @@ define(['jquery', 'toastr', 'backbone', 'handlebars', 'collections/daily-reports
                 var data = {};
                 if (this._dailyReports) {
                     this._dailyReports.each(function (dailyReport) {
-                        for (var i = 0; i < dailyReport.get('statusList').length; ++i) {
+                        for (var i = 0; i < dailyReport.get('data').length; ++i) {
                             var at = dailyReport.get("at");
-                            var status_ = dailyReport.get('statusList')[i];
+                            var status_ = dailyReport.get('data')[i];
+                            debugger;
                             var agent = agents.get(status_.id);
                             if (agent.get("selected") == true) {
                                 if (!(status_.id in data)) {

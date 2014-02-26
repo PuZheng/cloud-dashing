@@ -57,8 +57,8 @@ define(['jquery', 'backbone', 'toastr', 'handlebars', 'common', 'utils', 'collec
                     var data = [];
                     var seriesMap = {};
                     this._dailyReports.each(function (dailyReport) {
-                        for (var i=0; i < dailyReport.get('statusList').length; ++i) {
-                            var status_ = dailyReport.get('statusList')[i]
+                        for (var i=0; i < dailyReport.get('data').length; ++i) {
+                            var status_ = dailyReport.get('data')[i];
                         if (!(status_.id in seriesMap)) {
                             seriesMap[status_.id] = [];
                         }

@@ -83,8 +83,8 @@ define(['jquery', 'underscore', 'backbone', 'handlebars', 'text!/static/template
                         markings: function (axes) {
                             ret = [];
                             that._reports.each(function (report, i) {
-                                for (var j = 0; j < report.get('statusList').length; ++j) {
-                                    var status_ = report.get('statusList')[j];
+                                for (var j = 0; j < report.get('data').length; ++j) {
+                                    var status_ = report.get('data')[j];
                                     var agent = agents.get(status_.id);
                                     if (agent.selected && status_.latency == null) {
                                         var from = null;
@@ -150,12 +150,16 @@ define(['jquery', 'underscore', 'backbone', 'handlebars', 'text!/static/template
                 var data = [];
                 var seriesMap = {};
                 this._reports.each(function (report) {
-                    for (var j = 0; j < report.get('statusList').length; ++j) {
-                        var agentStatus = report.get('statusList')[j];
-                        if (!(agentStatus.id in seriesMap)) {
-                            seriesMap[agentStatus.id] = [];
+                    debugger;
+                    var netStatusList = report.get('data')["网络性能"];
+                    if (!!netStatusList) {
+                        for (var j = 0; j < netStatusList.length; ++j) {
+                            var agentStatus = netStatusList[j];
+                            if (!(agentStatus.id in seriesMap)) {
+                                seriesMap[agentStatus.id] = [];
+                            }
+                            seriesMap[agentStatus.id].push([report.get('time') * 1000, agentStatus["延迟"], report.get('data')["计算性能"], report.get('data')["磁盘性能"]]);
                         }
-                        seriesMap[agentStatus.id].push([report.get('at'), agentStatus.latency, agentStatus.available, agentStatus.db]);
                     }
                 });
                 for (var id in seriesMap) {
@@ -164,6 +168,7 @@ define(['jquery', 'underscore', 'backbone', 'handlebars', 'text!/static/template
                         data: seriesMap[id],
                     });
                 }
+                debugger;
                 this._plot = $.plot(this.$container, this._hideDisabledAgents(data), this._options());
                 this._updateTimeSpot(this._markedPosition);
                 this._hasChanged = false;
@@ -364,7 +369,7 @@ define(['jquery', 'underscore', 'backbone', 'handlebars', 'text!/static/template
                     left: this._plot.pointOffset({x: this._markedPosition.x, y: 0}).left + this.$container.offset().left,
                     top: this._plot.offset().top + this._plot.height() / 2
                 }).show();
-                var data = report.statusList.map(function (status_) {
+                var data = report.data.map(function (status_) {
                     var agent = _.find(agents.models, function (agent) {
                         return agent.get("id") == status_.id;
                     });
