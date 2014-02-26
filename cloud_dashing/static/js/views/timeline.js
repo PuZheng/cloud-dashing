@@ -150,7 +150,6 @@ define(['jquery', 'underscore', 'backbone', 'handlebars', 'text!/static/template
                 var data = [];
                 var seriesMap = {};
                 this._reports.each(function (report) {
-                    debugger;
                     var netStatusList = report.get('data')["网络性能"];
                     if (!!netStatusList) {
                         for (var j = 0; j < netStatusList.length; ++j) {
@@ -158,7 +157,8 @@ define(['jquery', 'underscore', 'backbone', 'handlebars', 'text!/static/template
                             if (!(agentStatus.id in seriesMap)) {
                                 seriesMap[agentStatus.id] = [];
                             }
-                            seriesMap[agentStatus.id].push([report.get('time') * 1000, agentStatus["延迟"], report.get('data')["计算性能"], report.get('data')["磁盘性能"]]);
+                            seriesMap[agentStatus.id].push([report.get('time') * 1000, parseFloat(agentStatus["延迟"]), parseFloat(report.get('data')["计算性能"]["分数"]),
+                                parseFloat(report.get('data')["磁盘性能"]["分数"])]);
                         }
                     }
                 });
@@ -168,7 +168,6 @@ define(['jquery', 'underscore', 'backbone', 'handlebars', 'text!/static/template
                         data: seriesMap[id],
                     });
                 }
-                debugger;
                 this._plot = $.plot(this.$container, this._hideDisabledAgents(data), this._options());
                 this._updateTimeSpot(this._markedPosition);
                 this._hasChanged = false;
@@ -215,10 +214,10 @@ define(['jquery', 'underscore', 'backbone', 'handlebars', 'text!/static/template
                                 agentName = agent.get("name");
                             }
                             if (point1[0] == point2[0]) {
-                                timespot = new TimeSpot({agent: agent, available: point1[2], latency: Math.floor(point1[1]), db: point1[3], name: agentName})
+                                timespot = new TimeSpot({agent: agent, cpu: point1[2], latency: Math.floor(point1[1]), hd: point1[3], name: agentName})
                             } else {
                                 var latency = Math.floor(point1[1] + (point2[1] - point1[1]) * (pos.x - point1[0]) / (point2[0] - point1[0]));
-                                timespot = new TimeSpot({agent: agent, available: point1[2] && point2[2], latency: latency, db: point1[3] && point2[3], name: agentName})
+                                timespot = new TimeSpot({agent: agent, cpu: (point1[2] + point2[2]) / 2, latency: latency, hd: (point1[3] + point2[3]) / 2, name: agentName})
                             }
                         }
                     }
