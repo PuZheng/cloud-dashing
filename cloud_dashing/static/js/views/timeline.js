@@ -139,7 +139,6 @@ define(['jquery', 'underscore', 'backbone', 'handlebars', 'text!/static/template
             },
 
             _renderPlot: function () {
-                debugger;
                 this._markedPosition = {
                     x: this._reports.last().get('time') * 1000,
                     y: null,
@@ -147,7 +146,7 @@ define(['jquery', 'underscore', 'backbone', 'handlebars', 'text!/static/template
                 if (!!this._initTime && this._getMode() === 'week' && this._markedPosition.x > this._initTime) {
                     this._markedPosition.x = this._initTime
                 }
-                this._initTime = this._markedPosition
+                this._initTime = this._markedPosition.x
                 var data = [];
                 var seriesMap = {};
                 this._reports.each(function (report) {

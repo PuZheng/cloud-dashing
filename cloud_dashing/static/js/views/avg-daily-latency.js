@@ -54,12 +54,10 @@ define(['jquery', 'backbone', 'toastr', 'handlebars', 'common', 'utils', 'collec
                 },
                 
                 _renderPlot: function () {
-                    debugger;
                     var data = [];
                     var seriesMap = {};
                     this._dailyReports.each(function (dailyReport) {
                         for (var i=0; i < dailyReport.get('data').length; ++i) {
-                            var status_ = dailyReport.get('data')[i]
                             var status_ = dailyReport.get('data')[i];
                         if (!(status_.id in seriesMap)) {
                             seriesMap[status_.id] = [];
@@ -69,7 +67,6 @@ define(['jquery', 'backbone', 'toastr', 'handlebars', 'common', 'utils', 'collec
                         }
                     });
                     for (var id in seriesMap) {
-                        var series = seriesMap[id];
                         data.push({
                             data: seriesMap[id],
                             bars: {
