@@ -12,7 +12,7 @@ define(['jquery', 'backbone', 'models/daily-report'], function ($, Backbone, Dai
         },
 
         url: function () {
-            return 'api/daily-reports/' + this.viewpoint.id + '?start=' + this.start + '&end=' + this.end;
+            return 'http://115.28.137.212/api/net-sum/' + this.viewpoint.id + '?at=' + this.start / 1000 + ',' + this.end / 1000;
         },
 
     });

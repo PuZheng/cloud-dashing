@@ -60,6 +60,7 @@ define(['jquery', 'backbone', 'toastr', 'handlebars', 'common', 'utils', 'collec
                     this._dailyReports.each(function (dailyReport) {
                         for (var i=0; i < dailyReport.get('data').length; ++i) {
                             var status_ = dailyReport.get('data')[i]
+                            var status_ = dailyReport.get('data')[i];
                         if (!(status_.id in seriesMap)) {
                             seriesMap[status_.id] = [];
                         }
@@ -73,6 +74,7 @@ define(['jquery', 'backbone', 'toastr', 'handlebars', 'common', 'utils', 'collec
                             data: seriesMap[id],
                             bars: {
                                 show: true,
+                                lineWidth: 0,
                                 fill: true,
                                 fillColor: agents.get(id).get('color'),
                                 align: 'left',

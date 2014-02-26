@@ -7,32 +7,22 @@ define(['jquery', 'backbone', 'backgrid', 'collections/timespots', 'collections/
             cell: "string"
         },
         {
-            name: "available", label: "状态", editable: false, cell: Backgrid.SelectCell.extend({
-            // It's possible to render an option group or use a
-            // function to provide option values too.
-            optionValues: [
-                ["<i class='fa-check fa' />", true],
-                ["<i class='fa-times fa text-danger' />", false]
-            ]
-        })
+            name: "cpu",
+            label: "CPU得分",
+            editable: false,
+            cell: "number"
         },
         {
             name: "latency",
             label: "延迟（ms）",
             editable: false,
-            cell: "string"
+            cell: "integer"
         },
         {
-            name: "db",
-            label: "存储",
+            name: "hd",
+            label: "hd得分",
             editable: false,
-            cell: Backgrid.SelectCell.extend({
-                // It's possible to render an option group or use a
-                // function to provide option values too.
-                optionValues: [
-                    ["<i class='fa-check fa' />", true],
-                    ["<i class='fa-times fa text-danger' />", false]
-                ]})
+            cell: "number"
         }
     ];
 
@@ -41,7 +31,7 @@ define(['jquery', 'backbone', 'backgrid', 'collections/timespots', 'collections/
             this._timespots = data;
             this._updateTimeSpot();
         },
-        toggleAgent: function(){
+        toggleAgent: function () {
             this._updateTimeSpot();
         },
         _updateTimeSpot: function () {
