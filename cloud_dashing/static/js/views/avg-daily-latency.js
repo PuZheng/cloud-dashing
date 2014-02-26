@@ -1,5 +1,5 @@
-define(['jquery', 'backbone', 'toastr', 'handlebars', 'common', 'utils', 'collections/daily-reports', 'collections/agents', 'text!/static/templates/avg-daily-latency.hbs', 'jquery.plot', 'jquery.plot.time', 'jquery.plot.tooltip'], 
-        function ($, Backbone, toastr, Handlebars, common, utils, DailyReports, agents, avgDailyLatencyTemplate) {
+define(['jquery', 'backbone', 'toastr', 'handlebars', 'common', 'utils', 'collections/daily-net-reports', 'collections/agents', 'text!/static/templates/avg-daily-latency.hbs', 'jquery.plot', 'jquery.plot.time', 'jquery.plot.tooltip'], 
+        function ($, Backbone, toastr, Handlebars, common, utils, DailyNetReports, agents, avgDailyLatencyTemplate) {
             var AvgDailyLatencyView = Backbone.View.extend({
 
                 _template: Handlebars.default.compile(avgDailyLatencyTemplate),
@@ -57,21 +57,21 @@ define(['jquery', 'backbone', 'toastr', 'handlebars', 'common', 'utils', 'collec
                     var data = [];
                     var seriesMap = {};
                     this._dailyReports.each(function (dailyReport) {
-                        for (var i=0; i < dailyReport.get('statusList').length; ++i) {
-                            var status_ = dailyReport.get('statusList')[i]
+                        for (var i=0; i < dailyReport.get('data').length; ++i) {
+                            var status_ = dailyReport.get('data')[i];
                         if (!(status_.id in seriesMap)) {
                             seriesMap[status_.id] = [];
                         }
-                        seriesMap[status_.id].push([dailyReport.get('at'), 
+                        seriesMap[status_.id].push([dailyReport.get('time') * 1000,  
                             status_.latency]);
                         }
                     });
                     for (var id in seriesMap) {
-                        var series = seriesMap[id];
                         data.push({
                             data: seriesMap[id],
                             bars: {
                                 show: true,
+                                lineWidth: 0,
                                 fill: true,
                                 fillColor: agents.get(id).get('color'),
                                 align: 'left',
@@ -109,7 +109,7 @@ define(['jquery', 'backbone', 'toastr', 'handlebars', 'common', 'utils', 'collec
                 updateViewpoint: function (viewpoint) {
                     if (this._viewpoint !=viewpoint || this._hasChanged == true) {
                         this._viewpoint = viewpoint;
-                        this._dailyReports = new DailyReports(this._viewpoint, this._start, this._end);
+                        this._dailyReports = new DailyNetReports(this._viewpoint, this._start, this._end);
                         this._dailyReports.fetch({reset: true});
                         this._dailyReports.on('reset', this._renderPlot, this);
                     }else{

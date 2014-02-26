@@ -83,8 +83,8 @@ define(['jquery', 'underscore', 'backbone', 'handlebars', 'text!/static/template
                         markings: function (axes) {
                             ret = [];
                             that._reports.each(function (report, i) {
-                                for (var j = 0; j < report.get('statusList').length; ++j) {
-                                    var status_ = report.get('statusList')[j];
+                                for (var j = 0; j < report.get('data').length; ++j) {
+                                    var status_ = report.get('data')[j];
                                     var agent = agents.get(status_.id);
                                     if (agent.selected && status_.latency == null) {
                                         var from = null;
@@ -140,22 +140,26 @@ define(['jquery', 'underscore', 'backbone', 'handlebars', 'text!/static/template
 
             _renderPlot: function () {
                 this._markedPosition = {
-                    x: this._reports.last().get('at'),
+                    x: this._reports.last().get('time') * 1000,
                     y: null,
                 }
                 if (!!this._initTime && this._getMode() === 'week' && this._markedPosition.x > this._initTime) {
                     this._markedPosition.x = this._initTime
                 }
-                this._initTime = this._markedPosition
+                this._initTime = this._markedPosition.x
                 var data = [];
                 var seriesMap = {};
                 this._reports.each(function (report) {
-                    for (var j = 0; j < report.get('statusList').length; ++j) {
-                        var agentStatus = report.get('statusList')[j];
-                        if (!(agentStatus.id in seriesMap)) {
-                            seriesMap[agentStatus.id] = [];
+                    var netStatusList = report.get('data')["网络性能"];
+                    if (!!netStatusList) {
+                        for (var j = 0; j < netStatusList.length; ++j) {
+                            var agentStatus = netStatusList[j];
+                            if (!(agentStatus.id in seriesMap)) {
+                                seriesMap[agentStatus.id] = [];
+                            }
+                            seriesMap[agentStatus.id].push([report.get('time') * 1000, parseFloat(agentStatus["延迟"]), parseFloat(report.get('data')["计算性能"]["分数"]),
+                                parseFloat(report.get('data')["磁盘性能"]["分数"])]);
                         }
-                        seriesMap[agentStatus.id].push([report.get('at'), agentStatus.latency, agentStatus.available, agentStatus.db]);
                     }
                 });
                 for (var id in seriesMap) {
@@ -210,10 +214,10 @@ define(['jquery', 'underscore', 'backbone', 'handlebars', 'text!/static/template
                                 agentName = agent.get("name");
                             }
                             if (point1[0] == point2[0]) {
-                                timespot = new TimeSpot({agent: agent, available: point1[2], latency: Math.floor(point1[1]), db: point1[3], name: agentName})
+                                timespot = new TimeSpot({agent: agent, cpu: point1[2], latency: Math.floor(point1[1]), hd: point1[3], name: agentName})
                             } else {
                                 var latency = Math.floor(point1[1] + (point2[1] - point1[1]) * (pos.x - point1[0]) / (point2[0] - point1[0]));
-                                timespot = new TimeSpot({agent: agent, available: point1[2] && point2[2], latency: latency, db: point1[3] && point2[3], name: agentName})
+                                timespot = new TimeSpot({agent: agent, cpu: (point1[2] + point2[2]) / 2, latency: latency, hd: (point1[3] + point2[3]) / 2, name: agentName})
                             }
                         }
                     }
@@ -364,7 +368,7 @@ define(['jquery', 'underscore', 'backbone', 'handlebars', 'text!/static/template
                     left: this._plot.pointOffset({x: this._markedPosition.x, y: 0}).left + this.$container.offset().left,
                     top: this._plot.offset().top + this._plot.height() / 2
                 }).show();
-                var data = report.statusList.map(function (status_) {
+                var data = report.data.map(function (status_) {
                     var agent = _.find(agents.models, function (agent) {
                         return agent.get("id") == status_.id;
                     });
