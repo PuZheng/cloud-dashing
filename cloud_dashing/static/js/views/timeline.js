@@ -139,8 +139,9 @@ define(['jquery', 'underscore', 'backbone', 'handlebars', 'text!/static/template
             },
 
             _renderPlot: function () {
+                debugger;
                 this._markedPosition = {
-                    x: this._reports.last().get('at'),
+                    x: this._reports.last().get('time') * 1000,
                     y: null,
                 }
                 if (!!this._initTime && this._getMode() === 'week' && this._markedPosition.x > this._initTime) {
