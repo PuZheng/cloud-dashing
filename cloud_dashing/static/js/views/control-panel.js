@@ -29,7 +29,15 @@ define(['jquery', 'backbone', 'handlebars', 'text',
             },
 
             _onViewpointSet: function (e) {
-                this.trigger('viewpoint-set', agents.get(this.$('select').val()).toJSON());
+                var viewpoint = agents.get(this.$('select').val()).toJSON();
+                this.trigger('viewpoint-set', viewpoint);
+                this.$("ul li").each(function (index) {
+                    if ($(this).attr('data-agent-id') == viewpoint.id) {
+                        $(this).hide();
+                    } else {
+                        $(this).show();
+                    }
+                });
             },
 
             _toggleAgent: function (el) {
