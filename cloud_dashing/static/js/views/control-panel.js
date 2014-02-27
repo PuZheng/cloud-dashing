@@ -77,7 +77,8 @@ define(['jquery', 'backbone', 'handlebars', 'text',
                     } else {
                         latency += 'ms';
                     }
-                    var el = this.$('li.list-group-item').eq(i).find('small');
+                    var agentId = val.get('agent').id;
+                    var el = this.$('li.list-group-item[data-agent-id=' + agentId + ']').find('small');
                     el.text(el.text().replace(/-.*/, '- ' + latency));
                 });
             }
