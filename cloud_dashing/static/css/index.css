@@ -78,7 +78,7 @@
     text-align: center !important;
 }
 
-.avg-latency {
+.hd-score, .cpu-score, .avg-latency {
     /*width: 90%;*/
     height: 300px;
 }

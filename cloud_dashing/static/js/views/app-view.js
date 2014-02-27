@@ -66,7 +66,7 @@ define(['backbone', 'views/map-view', 'views/control-panel', 'views/timeline', '
                         this.$('div.timeline').hide();
                         this.$('div.table').hide();
                         this.$('div.stat').show();
-                        this.$('div.stable').show();
+                        //this.$('div.stable').show();
 
                         if (!!this._stat) {
                             // 展示后必须重画
