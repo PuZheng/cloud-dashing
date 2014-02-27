@@ -157,8 +157,22 @@ define(['jquery', 'underscore', 'backbone', 'handlebars', 'text!/static/template
                             if (!(agentStatus.id in seriesMap)) {
                                 seriesMap[agentStatus.id] = [];
                             }
-                            seriesMap[agentStatus.id].push([report.get('time') * 1000, parseFloat(agentStatus["延迟"]), parseFloat(report.get('data')["计算性能"]["分数"]),
-                                parseFloat(report.get('data')["磁盘性能"]["分数"])]);
+                            var latency = 0;
+                            try {
+                                latency = parseFloat(agentStatus["延迟"]);
+                            } catch (e) {
+                            }
+                            var cpu_score = 0.0;
+                            try {
+                                cpu_score = parseFloat(report.get('data')["计算性能"]["分数"]);
+                            } catch (e) {
+                            }
+                            var hd_score = 0.0;
+                            try {
+                                hd_score = parseFloat(report.get('data')["磁盘性能"]["分数"]);
+                            } catch (e) {
+                            }
+                            seriesMap[agentStatus.id].push([report.get('time') * 1000, latency, cpu_score , hd_score]);
                         }
                     }
                 });
