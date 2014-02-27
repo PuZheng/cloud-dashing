@@ -1,56 +1,15 @@
-define(['jquery', 'backbone', 'toastr', 'handlebars', 'common', 'utils', 'collections/daily-net-reports', 'collections/agents', 'text!/static/templates/avg-daily-latency.hbs', 'jquery.plot', 'jquery.plot.time', 'jquery.plot.tooltip'], 
-        function ($, Backbone, toastr, Handlebars, common, utils, DailyNetReports, agents, avgDailyLatencyTemplate) {
-            var AvgDailyLatencyView = Backbone.View.extend({
+define(['handlebars', 'collections/daily-net-reports', 'collections/agents', 'text!/static/templates/avg-daily-latency.hbs', 'views/stat-bar-plot'], 
+        function (Handlebars, DailyNetReports, agents, avgDailyLatencyTemplate, StatBarPlot) {
+            var AvgDailyLatencyView = StatBarPlot.extend({
 
                 _template: Handlebars.default.compile(avgDailyLatencyTemplate),
 
-                initialize: function () {
-                    this._start = utils.getMonday(new Date()).getTime();
-                    this._end = this._start + common.MS_A_WEEK;
-                    toastr.options = {
-                        "positionClass": "toast-bottom-full-width",
-                        "timeOut": "1000",
-                    }
-                },
-                
-                events: {
-                    'click .backward-btn': 'moveBack',
-                    'click .forward-btn': 'moveForward',
+                getDailyReports: function () {
+                    return new DailyNetReports(this._viewpoint, this._start, this._end);
                 },
 
-                render: function () {
-                    this.$el.html(this._template());
-                    this.$container = this.$('.avg-latency');
-                    return this; 
-                },
-
-                _options: function () {
-                    return {
-                        xaxis: {
-                            mode: 'time',
-                            timezone: 'browser',
-                            min: this._start - common.MS_A_DAY/2,
-                            max: this._end - common.MS_A_DAY/2,
-                        },
-                        series: {
-                            lines: { show: false },
-                            points: { show: false }
-                        },
-                        grid: {
-                            clickable: true,
-                            hoverable: true,
-                            borderWidth: {
-                                top: 0,
-                                right: 0,
-                                bottom: 1,
-                                left: 1
-                            },
-                        },
-                        tooltip: true,
-                        tooltipOpts: {
-                            content: '%y',
-                        },
-                    };
+                container: function () {
+                    return this.$('.avg-latency');
                 },
                 
                 _renderPlot: function () {
@@ -86,7 +45,7 @@ define(['jquery', 'backbone', 'toastr', 'handlebars', 'common', 'utils', 'collec
                             return [point[0] - 11 * 60 * 60 * 1000 + i * barWidth, point[1]]
                         });
                     });
-                    this._plot = $.plot(this.$container, this._hideDisabledAgents(data), this._options());
+                    this._plot = $.plot(this.container(), this._hideDisabledAgents(data), this._options());
                     this._hasChanged = false;
                 },
 
@@ -106,34 +65,6 @@ define(['jquery', 'backbone', 'toastr', 'handlebars', 'common', 'utils', 'collec
                     this._plot = $.plot(this.$container, this._hideDisabledAgents(this._plot.getData()), this._options());
                 },
 
-                updateViewpoint: function (viewpoint) {
-                    if (this._viewpoint !=viewpoint || this._hasChanged == true) {
-                        this._viewpoint = viewpoint;
-                        this._dailyReports = new DailyNetReports(this._viewpoint, this._start, this._end);
-                        this._dailyReports.fetch({reset: true});
-                        this._dailyReports.on('reset', this._renderPlot, this);
-                    }else{
-                        this._renderPlot();
-                    }
-                },
-
-                moveBack: function () {
-                    this._end = this._start;
-                    this._start = this._start - common.MS_A_WEEK;
-                    this._hasChanged = true;
-                    this.updateViewpoint(this._viewpoint);
-                },
-                
-                moveForward: function () {
-                    if (this._end >= new Date().getTime()) {
-                        toastr.warning('已经是本周了!'); 
-                        return;
-                    }
-                    this._start = this._end;
-                    this._end = this._start + common.MS_A_WEEK;
-                    this._hasChanged = true;
-                    this.updateViewpoint(this._viewpoint);
-                },
             });
             return AvgDailyLatencyView;
         });
