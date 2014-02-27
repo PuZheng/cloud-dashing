@@ -42,6 +42,7 @@ require.config({
         'backgrid':'backgrid/lib/backgrid',
         'text': 'text/text',
         'widgets/agent-marker': '/static/js/widgets/agent-marker',
+        'widgets/mult-agent-marker': '/static/js/widgets/mult-agent-marker',
         'router/app-router': '/static/js/router/app-router'
     },
     urlArgs: "bust=" + (new Date()).getTime(),
