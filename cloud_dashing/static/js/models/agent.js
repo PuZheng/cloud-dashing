@@ -2,6 +2,7 @@ define(['backbone'], function (Backbone) {
     var Agent = Backbone.Model.extend({
         defaults: {
             name: '',
+            provider: '',
             location: '',
             color: '',
             crash_in_week: 0,
