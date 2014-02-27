@@ -12,7 +12,7 @@
   <div class="panel-body">
     <ul class="list-group">
       {{#each agents}}
-      <li class="list-group-item list-group-item-success text-center" value="{{this.id}}" data-enabled='true'>
+      <li class="list-group-item list-group-item-success text-center" value="{{this.id}}" data-enabled='true' data-agent-id={{this.id}}>
         <i class="fa fa-check"></i>
         <i class="fa fa-square" style="color: {{this.color}}" data-color="{{this.color}}"></i>
         <small>{{this.id}}.{{this.name}} -</small>
