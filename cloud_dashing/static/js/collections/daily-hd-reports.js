@@ -1,5 +1,5 @@
-define(['jquery', 'backbone', 'moment', 'models/daily-hd-report', 'common'], function ($, Backbone, moment, DailyHdReport, common) {
-
+define(['jquery', 'backbone', 'moment', 'models/daily-hd-report', 'common'], 
+function ($, Backbone, moment, DailyHdReport, common) { 
     var DailyHdReports = Backbone.Collection.extend({
 
         model: DailyHdReport,

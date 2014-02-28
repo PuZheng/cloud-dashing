@@ -1,4 +1,4 @@
-define(['jquery', 'backbone', 'models/daily-report', 'moment', 'common'], function ($, Backbone, DailyReport, moment, common) {
+define(['jquery', 'backbone', 'models/daily-report', 'moment', 'common', 'collections/agents'], function ($, Backbone, DailyReport, moment, common, agents) {
 
     var DailyReports = Backbone.Collection.extend({
 
@@ -12,7 +12,8 @@ define(['jquery', 'backbone', 'models/daily-report', 'moment', 'common'], functi
         },
 
         url: function () {
-            return 'http://' + common.SERVER_IP + '/api/net-sum/' + this.viewpoint.id + '?date=' + moment(this.start).format('YYYY-MM-DD') + ',' + moment(this.end).format('YYYY-MM-DD');
+            var cloud_id_list = agents.map(function (agent) {return agent.id}).join();
+            return 'http://' + common.SERVER_IP + '/api/details-sum?cloud-id-list=' + cloud_id_list + '&features=cpu,hd,net&date=' + moment(this.start).format('YYYY-MM-DD') + ',' + moment(this.end).format('YYYY-MM-DD');
         },
 
     });
