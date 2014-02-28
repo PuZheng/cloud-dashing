@@ -146,7 +146,7 @@ define(['jquery', 'underscore', 'backbone', 'handlebars', 'text!/static/template
                 if (!!this._initTime && this._getMode() === 'week' && this._markedPosition.x > this._initTime) {
                     this._markedPosition.x = this._initTime
                 }
-                this._initTime = this._markedPosition.x
+                this._initTime = this._markedPosition.x;
                 var data = [];
                 var seriesMap = {};
                 this._reports.each(function (report) {
@@ -360,25 +360,26 @@ define(['jquery', 'underscore', 'backbone', 'handlebars', 'text!/static/template
             },
 
             _displayReport: function (report) {
-                this._markedPosition.x = report.at;
+                this._markedPosition.x = report.time * 1000;
                 this._plot.draw();
-                var date = new Date(report.at);
+                var date = new Date(this._markedPosition.x);
                 this._currentTimeTag.text(date.getHours() + ":" + date.getMinutes());
                 this._currentTimeTag.offset({
                     left: this._plot.pointOffset({x: this._markedPosition.x, y: 0}).left + this.$container.offset().left,
                     top: this._plot.offset().top + this._plot.height() / 2
                 }).show();
-                var data = report.data.map(function (status_) {
+                var data = [];
+                _.forEach(report.data["网络性能"], function (netStatus) {
                     var agent = _.find(agents.models, function (agent) {
-                        return agent.get("id") == status_.id;
+                        return agent.get("id") == netStatus.id;
                     });
-                    return new TimeSpot({
+                    data.push(new TimeSpot({
                         agent: agent,
-                        name: agent.get("name"),
-                        available: status_.available,
-                        latency: status_.latency,
-                        db: status_.db
-                    });
+                        cpu: parseFloat(report.data["计算性能"]["分数"]),
+                        hd: parseFloat(report.data["磁盘性能"]["分数"]),
+                        latency:parseFloat(netStatus["延迟"]),
+                        name: agent.get("name") || ""
+                    }));
                 });
                 this.trigger('time-changed', data);
             }
