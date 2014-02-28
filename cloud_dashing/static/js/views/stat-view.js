@@ -3,14 +3,14 @@ define(['backbone', 'views/avg-daily-latency', 'views/cpu-score-view', 'views/hd
             var StatView = Backbone.View.extend({
 
                 initialize: function () {
+                    this._stableView = new StableView();
+                    this.$el.append(this._stableView.render().el);
                     this._avgDailyLatencyView = new AvgDailyLatencyView();
                     this.$el.append(this._avgDailyLatencyView.render().el);
                     this._cpuScoreView = new CpuScoreView();
                     this.$el.append(this._cpuScoreView.render().el);
                     this._hdScoreView = new HdScoreView();
                     this.$el.append(this._hdScoreView.render().el);
-                    this._stableView = new StableView();
-                    this.$el.append(this._stableView.render().el);
                     return this; 
                 },
 
