@@ -1,4 +1,4 @@
-define(['backbone', 'collections/agents', 'widgets/agent-marker', 'underscore'], function (Backbone, agents, AgentMarker, _) {
+define(['backbone', 'collections/agents', 'widgets/mult-agent-marker', 'underscore'], function (Backbone, agents, MultAgentMarker, _) {
     
     var MapView = Backbone.View.extend({
         render: function () {
@@ -17,46 +17,39 @@ define(['backbone', 'collections/agents', 'widgets/agent-marker', 'underscore'],
                 map.setMapStyle(mapStyle);
                 map.addControl(new BMap.NavigationControl());
 
-                this._markers = agents.map(function (agent) {
-                    var marker = new AgentMarker(agent);
+                this._markers = MultAgentMarker.initMarkers(agents);
+                _.each(this._markers, function (marker) {
                     map.addOverlay(marker);
-                    return marker;
-                }, this);
+                });
                 this._map = map;
             }
         },
 
-        updateLatency: function (data) {
-            _.each(this._markers, function (marker, idx) {
-                if (marker.getAgent().get('selected')) {
-                    marker.update(data[idx]);
-                    marker.show();
-                } else {
-                    marker.hide();
+        updateLatency: function (result) {
+            var data = {};
+            _.forEach(result, function (val) {
+                if (!!val) {
+                    data[val.get("agent").get("id")] = val.get("latency");
                 }
+            });
+            _.forEach(this._markers, function (marker) {
+                marker.update(data);
             });
         },
 
         toggleAgent: function (agent) {
-            _.filter(this._markers, function (marker) {
-                return marker.getAgent().get('id') === agent.id;
-            }).forEach(function (marker) {
-                if (agent.selected) {
-                    marker.show();
-                } else {
-                    marker.hide();
-                }
+            _.each(this._markers, function (marker, idx) {
+                marker.toggleAgent();
             });
         },
 
         updateTooltip: function (viewpoint) {
             if (!!this._markers) {
-                this._markers.forEach(function (marker) {
+                _.forEach(this._markers, function (marker) {
                     marker.updateTooltip(viewpoint);
                 });
             }
         }
-        
     });
 
 
