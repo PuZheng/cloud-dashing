@@ -62,7 +62,7 @@ define(['handlebars', 'collections/daily-net-reports', 'collections/agents', 'te
                 },
 
                 toggleAgent: function (agent) {
-                    this._plot = $.plot(this.$container, this._hideDisabledAgents(this._plot.getData()), this._options());
+                    this._plot = $.plot(this.container(), this._hideDisabledAgents(this._plot.getData()), this._options());
                 },
 
             });

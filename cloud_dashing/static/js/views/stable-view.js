@@ -27,30 +27,27 @@ define(['jquery', 'toastr', 'backbone', 'handlebars', 'collections/daily-reports
 
             _tbody: function () {
                 var data = {};
-                if (this._dailyReports) {
+                agents.each(function (agent) {
+                    data[agent.id]  = {};
+                });
+
+                if (this._dailyReports.length) {
                     this._dailyReports.each(function (dailyReport) {
-                        for (var i = 0; i < dailyReport.get('data').length; ++i) {
-                            var at = dailyReport.get("at");
-                            var status_ = dailyReport.get('data')[i];
-                            var agent = agents.get(status_.id);
-                            if (agent.get("selected") == true) {
-                                if (!(status_.id in data)) {
-                                    data[status_.id] = {};
-                                }
-                                data[status_.id][at] = status_.crash_num;
-                            }
-                        }
+                        var at = dailyReport.get("time");
+                        agents.each(function (agent) {
+                            data[agent.id][at] = dailyReport.agentCrashNum(agent.id);
+                        });
                     });
                 }
-                var _dateSpans = this._getDateSpans();
-                var dataColumns = _.map(data, function (value, key) {
+                var dateSpans = this._getDateSpans()
+                var dataColumns = _.map(data, function (series, agentId) {
                     var html = $("<tr></tr>");
-                    html.append($("<td></td>").addClass("text-center").text(agents.get(key).get("name")));
-                    _.each(_dateSpans, function (date) {
-                        var val = value[date.getTime()];
+                    html.append($("<td></td>").addClass("text-center").text(agents.get(agentId).get("provider")));
+                    _.each(dateSpans, function (date) {
+                        var val = series[date.getTime()/1000];
                         var td = $("<td></td>").addClass("text-center");
                         if(val == undefined){
-                            td.html("&nbsp;");
+                            td.html("--");
                         }else if (val > 0) {
                             td.html($("<i></i>").addClass("fa fa-frown-o"));
                         } else {
