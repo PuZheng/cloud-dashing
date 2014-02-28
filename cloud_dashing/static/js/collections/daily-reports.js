@@ -1,4 +1,4 @@
-define(['jquery', 'backbone', 'models/daily-report'], function ($, Backbone, DailyReport) {
+define(['jquery', 'backbone', 'models/daily-report', 'moment', 'common'], function ($, Backbone, DailyReport, moment, common) {
 
     var DailyReports = Backbone.Collection.extend({
 
@@ -12,7 +12,7 @@ define(['jquery', 'backbone', 'models/daily-report'], function ($, Backbone, Dai
         },
 
         url: function () {
-            return 'http://115.28.137.212/api/net-sum/' + this.viewpoint.id + '?at=' + this.start / 1000 + ',' + this.end / 1000;
+            return 'http://' + common.SERVER_IP + '/api/net-sum/' + this.viewpoint.id + '?date=' + moment(this.start).format('YYYY-MM-DD') + ',' + moment(this.end).format('YYYY-MM-DD');
         },
 
     });

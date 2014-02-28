@@ -1,5 +1,5 @@
-define(['backbone', 'views/avg-daily-latency', 'views/cpu-score-view', 'views/hd-score-view'], 
-        function (Backbone, AvgDailyLatencyView, CpuScoreView, HdScoreView) {
+define(['backbone', 'views/avg-daily-latency', 'views/cpu-score-view', 'views/hd-score-view', 'views/stable-view'], 
+        function (Backbone, AvgDailyLatencyView, CpuScoreView, HdScoreView, StableView) {
             var StatView = Backbone.View.extend({
 
                 initialize: function () {
@@ -9,6 +9,8 @@ define(['backbone', 'views/avg-daily-latency', 'views/cpu-score-view', 'views/hd
                     this.$el.append(this._cpuScoreView.render().el);
                     this._hdScoreView = new HdScoreView();
                     this.$el.append(this._hdScoreView.render().el);
+                    this._stableView = new StableView();
+                    this.$el.append(this._stableView.render().el);
                     return this; 
                 },
 
@@ -16,10 +18,12 @@ define(['backbone', 'views/avg-daily-latency', 'views/cpu-score-view', 'views/hd
                     this._avgDailyLatencyView.updateViewpoint(viewpoint);
                     this._cpuScoreView.updateViewpoint(viewpoint);
                     this._hdScoreView.updateViewpoint(viewpoint);
+                    this._stableView.updateViewpoint(viewpoint);
                 },
 
                 toggleAgent: function (agent) {
                     this._avgDailyLatencyView.toggleAgent(agent);
+                    this._stableView.toggleAgent(agent);
                 },
 
             });
