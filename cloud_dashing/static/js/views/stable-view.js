@@ -29,17 +29,17 @@ define(['jquery', 'toastr', 'backbone', 'handlebars', 'collections/daily-reports
                 var data = {};
                 if (this._dailyReports) {
                     this._dailyReports.each(function (dailyReport) {
-                        for (var i = 0; i < dailyReport.get('data').length; ++i) {
-                            var at = dailyReport.get("at");
-                            var status_ = dailyReport.get('data')[i];
-                            var agent = agents.get(status_.id);
+                        var time = dailyReport.get("time") * 1000;
+                        var result = dailyReport.get('data');
+                        _.each(result, function (val) {
+                            var agent = agents.get(val.id);
                             if (agent.get("selected") == true) {
-                                if (!(status_.id in data)) {
-                                    data[status_.id] = {};
+                                if (!(val.id in data)) {
+                                    data[val.id] = {};
                                 }
-                                data[status_.id][at] = status_.crash_num;
+                                data[val.id][time] = val.crash_num;
                             }
-                        }
+                        });
                     });
                 }
                 var _dateSpans = this._getDateSpans();
@@ -47,6 +47,7 @@ define(['jquery', 'toastr', 'backbone', 'handlebars', 'collections/daily-reports
                     var html = $("<tr></tr>");
                     html.append($("<td></td>").addClass("text-center").text(agents.get(key).get("name")));
                     _.each(_dateSpans, function (date) {
+                        debugger;
                         var val = value[date.getTime()];
                         var td = $("<td></td>").addClass("text-center");
                         if(val == undefined){
