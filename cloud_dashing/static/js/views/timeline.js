@@ -249,7 +249,6 @@ define(['jquery', 'underscore', 'backbone', 'handlebars', 'text!/static/template
                     return newDataset;
                 }
 
-                debugger;
                 var i, j, dataset = this._plot.getData();
                 var newDataSet = unionDataset(dataset);
                 var data = [];
