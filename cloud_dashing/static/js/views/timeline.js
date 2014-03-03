@@ -274,7 +274,6 @@ define(['jquery', 'underscore', 'backbone', 'handlebars', 'text!/static/template
                             break;
                         }
                     }
-                    debugger;
                     var timespot = null;
                     if (point1) {
                         if (point1.latency && point2.latency) {
