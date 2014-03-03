@@ -1,5 +1,6 @@
-define(['jquery', 'underscore', 'backbone', 'handlebars', 'text!/static/templates/timeline.hbs', 'collections/reports', 'collections/agents', 'models/timespot', 'common', 'utils', 'toastr', 'jquery.plot', 'jquery.plot.crosshair',
-    'jquery.plot.time'],
+define(['jquery', 'underscore', 'backbone', 'handlebars', 'text!/static/templates/timeline.hbs',
+    'collections/reports', 'collections/agents', 'models/timespot', 'common', 'utils', 'toastr',
+    'jquery.plot', 'jquery.plot.crosshair', 'jquery.plot.symbol', 'jquery.plot.time'],
     function ($, _, Backbone, Handlebars, timelineTemplate, Reports, agents, TimeSpot, common, utils, toastr) {
         var Timeline = Backbone.View.extend({
             _template: Handlebars.default.compile(timelineTemplate),
@@ -51,7 +52,7 @@ define(['jquery', 'underscore', 'backbone', 'handlebars', 'text!/static/template
                     this._reports = new Reports(viewpoint, this._start, this._end);
                     this._reports.fetch({reset: true});
                     this._reports.on('reset', this._renderPlot, this);
-                }else{
+                } else {
                     this._renderPlot();
                 }
             },
@@ -148,27 +149,68 @@ define(['jquery', 'underscore', 'backbone', 'handlebars', 'text!/static/template
                 }
                 this._initTime = this._markedPosition.x;
                 var data = [];
-                var seriesMap = {};
-                this._reports.each(function (report) {
+                var lineSeriesMap = {};
+                var pointSeriesMap = {};
+                var _reportsSize = this._reports.models.length;
+
+                function getLatency(report, agentId) {
+                    var netStatus = report.get("data")["网络性能"];
+                    var agentStatus = _.find(netStatus, function (status) {
+                        return status.id == agentId;
+                    });
+                    if (!!agentStatus) {
+                        return  parseFloat(agentStatus["延迟"]);
+                    }
+                }
+
+                for (var i = 0; i < _reportsSize; i++) {
+                    var report = this._reports.models[i];
                     var netStatusList = report.get('data')["网络性能"];
                     if (!!netStatusList) {
                         for (var j = 0; j < netStatusList.length; ++j) {
                             var agentStatus = netStatusList[j];
-                            if (!(agentStatus.id in seriesMap)) {
-                                seriesMap[agentStatus.id] = [];
-                            }
-                            try {
-                                seriesMap[agentStatus.id].push([report.get('time') * 1000, parseFloat(agentStatus["延迟"]), parseFloat(report.get('data')["计算性能"]["分数"]),
+                            var latency = parseFloat(agentStatus["延迟"]);
+
+                            if (agentStatus["crashed"] === 0) {
+                                if (!(agentStatus.id in lineSeriesMap)) {
+                                    lineSeriesMap[agentStatus.id] = [];
+                                }
+                                lineSeriesMap[agentStatus.id].push([report.get('time') * 1000, latency, parseFloat(report.get('data')["计算性能"]["分数"]),
                                     parseFloat(report.get('data')["磁盘性能"]["分数"])]);
-                            } catch (e) {
+                            } else {
+                                if (!(agentStatus.id in pointSeriesMap)) {
+                                    pointSeriesMap[agentStatus.id] = [];
+                                }
+
+                                if (i < _reportsSize - 1) {
+                                    var nextLatency = getLatency(this._reports.models[i + 1], agentStatus.id);
+                                }
+                                if (i > 0) {
+                                    var prevLatency = getLatency(this._reports.models[i - 1], agentStatus.id);
+                                }
+                                if (nextLatency && prevLatency) {
+                                    latency = (nextLatency + prevLatency) / 2
+                                } else {
+                                    latency = nextLatency || prevLatency;
+                                }
+                                pointSeriesMap[agentStatus.id].push([report.get('time') * 1000, latency, parseFloat(report.get('data')["计算性能"]["分数"]),
+                                    parseFloat(report.get('data')["磁盘性能"]["分数"]), "crashed"]);
                             }
                         }
                     }
-                });
-                for (var id in seriesMap) {
+                }
+                for (var id in lineSeriesMap) {
                     data.push({
                         agentId: id,
-                        data: seriesMap[id],
+                        data: lineSeriesMap[id],
+                        dataType: "lines"
+                    });
+                }
+                for (var id in pointSeriesMap) {
+                    data.push({
+                        agentId: id,
+                        data: pointSeriesMap[id],
+                        dataType: "points"
                     });
                 }
                 this._plot = $.plot(this.$container, this._hideDisabledAgents(data), this._options());
@@ -181,28 +223,48 @@ define(['jquery', 'underscore', 'backbone', 'handlebars', 'text!/static/template
                     var series = data[i];
                     var agent = agents.get(series.agentId);
                     var selected = agent.get('selected');
-                    series.lines = {show: selected};
-                    series.color = selected ? agent.get('color') : '#ccc';
+                    if (series.dataType == "lines") {
+                        series.lines = {show: selected};
+                        series.color = selected ? agent.get('color') : '#ccc';
+                    } else if (series.dataType == "points") {
+                        series.points = {show: selected, symbol: "cross"};
+                        series.color = "red";
+                    }
                 }
                 return data;
             },
 
             _updateTimeSpot: function (pos) {
+                function unionDataset(dataset, x) {
+                    var newDataset = {};
+                    _.forEach(dataset, function (series) {
+                        if(!(series.agentId in newDataset)) {
+                            newDataset[series.agentId] = [];
+                        }
+                        var data = _.union(newDataset[series.agentId], series.data);
+                        newDataset[series.agentId] = _.sortBy(data, function (val) {
+                            return val[0];
+                        });
+                    });
+                    return newDataset;
+                }
+
+                debugger;
                 var i, j, dataset = this._plot.getData();
+                var newDataSet = unionDataset(dataset);
                 var data = [];
-                for (i = 0; i < dataset.length; ++i) {
-                    var series = dataset[i];
+                _.each(newDataSet, function (value, idx) {
                     // Find the nearest points, x-wise
                     var point1 = null;
                     var point2 = null;
-                    for (j = 0; j < series.data.length; ++j) {
-                        if (series.data[j][0] > pos.x) {
-                            point1 = series.data[j - 1];
-                            point2 = series.data[j];
+                    for (j = 0; j < value.length; ++j) {
+                        if (value[j][0] > pos.x) {
+                            point1 = value[j - 1];
+                            point2 = value[j];
                             break;
-                        } else if (series.data[j][0] == pos.x) {
-                            point1 = series.data[j];
-                            point2 = series.data[j];
+                        } else if (value[j][0] == pos.x) {
+                            point1 = value[j];
+                            point2 = value[j];
                             break;
                         }
                     }
@@ -210,22 +272,29 @@ define(['jquery', 'underscore', 'backbone', 'handlebars', 'text!/static/template
                     if (point1) {
                         if (point1[1] && point2[1]) {
                             var agent = _.find(agents.models, function (agent) {
-                                return agent.get("id") == series.agentId
+                                return agent.get("id") == idx
                             });
                             var agentName = "";
                             if (agent) {
                                 agentName = agent.get("name");
                             }
-                            if (point1[0] == point2[0]) {
-                                timespot = new TimeSpot({agent: agent, cpu: point1[2], latency: Math.floor(point1[1]), hd: point1[3], name: agentName})
-                            } else {
-                                var latency = Math.floor(point1[1] + (point2[1] - point1[1]) * (pos.x - point1[0]) / (point2[0] - point1[0]));
-                                timespot = new TimeSpot({agent: agent, cpu: (point1[2] + point2[2]) / 2, latency: latency, hd: (point1[3] + point2[3]) / 2, name: agentName})
+                            var cpu = point1[2];
+                            var hd = point1[3];
+                            var latency = Math.floor(point1[1]);
+                            if (point1[0] != point2[0]) {
+                                latency = Math.floor(point1[1] + (point2[1] - point1[1]) * (pos.x - point1[0]) / (point2[0] - point1[0]));
+                                cpu = (point1[2] + point2[2]) / 2;
+                                hd = (point1[3] + point2[3]) / 2;
                             }
+                            if (!!point1[4]) {
+                                latency = -1
+                            }
+                            timespot = new TimeSpot({agent: agent, cpu: cpu, latency: latency, hd: hd, name: agentName})
+
                         }
                     }
                     data.push(timespot);
-                }
+                });
                 this.trigger('time-changed', data);
             },
 
@@ -380,7 +449,7 @@ define(['jquery', 'underscore', 'backbone', 'handlebars', 'text!/static/template
                         agent: agent,
                         cpu: parseFloat(report.data["计算性能"]["分数"]),
                         hd: parseFloat(report.data["磁盘性能"]["分数"]),
-                        latency:parseFloat(netStatus["延迟"]),
+                        latency: parseFloat(netStatus["延迟"]),
                         name: agent.get("name") || ""
                     }));
                 });

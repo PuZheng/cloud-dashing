@@ -17,6 +17,7 @@ require.config({
         'jquery.plot.crosshair': 'flot/jquery.flot.crosshair',
         'jquery.plot.time': '/static/js/misc/jquery.flot.time',
         'jquery.plot.tooltip': 'flot.tooltip/js/jquery.flot.tooltip.min',
+        'jquery.plot.symbol': 'flot/jquery.flot.symbol',
         'moment': 'moment/min/moment.min',
         'toastr': 'toastr/toastr.min',
         //utils: '/static/js/utils',
@@ -61,6 +62,7 @@ require.config({
         'jquery.plot.crosshair': ['jquery.plot'],
         'jquery.plot.time': ['jquery.plot'],
         'jquery.plot.tooltip': ['jquery.plot'],
+        'jquery.plot.symbol': ['jquery.plot'],
         'toastr': {
             exports: 'toastr',
         },
