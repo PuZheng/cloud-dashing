@@ -248,8 +248,14 @@ define(['jquery', 'underscore', 'backbone', 'handlebars', 'text!/static/template
                     });
                     return newDataset;
                 }
-
-                debugger;
+                function Point(data) {
+                    this.x = data[0];
+                    this.latency = data[1];
+                    this.cpu = data[2];
+                    this.hd = data[3];
+                    this.crashed = data[4] || false;
+                }
+                
                 var i, j, dataset = this._plot.getData();
                 var newDataSet = unionDataset(dataset);
                 var data = [];
@@ -259,18 +265,19 @@ define(['jquery', 'underscore', 'backbone', 'handlebars', 'text!/static/template
                     var point2 = null;
                     for (j = 0; j < value.length; ++j) {
                         if (value[j][0] > pos.x) {
-                            point1 = value[j - 1];
-                            point2 = value[j];
+                            point1 = new Point(value[j - 1]);
+                            point2 = new Point(value[j]);
                             break;
                         } else if (value[j][0] == pos.x) {
-                            point1 = value[j];
-                            point2 = value[j];
+                            point1 = new Point(value[j]);
+                            point2 = new Point(value[j]);
                             break;
                         }
                     }
+                    debugger;
                     var timespot = null;
                     if (point1) {
-                        if (point1[1] && point2[1]) {
+                        if (point1.latency && point2.latency) {
                             var agent = _.find(agents.models, function (agent) {
                                 return agent.get("id") == idx
                             });
@@ -278,15 +285,15 @@ define(['jquery', 'underscore', 'backbone', 'handlebars', 'text!/static/template
                             if (agent) {
                                 agentName = agent.get("name");
                             }
-                            var cpu = point1[2];
-                            var hd = point1[3];
-                            var latency = Math.floor(point1[1]);
-                            if (point1[0] != point2[0]) {
-                                latency = Math.floor(point1[1] + (point2[1] - point1[1]) * (pos.x - point1[0]) / (point2[0] - point1[0]));
-                                cpu = (point1[2] + point2[2]) / 2;
-                                hd = (point1[3] + point2[3]) / 2;
+                            var cpu = point1.cpu;
+                            var hd = point1.hd;
+                            var latency = Math.floor(point1.latency);
+                            if (point1.x != point2.x) {
+                                latency = Math.floor(point1.latency + (point2.latency - point1.latency) * (pos.x - point1.x) / (point2.x - point1.x));
+                                cpu = (point1.cpu + point2.cpu) / 2;
+                                hd = (point1.hd + point2.hd) / 2;
                             }
-                            if (!!point1[4]) {
+                            if (point1.crashed || point2.crashed) {
                                 latency = -1
                             }
                             timespot = new TimeSpot({agent: agent, cpu: cpu, latency: latency, hd: hd, name: agentName})
