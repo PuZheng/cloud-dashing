@@ -1,6 +1,6 @@
-define(['jquery', 'backbone', 'handlebars', 'text', 
-    'collections/agents', 
-    'text!/static/templates/control-panel.hbs', 'select2'], 
+define(['jquery', 'backbone', 'handlebars', 'text',
+    'collections/agents',
+    'text!/static/templates/control-panel.hbs', 'select2'],
     function ($, Backbone, Handlebars, text, agents, controlPanelTemplate) {
 
         var ControlPanel = Backbone.View.extend({
@@ -11,19 +11,19 @@ define(['jquery', 'backbone', 'handlebars', 'text',
                 $('select').select2();
                 this._onViewpointSet();
                 return this;
-            }, 
+            },
 
             events: {
                 'change select': '_onViewpointSet',
-                'click li.list-group-item': function (e) { 
-                    this._toggleAgent($(e.target)); 
+                'click li.list-group-item': function (e) {
+                    this._toggleAgent($(e.target));
                 },
-                'click li.list-group-item i': function (e) { 
-                    this._toggleAgent($(e.target).parent()); 
+                'click li.list-group-item i': function (e) {
+                    this._toggleAgent($(e.target).parent());
                     return false;
                 },
-                'click li.list-group-item small': function (e) { 
-                    this._toggleAgent($(e.target).parent()); 
+                'click li.list-group-item small': function (e) {
+                    this._toggleAgent($(e.target).parent());
                     return false;
                 }
             },
@@ -42,7 +42,7 @@ define(['jquery', 'backbone', 'handlebars', 'text',
 
             _toggleAgent: function (el) {
                 var enabled = !el.attr('data-enabled');
-                el.attr('data-enabled', enabled? 'true': '');
+                el.attr('data-enabled', enabled ? 'true' : '');
                 el.toggleClass('list-group-item-success', enabled);
                 el.toggleClass('text-muted', !enabled);
                 el.children('i').toggleClass('fa-check', enabled);
@@ -64,12 +64,16 @@ define(['jquery', 'backbone', 'handlebars', 'text',
                     this.$('li.list-group-item small').each(function () {
                         $(this).text($(this).text().replace(/-.*/, '- '));
                     });
+                } else {
+                    this.$('li.list-group-item small').each(function () {
+                        $(this).text($(this).text().replace(/-.*/, '- ??'));
+                    });
                 }
                 _.each(data, function (val, i) {
-                    var latency = null;
-                    if (!!val) {
-                        latency = val.get("latency");
+                    if (!val) {
+                        return;
                     }
+                    var latency = val.get("latency");
                     if (latency === null) {
                         latency = '??';
                     } else if (latency === -1) {
