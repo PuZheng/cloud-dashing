@@ -47,7 +47,6 @@ require.config({
         'models/daily-net-report': '/static/js/models/daily-net-report',
         'models/daily-cpu-report': '/static/js/models/daily-cpu-report',
         'models/daily-hd-report': '/static/js/models/daily-hd-report',
-        'backgrid':'backgrid/lib/backgrid',
         'text': 'text/text',
         'widgets/agent-marker': '/static/js/widgets/agent-marker',
         'widgets/mult-agent-marker': '/static/js/widgets/mult-agent-marker',
@@ -80,10 +79,6 @@ require.config({
         'select2': {
             deps: ['jquery'],
             exports: '$.fn.select2',
-        },
-        'backgrid':{
-            deps:['backbone'],
-            exports:'Backgrid'
         },
     },
 });

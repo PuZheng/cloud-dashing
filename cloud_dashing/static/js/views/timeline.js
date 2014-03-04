@@ -175,8 +175,8 @@ define(['jquery', 'underscore', 'backbone', 'handlebars', 'text!/static/template
                                 if (!(agentStatus.id in lineSeriesMap)) {
                                     lineSeriesMap[agentStatus.id] = [];
                                 }
-                                lineSeriesMap[agentStatus.id].push([report.get('time') * 1000, latency, parseFloat(report.get('data')["计算性能"]["分数"]),
-                                    parseFloat(report.get('data')["磁盘性能"]["分数"])]);
+                                lineSeriesMap[agentStatus.id].push([report.get('time') * 1000, latency,report.get('data')["计算性能"],
+                                    report.get('data')["磁盘性能"]]);
                             } else {
                                 if (!(agentStatus.id in pointSeriesMap)) {
                                     pointSeriesMap[agentStatus.id] = [];
@@ -193,8 +193,8 @@ define(['jquery', 'underscore', 'backbone', 'handlebars', 'text!/static/template
                                 } else {
                                     latency = nextLatency || prevLatency;
                                 }
-                                pointSeriesMap[agentStatus.id].push([report.get('time') * 1000, latency, parseFloat(report.get('data')["计算性能"]["分数"]),
-                                    parseFloat(report.get('data')["磁盘性能"]["分数"]), "crashed"]);
+                                pointSeriesMap[agentStatus.id].push([report.get('time') * 1000, latency, report.get('data')["计算性能"],
+                                    report.get('data')["磁盘性能"], "crashed"]);
                             }
                         }
                     }
@@ -251,8 +251,10 @@ define(['jquery', 'underscore', 'backbone', 'handlebars', 'text!/static/template
                 function Point(data) {
                     this.x = data[0];
                     this.latency = data[1];
-                    this.cpu = data[2];
-                    this.hd = data[3];
+                    this.cpu_crashed = data[2]["crashed"] || false;
+                    this.cpu = parseFloat(data[2]["分数"]);
+                    this.hd = parseFloat(data[3]["分数"]);
+                    this.hd_crashed = data[3]["crashed"] || false;
                     this.crashed = data[4] || false;
                 }
                 
@@ -295,8 +297,13 @@ define(['jquery', 'underscore', 'backbone', 'handlebars', 'text!/static/template
                             if (point1.crashed || point2.crashed) {
                                 latency = -1
                             }
-                            timespot = new TimeSpot({agent: agent, cpu: cpu, latency: latency, hd: hd, name: agentName})
-
+                            timespot = new TimeSpot({
+                                agent: agent,
+                                latency: latency,
+                                name: agentName,
+                                services: {"计算性能": {"分数": cpu, "crashed": point1.cpu_crashed || point2.cpu_crashed},
+                                    "磁盘性能": {"分数": hd, "crashed": point1.hd_crashed || point2.hd_crashed}}
+                            });
                         }
                     }
                     data.push(timespot);

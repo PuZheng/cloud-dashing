@@ -3,11 +3,10 @@
  */
 define(['backbone'], function (Backbone) {
     var TimeSpot = Backbone.Model.extend({
-        cpu: 0,
-        agent:null,
+        agent: null,
         latency: 0,
-        hd: 0,
-        name: ""
+        name: "",
+        services:[]
     });
     return TimeSpot;
 });

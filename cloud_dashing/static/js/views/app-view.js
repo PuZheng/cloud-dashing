@@ -1,6 +1,6 @@
 define(['backbone', 'views/map-view', 'views/control-panel', 'views/timeline', 'views/table-view',
     'collections/agents', 'collections/timespots', 'router/app-router', 'views/stat-view'],
-    function (Backbone, MapView, ControlPanel, Timeline, tableView,  agents, timespots, router, StatView) {
+    function (Backbone, MapView, ControlPanel, Timeline, TableView,  agents, timespots, router, StatView) {
         var AppView = Backbone.View.extend({
             el: '#main',
 
@@ -80,7 +80,7 @@ define(['backbone', 'views/map-view', 'views/control-panel', 'views/timeline', '
 
             _render: function () {
                 this._map = new MapView({el: this.$('.map')}).render();
-                this._table = tableView.render();
+                this._table = new TableView({el: this.$(".table")}).render();
                 this.$(".table").append(this._table.el);
                 this._tl = new Timeline({el: this.$('.timeline')});
                 this._stat = new StatView({el: this.$('.stat')});
@@ -90,7 +90,7 @@ define(['backbone', 'views/map-view', 'views/control-panel', 'views/timeline', '
                         this._cp.updateLatency(data);
                     }
                     this._map.updateLatency(data);
-                    this._table.updateStatus(data);
+                    this._table.updateTimeSpot(data);
                 }, this);
                 this._cp.on('viewpoint-set', this._onViewpointSet, this);
                 this._cp.on('agent-toggle', this._onAgentToggle, this);
@@ -103,12 +103,12 @@ define(['backbone', 'views/map-view', 'views/control-panel', 'views/timeline', '
                 this._tl.makePlot(viewpoint);
                 this._map.updateTooltip(viewpoint);
                 this._stat.updateViewpoint(viewpoint);
+                this._table.updateViewpoint(viewpoint);
             },
 
             _onAgentToggle: function (agent) {
                 this._tl.toggleAgent(agent);
                 this._map.toggleAgent(agent);
-                this._table.toggleAgent(agent);
                 this._stat.toggleAgent(agent);
             }
 
