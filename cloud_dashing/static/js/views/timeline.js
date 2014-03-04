@@ -251,10 +251,10 @@ define(['jquery', 'underscore', 'backbone', 'handlebars', 'text!/static/template
                 function Point(data) {
                     this.x = data[0];
                     this.latency = data[1];
-                    this.cpu_crashed = data[2]["crashed"] || false;
+                    this.cpu_crashed = data[2]["crashed"];
                     this.cpu = parseFloat(data[2]["分数"]);
                     this.hd = parseFloat(data[3]["分数"]);
-                    this.hd_crashed = data[3]["crashed"] || false;
+                    this.hd_crashed = data[3]["crashed"];
                     this.crashed = data[4] || false;
                 }
                 
@@ -301,8 +301,8 @@ define(['jquery', 'underscore', 'backbone', 'handlebars', 'text!/static/template
                                 agent: agent,
                                 latency: latency,
                                 name: agentName,
-                                services: {"计算性能": {"分数": cpu, "crashed": point1.cpu_crashed || point2.cpu_crashed},
-                                    "磁盘性能": {"分数": hd, "crashed": point1.hd_crashed || point2.hd_crashed}}
+                                services: {"计算性能": {"crashed": point1.cpu_crashed || point2.cpu_crashed, "分数": cpu},
+                                    "磁盘性能": {"crashed": point1.hd_crashed || point2.hd_crashed, "分数": hd}}
                             });
                         }
                     }
@@ -460,8 +460,7 @@ define(['jquery', 'underscore', 'backbone', 'handlebars', 'text!/static/template
                     });
                     data.push(new TimeSpot({
                         agent: agent,
-                        cpu: parseFloat(report.data["计算性能"]["分数"]),
-                        hd: parseFloat(report.data["磁盘性能"]["分数"]),
+                        services: {"计算性能": report.data["计算性能"], "磁盘性能": report.data["磁盘性能"]},
                         latency: parseFloat(netStatus["延迟"]),
                         name: agent.get("name") || ""
                     }));
