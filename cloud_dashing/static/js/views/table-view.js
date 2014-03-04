@@ -1,51 +1,50 @@
-define(['jquery', 'backbone', 'backgrid', 'collections/timespots', 'collections/agents', 'models/timespot'], function ($, Backbone, Backgrid, timespots, agents, TimeSpot) {
-    var columns = [
-        {
-            name: "name",
-            label: "云",
-            editable: false,
-            cell: "string"
-        },
-        {
-            name: "cpu",
-            label: "CPU得分",
-            editable: false,
-            cell: "number"
-        },
-        {
-            name: "latency",
-            label: "延迟（ms）",
-            editable: false,
-            cell: "integer"
-        },
-        {
-            name: "hd",
-            label: "hd得分",
-            editable: false,
-            cell: "number"
-        }
-    ];
+define(['jquery', 'backbone'],
+    function ($, Backbone) {
+        var TableView = Backbone.View.extend({
+            _table: function (data) {
+                return $("<table></table>").addClass("table table-bordered table-condensed").append(this._renderDetail(data));
+            },
 
-    var TableView = Backgrid.Grid.extend({
-        updateStatus: function (data) {
-            this._timespots = data;
-            this._updateTimeSpot();
-        },
-        toggleAgent: function () {
-            this._updateTimeSpot();
-        },
-        _updateTimeSpot: function () {
-            if (this._timespots) {
-                timespots.reset();
-                $.each(this._timespots, function (idx, value) {
-                    if (value && value.get("agent").get("selected")) {
-                        timespots.add(value);
+            _renderService: function (name, vals) {
+                var th = $("<tr></tr>").append($("<th></th>").attr("rowspan", 2).text(name).addClass("text-center"));
+                var tds = [];
+                _.each(vals, function (val, key) {
+                    th.append($("<th></th>").addClass("text-center").text(key));
+                    if (typeof val == 'boolean') {
+                        if (val) {
+                            val = '是';
+                        } else {
+                            val = '否';
+                        }
                     }
+                    var valueColumn = $("<td></td>").addClass("text-center").text(val);
+                    tds.push(valueColumn);
                 });
-            }
-        }
-    });
+                return th.add($("<tr></tr>").append(tds));
+            },
 
-    return new TableView({columns: columns,
-        collection: timespots});
-});
+            _renderDetail: function (data) {
+                var columns = [];
+                var that = this;
+                _.each(data.get("services"), function (val, key) {
+                    columns.push(that._renderService(key, val));
+                });
+                return $("<tbody></tbody>").append(columns);
+            },
+
+            updateTimeSpot: function (data) {
+                this.$el.empty();
+                if (!!data[0]) {
+                    this.$el.append(this._table(data[0])).append(this._desc());
+                }
+            },
+
+            _desc: function () {
+                return $("<p></p>").text(this._viewpoint.provider + "服务一览表");
+            },
+            updateViewpoint:  function(viewpoint) {
+                this._viewpoint = viewpoint;
+            }
+        });
+        return TableView;
+    });
