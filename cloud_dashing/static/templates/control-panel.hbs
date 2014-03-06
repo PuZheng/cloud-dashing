@@ -1,15 +1,15 @@
 <div class='panel panel-default'>
-  <div class="panel-body">
-    <i class="fa fa-eye"></i>
-    <select id="viewpoint" name="viewpoint">
+  <div class="panel-body alert alert-info">
+    <i class="fa fa-map-marker fa-fw"></i>
+    <select id="viewpoint" name="viewpoint" style="width: 80%">
       {{#each agents}}
       <option value="{{this.id}}">{{this.provider}}</option> 
       {{/each}}
     </select>
   </div>
 </div>
-<div class="panel panel-default">
-  <div class="panel-body">
+<!--<div class="panel panel-default">-->
+  <!--<div class="panel-body">-->
     <ul class="list-group">
       {{#each agents}}
       <li class="list-group-item list-group-item-success text-center" value="{{this.id}}" data-enabled='true' data-agent-id={{this.id}}>
@@ -19,7 +19,7 @@
       </li>
       {{/each}}
     </ul>
-  </div>
-</div>
+  <!--</div>-->
+<!--</div>-->
 
 
