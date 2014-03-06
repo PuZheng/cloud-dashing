@@ -5,5 +5,6 @@ define(['backbone'], function (Backbone) {
             data: [],
         }, 
     });
+
     return Report;
 });
