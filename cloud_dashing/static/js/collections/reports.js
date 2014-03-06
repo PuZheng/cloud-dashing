@@ -1,4 +1,4 @@
-define(['jquery', 'backbone', 'models/report'], function ($, Backbone, Report) {
+define(['jquery', 'backbone', 'underscore', 'models/report', 'collections/agents'], function ($, Backbone, _, Report, agents) {
 
     var Reports = Backbone.Collection.extend({
 
@@ -18,6 +18,32 @@ define(['jquery', 'backbone', 'models/report'], function ($, Backbone, Report) {
             var result = [];
             _.each(resp, function (val) {
                 if (!(_.isEmpty(val.data))) {
+                    if (!val.data.hasOwnProperty('计算性能')) {
+                        console.log('时间点没有提供计算性能');
+                        val.data['计算性能'] = {
+                            crashed: 0,
+                            分数: null, 
+                        };
+                    }
+                    if (!val.data.hasOwnProperty('磁盘性能')) {
+                        console.log('时间点没有提供磁盘性能');
+                        val.data['磁盘性能'] = {
+                            crashed: 0,
+                            分数: null, 
+                        };
+                    }
+                    if (!val.data.hasOwnProperty('网络性能')) {
+                        console.log('时间点没有提供网络性能');
+                        val.data['网络性能'] = agents.filter(function (agent) {
+                            return agent.id != this.viewpoint.id;
+                        }).map(function (agent) { 
+                            return {
+                                id: agent.id,
+                                分数: null, 
+                                crashed: 0
+                            };
+                        });
+                    }
                     result.push(val);
                 }
             });
