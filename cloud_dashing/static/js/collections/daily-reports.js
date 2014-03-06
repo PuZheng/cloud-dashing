@@ -15,7 +15,7 @@ define(['jquery', 'backbone', 'models/daily-report', 'moment', 'common', 'collec
             var cloud_id_list = agents.map(function (agent) {return agent.id}).join();
             return 'http://' + common.SERVER_IP + '/api/details-sum?cloud-id-list=' + cloud_id_list + '&features=cpu,hd,net&date=' + moment(this.start).format('YYYY-MM-DD') + ',' + moment(this.end).format('YYYY-MM-DD');
         },
-
+    
     });
 
     return DailyReports;
