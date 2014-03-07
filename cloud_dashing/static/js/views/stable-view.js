@@ -17,12 +17,12 @@ define(['jquery', 'toastr', 'backbone', 'handlebars', 'collections/daily-reports
                 return this;
             },
 
-            _table: function () {
-                return $("<table></table>").addClass("table table-bordered table-condensed").append(this._thead()).append(this._tbody());
-            },
+            //_table: function () {
+                //return this.$("").addClass("table table-bordered table-condensed").append(this._thead()).append(this._tbody());
+            //},
 
             _thead: function () {
-                return $("<thead></thead>").append($("<tr></tr>").append(this._columns()));
+                return $("<thead></thead>").append($("<tr class='info'></tr>").append(this._columns()));
             },
 
             _tbody: function () {
@@ -75,7 +75,7 @@ define(['jquery', 'toastr', 'backbone', 'handlebars', 'collections/daily-reports
             _columns: function () {
                 var columns = [$("<th></th>").text("云").addClass("text-center")];
                 _.each(this._getDateSpans(), function (date) {
-                    columns.push($("<th></th>").text(monthNames[date.getMonth()] + date.getDate()).addClass("text-center"));
+                    columns.push($("<th></th>").text(monthNames[date.getMonth()] + date.getDate() + '日').addClass("text-center"));
                 });
                 return columns;
             },
@@ -83,7 +83,7 @@ define(['jquery', 'toastr', 'backbone', 'handlebars', 'collections/daily-reports
             _renderReports: function () {
                 if (this._dailyReports) {
                     this.$el.empty();
-                    this.$el.append(this._table());
+                    this.$el.append(this._thead()).append(this._tbody());
                 }
             },
 
@@ -122,7 +122,7 @@ define(['jquery', 'toastr', 'backbone', 'handlebars', 'collections/daily-reports
             },
             render: function () {
                 this.$el.html(this._template());
-                this._stableTableView = new StableTableView({el: this.$('.stable-view')});
+                this._stableTableView = new StableTableView({el: this.$('.stable-view table')});
                 return this;
             },
             updateViewpoint: function (viewpoint) {
