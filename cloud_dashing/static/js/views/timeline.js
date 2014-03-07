@@ -249,13 +249,15 @@ define(['jquery', 'underscore', 'backbone', 'handlebars', 'text!/static/template
                     return newDataset;
                 }
                 function Point(data) {
-                    this.x = data[0];
-                    this.latency = data[1];
-                    this.cpu_crashed = data[2]["crashed"];
-                    this.cpu = parseFloat(data[2]["分数"]);
-                    this.hd = parseFloat(data[3]["分数"]);
-                    this.hd_crashed = data[3]["crashed"];
-                    this.crashed = data[4] || false;
+                    if (!!data) {
+                        this.x = data[0];
+                        this.latency = data[1];
+                        this.cpu_crashed = data[2]["crashed"];
+                        this.cpu = parseFloat(data[2]["分数"]);
+                        this.hd = parseFloat(data[3]["分数"]);
+                        this.hd_crashed = data[3]["crashed"];
+                        this.crashed = data[4] || false;
+                    }
                 }
                 
                 var i, j, dataset = this._plot.getData();
@@ -277,34 +279,32 @@ define(['jquery', 'underscore', 'backbone', 'handlebars', 'text!/static/template
                         }
                     }
                     var timespot = null;
-                    if (point1) {
-                        if (point1.latency && point2.latency) {
-                            var agent = _.find(agents.models, function (agent) {
-                                return agent.get("id") == idx
-                            });
-                            var agentName = "";
-                            if (agent) {
-                                agentName = agent.get("name");
-                            }
-                            var cpu = point1.cpu;
-                            var hd = point1.hd;
-                            var latency = Math.floor(point1.latency);
-                            if (point1.x != point2.x) {
-                                latency = Math.floor(point1.latency + (point2.latency - point1.latency) * (pos.x - point1.x) / (point2.x - point1.x));
-                                cpu = (point1.cpu + point2.cpu) / 2;
-                                hd = (point1.hd + point2.hd) / 2;
-                            }
-                            if (point1.crashed || point2.crashed) {
-                                latency = -1
-                            }
-                            timespot = new TimeSpot({
-                                agent: agent,
-                                latency: latency,
-                                name: agentName,
-                                services: {"计算性能": {"crashed": point1.cpu_crashed || point2.cpu_crashed, "分数": cpu},
-                                    "磁盘性能": {"crashed": point1.hd_crashed || point2.hd_crashed, "分数": hd}}
-                            });
+                    if (point1 && point2 && point1.latency && point2.latency) {
+                        var agent = _.find(agents.models, function (agent) {
+                            return agent.get("id") == idx
+                        });
+                        var agentName = "";
+                        if (agent) {
+                            agentName = agent.get("name");
                         }
+                        var cpu = point1.cpu;
+                        var hd = point1.hd;
+                        var latency = Math.floor(point1.latency);
+                        if (point1.x != point2.x) {
+                            latency = Math.floor(point1.latency + (point2.latency - point1.latency) * (pos.x - point1.x) / (point2.x - point1.x));
+                            cpu = (point1.cpu + point2.cpu) / 2;
+                            hd = (point1.hd + point2.hd) / 2;
+                        }
+                        if (point1.crashed || point2.crashed) {
+                            latency = -1
+                        }
+                        timespot = new TimeSpot({
+                            agent: agent,
+                            latency: latency,
+                            name: agentName,
+                            services: {"计算性能": {"crashed": point1.cpu_crashed || point2.cpu_crashed, "分数": cpu},
+                                "磁盘性能": {"crashed": point1.hd_crashed || point2.hd_crashed, "分数": hd}}
+                        });
                     }
                     data.push(timespot);
                 });
