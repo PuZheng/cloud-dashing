@@ -99,6 +99,14 @@
             height: 196px;
             margin-left: 50px;
         }
+
+        .details-table {
+            padding: 0px 10px 50px 10px;
+        }
+
+        .details-table h3 {
+            margin: 0px 0px 20px 0px; 
+        }
     }
 }
 
