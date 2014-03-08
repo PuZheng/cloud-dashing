@@ -43,7 +43,7 @@ define(['jquery', 'backbone', 'handlebars', 'text',
             _toggleAgent: function (el) {
                 var enabled = !el.attr('data-enabled');
                 el.attr('data-enabled', enabled ? 'true' : '');
-                el.toggleClass('list-group-item-success', enabled);
+                el.toggleClass('list-group-item-info', enabled);
                 el.toggleClass('text-muted', !enabled);
                 el.children('i').toggleClass('fa-check', enabled);
                 var square = el.children('i.fa-square');

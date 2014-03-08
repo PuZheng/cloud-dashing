@@ -52,7 +52,7 @@ define(['jquery', 'backbone', 'toastr', 'common', 'utils', 'collections/agents',
                 
 
                 updateViewpoint: function (viewpoint) {
-                    if (this._viewpoint !=viewpoint || this._hasChanged == true) {
+                    if (!!viewpoint && (this._viewpoint !=viewpoint || this._hasChanged == true)) {
                         this._viewpoint = viewpoint;
                         this._dailyReports = this.getDailyReports();
                         this._dailyReports.fetch({reset: true});

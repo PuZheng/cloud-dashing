@@ -16,6 +16,7 @@ define(['jquery', 'backbone', 'underscore', 'models/report', 'collections/agents
         },
         parse: function (resp, options) {
             var result = [];
+            var viewpointId = this.viewpoint.id;
             _.each(resp, function (val) {
                 if (!(_.isEmpty(val.data))) {
                     if (!val.data.hasOwnProperty('计算性能')) {
@@ -35,7 +36,7 @@ define(['jquery', 'backbone', 'underscore', 'models/report', 'collections/agents
                     if (!val.data.hasOwnProperty('网络性能')) {
                         console.log('时间点没有提供网络性能');
                         val.data['网络性能'] = agents.filter(function (agent) {
-                            return agent.id != this.viewpoint.id;
+                            return agent.id != viewpointId;
                         }).map(function (agent) { 
                             return {
                                 id: agent.id,
