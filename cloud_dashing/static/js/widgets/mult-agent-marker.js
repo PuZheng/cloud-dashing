@@ -1,10 +1,8 @@
 /**
  * Created by Young on 14-2-27.
  */
-define(['jquery', 'underscore', 'handlebars', 'text!/static/templates/mult-agent-brief.hbs', 'bootstrap'], function ($, _, Handlebars, agentBriefTemplate) {
+define(['jquery', 'underscore', 'handlebars', 'text!/static/templates/mult-agent-brief.hbs', 'common', 'bootstrap'], function ($, _, Handlebars, agentBriefTemplate, common) {
     var location2agents = {};
-    var acceptableThreshhold = 50; // 可以接受的网络延迟门槛
-    var badThreshhold = 80; // 不可接受的网络延迟门槛
     var _template = Handlebars.default.compile(agentBriefTemplate);
 
     var MultAgentMarker = function () {
@@ -93,9 +91,9 @@ define(['jquery', 'underscore', 'handlebars', 'text!/static/templates/mult-agent
                 var icon;
                 if (!latency) {
                     icon = questionICON;
-                } else if (latency >= badThreshhold) {
+                } else if (latency >= common.BAD_LATENCY_THRESHHOLD) {
                     icon = warningICON;
-                } else if (latency >= acceptableThreshhold) {
+                } else if (latency >= common.ACCEPTABLE_LATENCY_THRESHHOLD) {
                     icon = frownICON;
                 } else if (latency == -1) {
                     icon = banICON;

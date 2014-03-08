@@ -3,7 +3,7 @@ define(['jquery', 'handlebars', 'text!/static/templates/agent-brief.hbs', 'colle
     var badThreshhold = 80; // 不可接受的网络延迟门槛
     var _template = Handlebars.default.compile(agentBriefTemplate);
 
-    AgentMarker = function (agent, point) {
+    var AgentMarker = function (agent, point) {
         this._agent = agent;
         this._length = 32;
     },

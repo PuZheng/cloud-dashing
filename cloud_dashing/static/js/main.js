@@ -22,6 +22,7 @@ require.config({
         'toastr': 'toastr/toastr.min',
         //utils: '/static/js/utils',
         'common': '/static/js/common',
+        'config': '/static/js/config',
         'views/app-view': '/static/js/views/app-view',
         'views/map-view': '/static/js/views/map-view',
         'views/control-panel': '/static/js/views/control-panel',
@@ -49,6 +50,7 @@ require.config({
         'models/daily-hd-report': '/static/js/models/daily-hd-report',
         'text': 'text/text',
         'widgets/agent-marker': '/static/js/widgets/agent-marker',
+        'widgets/map-help-button': '/static/js/widgets/map-help-button',
         'widgets/mult-agent-marker': '/static/js/widgets/mult-agent-marker',
         'router/app-router': '/static/js/router/app-router'
     },

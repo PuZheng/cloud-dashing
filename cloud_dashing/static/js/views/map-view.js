@@ -1,7 +1,12 @@
-define(['backbone', 'collections/agents', 'widgets/mult-agent-marker', 'underscore'], function (Backbone, agents, MultAgentMarker, _) {
+define(['backbone', 'handlebars', 'collections/agents', 'widgets/mult-agent-marker', 'widgets/map-help-button', 'underscore', 'text!/static/templates/map-help-modal.hbs'], function (Backbone, Handlebars, agents, MultAgentMarker, MapHelpButton, _, helpModalTemplate) {
     
     var MapView = Backbone.View.extend({
+       
+        _helpModalTemplate: Handlebars.default.compile(helpModalTemplate),
+        
         render: function () {
+            $("<div class='map-block'></div>").appendTo(this.$el);
+            this.$el.append(this._helpModalTemplate());
             this.drawMap();
             return this;
         },
@@ -9,7 +14,7 @@ define(['backbone', 'collections/agents', 'widgets/mult-agent-marker', 'undersco
         drawMap: function () {
             if (this.$el.is(":visible") && this._map == undefined) {
                 var chinaGeoCenter = new BMap.Point(103.336594, 35.849248);
-                var map = new BMap.Map(this.$el[0]);
+                var map = new BMap.Map(this.$('.map-block')[0]);
                 map.centerAndZoom(chinaGeoCenter, 4);
                 var mapStyle = {
                     features: ["water", "land"]
@@ -21,6 +26,8 @@ define(['backbone', 'collections/agents', 'widgets/mult-agent-marker', 'undersco
                 _.each(this._markers, function (marker) {
                     map.addOverlay(marker);
                 });
+                var mapHelpButton = new MapHelpButton('.map-help-modal');
+                map.addOverlay(mapHelpButton);
                 this._map = map;
             }
         },
