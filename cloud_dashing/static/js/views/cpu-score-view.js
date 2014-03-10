@@ -32,6 +32,11 @@ define(['handlebars', 'views/stat-bar-plot', 'text!/static/templates/cpu-score-v
             this._plot = $.plot(this.container(), data, this._options());
             this._hasChanged = false;
         },
+
+        getMaskView: function () {
+            return this.$('.mask');
+        }
+
     });
 
     return CpuScoreView;

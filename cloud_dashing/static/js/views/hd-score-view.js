@@ -32,6 +32,10 @@ define(['handlebars', 'views/stat-bar-plot', 'text!/static/templates/hd-score-vi
             this._plot = $.plot(this.container(), data, this._options());
             this._hasChanged = false;
         },
+        getMaskView: function () {
+            return this.$('.mask');
+        }
+
     });
 
     return HdScoreView;

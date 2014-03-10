@@ -5,7 +5,7 @@ define(['backbone', 'handlebars', 'collections/agents', 'widgets/mult-agent-mark
         _helpModalTemplate: Handlebars.default.compile(helpModalTemplate),
         
         render: function () {
-            $("<div class='map-block'></div>").appendTo(this.$el);
+            $("<div class='map-block'><i class='fa fa-spinner fa-spin fa-4x'></i></div>").appendTo(this.$el);
             this.$el.append(this._helpModalTemplate());
             this.drawMap();
             return this;
@@ -29,9 +29,6 @@ define(['backbone', 'handlebars', 'collections/agents', 'widgets/mult-agent-mark
                 var mapHelpButton = new MapHelpButton('.map-help-modal');
                 map.addOverlay(mapHelpButton);
                 this._map = map;
-                if(!!this._viewpoint) {
-                    this.updateTooltip(this._viewpoint);
-                }
             }
         },
 
