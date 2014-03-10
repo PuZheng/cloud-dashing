@@ -8,6 +8,7 @@ define(['backbone', 'views/map-view', 'views/control-panel', 'views/timeline', '
 
             initialize: function (router) {
                 var that = this;
+                this._map = new MapView({el: this.$('.map')}).render();
                 agents.fetch({
                     reset: true,
                     success: function (collection, response, options) {
@@ -81,11 +82,10 @@ define(['backbone', 'views/map-view', 'views/control-panel', 'views/timeline', '
 
 
             _render: function () {
-                this._map = new MapView({el: this.$('.map')}).render();
                 this._table = new TableView({el: this.$(".table-view")}).render();
                 this.$(".table-view").append(this._table.el);
-                this._tl = new Timeline({el: this.$('.timeline')});
                 this._stat = new StatView({el: this.$('.stat')});
+                this._tl = new Timeline({el: this.$('.timeline')});
                 this._cp = new ControlPanel({el: this.$('.control-panel')});
                 this._tl.on('time-changed', function (data) {
                     if (this._filter !== 'stat') {

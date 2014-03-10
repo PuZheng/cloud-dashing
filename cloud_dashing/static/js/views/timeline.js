@@ -35,9 +35,9 @@ define(['views/maskerable-view', 'handlebars', 'text!/static/templates/timeline.
             },
 
             render: function () {
-                this.$el.html(this._template());
+                this.$el.append(this._template());
                 this.$container = this.$('.timeline-plot');
-                this.maskerView(this.$container);
+                this.maskerView(this.$('.timeline-view'), this.$('.mask'));
                 this._currentTimeTag = $('<span id="currentTime"></span>').insertBefore(this.$container).css({position: 'absolute'}).hide();
                 return this;
             },

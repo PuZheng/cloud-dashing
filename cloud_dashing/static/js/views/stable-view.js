@@ -7,14 +7,14 @@ define(['views/maskerable-view', 'toastr', 'handlebars', 'collections/daily-repo
         var monthNames = ["一月", "二月", "三月", "四月", "五月", "六月", "七月", "八月", "九月", "十月", "十一月", "十二月"];
 
         var StableTableView = MaskerableView.extend({
-            initialize: function () {
+            initialize: function (options) {
                 this._start = utils.getMonday(new Date()).getTime();
                 this._end = this._start + common.MS_A_WEEK;
                 toastr.options = {
                     "positionClass": "toast-bottom-full-width",
                     "timeOut": "1000"
                 };
-                this.maskerView(this.$el);
+                this.maskerView(this.$el, options.mask);
                 return this;
             },
 
@@ -122,8 +122,8 @@ define(['views/maskerable-view', 'toastr', 'handlebars', 'collections/daily-repo
                 return this;
             },
             render: function () {
-                this.$el.html(this._template());
-                this._stableTableView = new StableTableView({el: this.$('.stable-view table')});
+                this.$el.append(this._template());
+                this._stableTableView = new StableTableView({el: this.$('.stable-view table'), mask: this.$('.mask')});
                 return this;
             },
             updateViewpoint: function (viewpoint) {

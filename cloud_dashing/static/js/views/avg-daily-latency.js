@@ -65,6 +65,10 @@ define(['handlebars', 'collections/daily-net-reports', 'collections/agents', 'te
                     this._plot = $.plot(this.container(), this._hideDisabledAgents(this._plot.getData()), this._options());
                 },
 
+                getMaskView: function () {
+                    return this.$('.mask');
+                }
+
             });
             return AvgDailyLatencyView;
         });

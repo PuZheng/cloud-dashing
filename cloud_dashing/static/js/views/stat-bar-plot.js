@@ -17,8 +17,8 @@ define(['views/maskerable-view', 'toastr', 'common', 'utils', 'collections/agent
             },
 
             render: function () {
-                this.$el.html(this._template());
-                this.maskerView(this.container());
+                this.$el.append(this._template());
+                this.maskerView(this.container(), this.getMaskView());
                 return this;
             },
 

@@ -10,30 +10,23 @@ define(['jquery', 'backbone'], function ($, Backbone) {
 
         },
 
-        maskerView: function (view) {
-            this._maskedView = view;
+        maskerView: function (masked, mask) {
+            this._maskedView = masked;
+            this._mask = mask;
         },
 
         mask: function () {
             if (!this._maskedView) {
                 return false;
             }
-            if (!this._masker) {
-                this._masker = $("<div></div>").height("100%").width("100%").css("line-height", "100%").addClass("text-center").html(
-                    $("<img></img>").attr("src", "/static/img/ajax-loader.gif").css({"vertical-align": "middle"})
-                );
-            }
-            this._maskedView.after(this._masker);
             this._maskedView.hide();
-            this._masker.show();
+            this._mask.show();
             return true;
         },
+
         unmask: function () {
-            if (!this._maskedView || !this._masker) {
-                return false;
-            }
+            this._mask.hide();
             this._maskedView.show();
-            this._masker.hide();
             return true;
         }
     });
