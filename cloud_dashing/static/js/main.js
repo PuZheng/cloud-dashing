@@ -34,6 +34,8 @@ require.config({
         'views/cpu-score-view': '/static/js/views/cpu-score-view',
         'views/hd-score-view': '/static/js/views/hd-score-view',
         'views/stable-view':'/static/js/views/stable-view',
+        'views/toast-view':'/static/js/views/toast-view',
+        'views/maskerable-view':'/static/js/views/maskerable-view',
         'collections/agents': '/static/js/collections/agents',
         'collections/reports': '/static/js/collections/reports',
         'collections/timespots': '/static/js/collections/timespots',
@@ -85,4 +87,4 @@ require.config({
     },
 });
 
-requirejs(['/static/js/app.js'])
+requirejs(['/static/js/app.js']);

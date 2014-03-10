@@ -1,12 +1,12 @@
 /**
  * Created by Young on 14-2-14.
  */
-define(['jquery', 'toastr', 'backbone', 'handlebars', 'collections/daily-reports', 'common', 'utils', 'collections/agents',
+define(['views/maskerable-view', 'toastr', 'handlebars', 'collections/daily-reports', 'common', 'utils', 'collections/agents',
     'text!/static/templates/daily-stable-view.hbs'],
-    function ($, toastr, Backbone, Handlebars, DailyReports, common, utils, agents, dailyStableViewTemplate) {
+    function (MaskerableView, toastr, Handlebars, DailyReports, common, utils, agents, dailyStableViewTemplate) {
         var monthNames = ["一月", "二月", "三月", "四月", "五月", "六月", "七月", "八月", "九月", "十月", "十一月", "十二月"];
 
-        var StableTableView = Backbone.View.extend({
+        var StableTableView = MaskerableView.extend({
             initialize: function () {
                 this._start = utils.getMonday(new Date()).getTime();
                 this._end = this._start + common.MS_A_WEEK;
@@ -14,12 +14,9 @@ define(['jquery', 'toastr', 'backbone', 'handlebars', 'collections/daily-reports
                     "positionClass": "toast-bottom-full-width",
                     "timeOut": "1000"
                 };
+                this.maskerView(this.$el);
                 return this;
             },
-
-            //_table: function () {
-                //return this.$("").addClass("table table-bordered table-condensed").append(this._thead()).append(this._tbody());
-            //},
 
             _thead: function () {
                 return $("<thead></thead>").append($("<tr class='info'></tr>").append(this._columns()));
@@ -39,7 +36,7 @@ define(['jquery', 'toastr', 'backbone', 'handlebars', 'collections/daily-reports
                         });
                     });
                 }
-                var dateSpans = this._getDateSpans()
+                var dateSpans = this._getDateSpans();
                 var dataColumns = _.map(data, function (series, agentId) {
                     var html = $("<tr></tr>");
                     html.append($("<td></td>").addClass("text-center").text(agents.get(agentId).get("provider")));
@@ -81,6 +78,7 @@ define(['jquery', 'toastr', 'backbone', 'handlebars', 'collections/daily-reports
             },
 
             _renderReports: function () {
+                this.unmask();
                 if (this._dailyReports) {
                     this.$el.empty();
                     this.$el.append(this._thead()).append(this._tbody());
@@ -88,6 +86,7 @@ define(['jquery', 'toastr', 'backbone', 'handlebars', 'collections/daily-reports
             },
 
             updateViewpoint: function (viewpoint) {
+                this.mask();
                 this._viewpoint = viewpoint;
                 this._dailyReports = new DailyReports(this._viewpoint, this._start, this._end);
                 this._dailyReports.fetch({reset: true});
@@ -95,6 +94,7 @@ define(['jquery', 'toastr', 'backbone', 'handlebars', 'collections/daily-reports
             },
 
             moveBack: function () {
+                Backbone.Notifications.trigger("toastShow");
                 this._end = this._start;
                 this._start = this._start - common.MS_A_WEEK;
                 this.updateViewpoint(this._viewpoint);
@@ -105,6 +105,7 @@ define(['jquery', 'toastr', 'backbone', 'handlebars', 'collections/daily-reports
                     toastr.warning('已经是本周了!');
                     return;
                 }
+                Backbone.Notifications.trigger("toastShow");
                 this._start = this._end;
                 this._end = this._start + common.MS_A_WEEK;
                 this.updateViewpoint(this._viewpoint);

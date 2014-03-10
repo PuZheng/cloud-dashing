@@ -1,6 +1,8 @@
 define(['backbone', 'views/map-view', 'views/control-panel', 'views/timeline', 'views/table-view',
-    'collections/agents', 'collections/timespots', 'router/app-router', 'views/stat-view'],
-    function (Backbone, MapView, ControlPanel, Timeline, TableView,  agents, timespots, router, StatView) {
+    'collections/agents', 'collections/timespots', 'router/app-router', 'views/stat-view', 'views/toast-view'],
+    function (Backbone, MapView, ControlPanel, Timeline, TableView,  agents, timespots, router, StatView, ToastView) {
+        Backbone.Notifications = {};
+        _.extend(Backbone.Notifications, Backbone.Events);
         var AppView = Backbone.View.extend({
             el: '#main',
 
@@ -36,6 +38,7 @@ define(['backbone', 'views/map-view', 'views/control-panel', 'views/timeline', '
                     $(this).toggleClass('active', toggle);
                 });
                 this._filter = param;
+                Backbone.Notifications.trigger("toastShow");
                 switch (param) {
                     case 'map':
                         this.$('div.map').show();
@@ -95,10 +98,11 @@ define(['backbone', 'views/map-view', 'views/control-panel', 'views/timeline', '
                 this._cp.on('viewpoint-set', this._onViewpointSet, this);
                 this._cp.on('agent-toggle', this._onAgentToggle, this);
                 this._cp.render();
-
+                this._toast = new ToastView();
             },
 
             _onViewpointSet: function (viewpoint) {
+                Backbone.Notifications.trigger("toastShow");
                 this._viewpoint = viewpoint;
                 this._tl.makePlot(viewpoint);
                 this._map.updateTooltip(viewpoint);

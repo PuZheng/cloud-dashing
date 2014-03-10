@@ -1,8 +1,8 @@
-define(['jquery', 'underscore', 'backbone', 'handlebars', 'text!/static/templates/timeline.hbs',
+define(['views/maskerable-view', 'handlebars', 'text!/static/templates/timeline.hbs',
     'collections/reports', 'collections/agents', 'models/timespot', 'common', 'utils', 'toastr',
     'jquery.plot', 'jquery.plot.crosshair', 'jquery.plot.symbol', 'jquery.plot.time'],
-    function ($, _, Backbone, Handlebars, timelineTemplate, Reports, agents, TimeSpot, common, utils, toastr) {
-        var Timeline = Backbone.View.extend({
+    function (MaskerableView, Handlebars, timelineTemplate, Reports, agents, TimeSpot, common, utils, toastr) {
+        var Timeline = MaskerableView.extend({
             _template: Handlebars.default.compile(timelineTemplate),
 
             initialize: function () {
@@ -12,8 +12,8 @@ define(['jquery', 'underscore', 'backbone', 'handlebars', 'text!/static/template
                 this._end = this._start + common.MS_A_DAY;
                 toastr.options = {
                     "positionClass": "toast-bottom-full-width",
-                    "timeOut": "1000",
-                }
+                    "timeOut": "1000"
+                };
                 this._playing = false;
                 this.render();
             },
@@ -37,6 +37,7 @@ define(['jquery', 'underscore', 'backbone', 'handlebars', 'text!/static/template
             render: function () {
                 this.$el.html(this._template());
                 this.$container = this.$('.timeline-plot');
+                this.maskerView(this.$container);
                 this._currentTimeTag = $('<span id="currentTime"></span>').insertBefore(this.$container).css({position: 'absolute'}).hide();
                 return this;
             },
@@ -49,11 +50,13 @@ define(['jquery', 'underscore', 'backbone', 'handlebars', 'text!/static/template
                     } else if (!!this._markedPosition) {
                         this._initTime = this._markedPosition;
                     }
+                    this.mask();
+                    var that = this;
                     this._reports = new Reports(viewpoint, this._start, this._end);
                     this._reports.fetch({reset: true});
-                    this._reports.on('reset', this._renderPlot, this);
+                    this._reports.on('reset', this._doRender, this);
                 } else {
-                    this._renderPlot();
+                    this._doRender();
                 }
             },
 
@@ -139,7 +142,8 @@ define(['jquery', 'underscore', 'backbone', 'handlebars', 'text!/static/template
                 }
             },
 
-            _renderPlot: function () {
+            _doRender: function () {
+                this.unmask();
                 this._markedPosition = {
                     x: this._reports.last().get('time') * 1000,
                     y: null,
@@ -355,8 +359,6 @@ define(['jquery', 'underscore', 'backbone', 'handlebars', 'text!/static/template
             },
 
             _changeMode: function (e) {
-                var start = null;
-                var end = null;
                 if (this._getMode() === 'day') {
                     this.$('.mode-btn').text('周');
                     this._start = utils.getMonday(this.getCurrentDate()).getTime();
@@ -379,6 +381,7 @@ define(['jquery', 'underscore', 'backbone', 'handlebars', 'text!/static/template
             },
 
             _backward: function (e) {
+                Backbone.Notifications.trigger("toastShow");
                 if (this._getMode() == 'day') {
                     var start = new Date(this._start - common.MS_A_DAY);
                     this._start = new Date(start.getFullYear(), start.getMonth(), start.getDate()).getTime();
@@ -396,7 +399,7 @@ define(['jquery', 'underscore', 'backbone', 'handlebars', 'text!/static/template
                 if (this._getMode() == 'day') {
                     var today = new Date();
                     today = new Date(today.getFullYear(), today.getMonth(), today.getDate());
-                    if (this.getCurrentDate() >= today) {
+                    if (new Date(this._start) >= today) {
                         toastr.warning('已经是今天了!');
                         return;
                     }
@@ -404,13 +407,14 @@ define(['jquery', 'underscore', 'backbone', 'handlebars', 'text!/static/template
                     this._start = new Date(start.getFullYear(), start.getMonth(), start.getDate()).getTime();
                     this._end = this._start + common.MS_A_DAY;
                 } else {
-                    if (this.getCurrentDate() >= utils.getMonday(new Date())) {
+                    if (new Date(this._start) >= utils.getMonday(new Date())) {
                         toastr.warning('已经是最后一周了!');
                         return;
                     }
                     this._start = new Date(utils.getMonday(this._start + common.MS_A_WEEK)).getTime();
                     this._end = this._start + common.MS_A_WEEK;
                 }
+                Backbone.Notifications.trigger("toastShow");
                 this.pause();
                 this._hasChanged = true;
                 this.makePlot(this._viewpoint);

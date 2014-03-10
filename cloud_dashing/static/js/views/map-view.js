@@ -29,6 +29,9 @@ define(['backbone', 'handlebars', 'collections/agents', 'widgets/mult-agent-mark
                 var mapHelpButton = new MapHelpButton('.map-help-modal');
                 map.addOverlay(mapHelpButton);
                 this._map = map;
+                if(!!this._viewpoint) {
+                    this.updateTooltip(this._viewpoint);
+                }
             }
         },
 
@@ -51,6 +54,7 @@ define(['backbone', 'handlebars', 'collections/agents', 'widgets/mult-agent-mark
         },
 
         updateTooltip: function (viewpoint) {
+            this._viewpoint = viewpoint;
             if (!!this._markers) {
                 _.forEach(this._markers, function (marker) {
                     marker.updateTooltip(viewpoint);
