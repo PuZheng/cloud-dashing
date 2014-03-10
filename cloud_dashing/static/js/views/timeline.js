@@ -51,12 +51,11 @@ define(['views/maskerable-view', 'handlebars', 'text!/static/templates/timeline.
                         this._initTime = this._markedPosition;
                     }
                     this.mask();
-                    var that = this;
                     this._reports = new Reports(viewpoint, this._start, this._end);
                     this._reports.fetch({reset: true});
-                    this._reports.on('reset', this._doRender, this);
+                    this._reports.on('reset', this._renderPlot, this);
                 } else {
-                    this._doRender();
+                    this._renderPlot();
                 }
             },
 
@@ -142,7 +141,7 @@ define(['views/maskerable-view', 'handlebars', 'text!/static/templates/timeline.
                 }
             },
 
-            _doRender: function () {
+            _renderPlot: function () {
                 this.unmask();
                 this._markedPosition = {
                     x: this._reports.last().get('time') * 1000,
