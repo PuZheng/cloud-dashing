@@ -5,6 +5,7 @@
     <script type="text/javascript" src="{{ url_for('static', filename='components/flot/excanvas.min.js') }}"></script>
     <![endif]-->
   <link rel="stylesheet" href="{{ url_for('static', filename='css/index.css') }}"/>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/toast.css') }}"/>
   <link rel="stylesheet" href="{{ url_for('static', filename='components/backgrid/lib/backgrid.min.css') }}"/>
 {% endblock %}
 {% block main %}
@@ -21,12 +22,19 @@
           <div class="col-lg-8 col-md-8 col-sm-8 col-xs-8">
             <div class="map"></div>
             <div class="table-view"></div>
-            <div class="stat"></div>
-            <div class="timeline"></div>
-            <div class="stable"></div>
+            <div class="stat" style='display: none'></div>
+            <div class="timeline">
+              <div class='mask text-center'>
+                <i class="fa fa-spinner fa-spin fa-4x" style='vertical-align: middle'></i> 
+              </div>
+            </div>
           </div>
         </div>
-        <div class="control-panel col-lg-3 col-md-3 col-sm-3 col-xs-3"></div>
+        <div class="control-panel col-lg-3 col-md-3 col-sm-3 col-xs-3 text-cener">
+          <div class='mask text-center'>
+            <i class="fa fa-spinner fa-spin fa-4x" style='vertical-align: middle'></i> 
+          </div>
+        </div>
       </div>
     </div>
   </div><!-- /.container -->

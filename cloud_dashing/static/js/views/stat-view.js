@@ -19,14 +19,10 @@ define(['backbone', 'handlebars', 'views/avg-daily-latency', 'views/cpu-score-vi
 
                 initialize: function () {
                     this.$el.append(this._template());
-                    this._stableView = new StableView();
-                    this.$('#avail').append(this._stableView.render().el);
-                    this._avgDailyLatencyView = new AvgDailyLatencyView();
-                    this.$('#avg-latency').append(this._avgDailyLatencyView.render().el);
-                    this._cpuScoreView = new CpuScoreView();
-                    this.$('#cpu-score').append(this._cpuScoreView.render().el);
-                    this._hdScoreView = new HdScoreView();
-                    this.$('#hd-score').append(this._hdScoreView.render().el);
+                    this._stableView = new StableView({el: this.$('#avail')}).render();
+                    this._avgDailyLatencyView = new AvgDailyLatencyView({el: this.$('#avg-latency')}).render();
+                    this._cpuScoreView = new CpuScoreView({el: this.$('#cpu-score')}).render();
+                    this._hdScoreView = new HdScoreView({el: this.$('#hd-score')}).render();
                     return this; 
                 },
 
