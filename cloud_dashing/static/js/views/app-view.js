@@ -40,7 +40,7 @@ define(['backbone', 'views/map-view', 'views/control-panel', 'views/timeline', '
                     case 'map':
                         this.$('div.map').show();
                         this.$('div.timeline').show();
-                        this.$('div.table').hide();
+                        this.$('div.table-view').hide();
                         this.$('div.stat').hide();
                         if(!!this._map) {
                             this._map.drawMap();
@@ -52,7 +52,7 @@ define(['backbone', 'views/map-view', 'views/control-panel', 'views/timeline', '
                     case 'table':
                         this.$('div.map').hide();
                         this.$('div.timeline').show();
-                        this.$('div.table').show();
+                        this.$('div.table-view').show();
                         this.$('div.stat').hide();
 
                         if (!!this._tl) {
@@ -62,7 +62,7 @@ define(['backbone', 'views/map-view', 'views/control-panel', 'views/timeline', '
                     case 'stat':
                         this.$('div.map').hide();
                         this.$('div.timeline').hide();
-                        this.$('div.table').hide();
+                        this.$('div.table-view').hide();
                         this.$('div.stat').show();
 
                         if (!!this._stat) {
@@ -80,8 +80,8 @@ define(['backbone', 'views/map-view', 'views/control-panel', 'views/timeline', '
 
             _render: function () {
                 this._map = new MapView({el: this.$('.map')}).render();
-                this._table = new TableView({el: this.$(".table")}).render();
-                this.$(".table").append(this._table.el);
+                this._table = new TableView({el: this.$(".table-view")}).render();
+                this.$(".table-view").append(this._table.el);
                 this._tl = new Timeline({el: this.$('.timeline')});
                 this._stat = new StatView({el: this.$('.stat')});
                 this._cp = new ControlPanel({el: this.$('.control-panel')});

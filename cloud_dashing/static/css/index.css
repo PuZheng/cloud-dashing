@@ -1,6 +1,3 @@
-.stat, .map {
-    height: 360px;
-}
 
 .fa-map-marker {
     color: red;
@@ -100,13 +97,10 @@
             margin-left: 50px;
         }
 
-        /*.details-table {*/
-            /*padding: 0px 10px 50px 10px;*/
-        /*}*/
+        .stat, .map-block {
+            height: 360px;
+        }
 
-        /*.details-table h3 {*/
-            /*margin: 0px 0px 20px 0px; */
-        /*}*/
     }
 }
 
