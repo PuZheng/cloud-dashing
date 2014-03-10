@@ -38,7 +38,6 @@ define(['backbone', 'views/map-view', 'views/control-panel', 'views/timeline', '
                     $(this).toggleClass('active', toggle);
                 });
                 this._filter = param;
-                Backbone.Notifications.trigger("toastShow");
                 switch (param) {
                     case 'map':
                         this.$('div.map').show();
