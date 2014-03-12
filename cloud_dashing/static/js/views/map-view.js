@@ -31,6 +31,9 @@ define(['backbone', 'handlebars', 'collections/agents', 'widgets/mult-agent-mark
                     that._map.addOverlay(marker);
                 });
             }
+            if (!!this._viewpoint) {
+                this.updateTooltip(this._viewpoint);
+            }
         },
 
         updateLatency: function (result) {
@@ -51,8 +54,20 @@ define(['backbone', 'handlebars', 'collections/agents', 'widgets/mult-agent-mark
             });
         },
 
-        updateTooltip: function (viewpoint) {
+        _setViewpoint: function (viewpoint) {
             this._viewpoint = viewpoint;
+            var point = new BMap.Point(viewpoint.point.lng, viewpoint.point.lat);
+            var marker = new BMap.Marker(point);  // 创建标注
+            var that = this;
+            that._map.addOverlay(marker);              // 将标注添加到地图中
+            marker.setAnimation(BMAP_ANIMATION_BOUNCE);
+            setTimeout(function () {
+                that._map.removeOverlay(marker);
+            }, 1500);
+        },
+
+        updateTooltip: function (viewpoint) {
+            this._setViewpoint(viewpoint);
             if (!!this._markers) {
                 _.forEach(this._markers, function (marker) {
                     marker.updateTooltip(viewpoint);
