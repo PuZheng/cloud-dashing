@@ -83,6 +83,9 @@ define(['backbone', 'views/map-view', 'views/control-panel', 'views/timeline', '
 
             _render: function () {
                 this._table = new TableView({el: this.$(".table-view")}).render();
+                if(!!this._map) {
+                    this._map.drawMap();
+                }
                 this.$(".table-view").append(this._table.el);
                 this._stat = new StatView({el: this.$('.stat')});
                 this._tl = new Timeline({el: this.$('.timeline')});

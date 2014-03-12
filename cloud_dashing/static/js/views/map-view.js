@@ -1,13 +1,12 @@
 define(['backbone', 'handlebars', 'collections/agents', 'widgets/mult-agent-marker', 'widgets/map-help-button', 'underscore', 'text!/static/templates/map-help-modal.hbs'], function (Backbone, Handlebars, agents, MultAgentMarker, MapHelpButton, _, helpModalTemplate) {
-    
+
     var MapView = Backbone.View.extend({
-       
+
         _helpModalTemplate: Handlebars.default.compile(helpModalTemplate),
-        
+
         render: function () {
             $("<div class='map-block'><i class='fa fa-spinner fa-spin fa-4x'></i></div>").appendTo(this.$el);
             this.$el.append(this._helpModalTemplate());
-            this.drawMap();
             return this;
         },
 
@@ -21,14 +20,16 @@ define(['backbone', 'handlebars', 'collections/agents', 'widgets/mult-agent-mark
                 };
                 map.setMapStyle(mapStyle);
                 map.addControl(new BMap.NavigationControl());
-
-                this._markers = MultAgentMarker.initMarkers(agents);
-                _.each(this._markers, function (marker) {
-                    map.addOverlay(marker);
-                });
                 var mapHelpButton = new MapHelpButton('.map-help-modal');
                 map.addOverlay(mapHelpButton);
                 this._map = map;
+            }
+            if (this._map && _.isEmpty(this._markers)) {
+                var that = this;
+                this._markers = MultAgentMarker.initMarkers(agents);
+                _.each(this._markers, function (marker) {
+                    that._map.addOverlay(marker);
+                });
             }
         },
 
