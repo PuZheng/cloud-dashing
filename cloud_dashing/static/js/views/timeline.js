@@ -68,6 +68,11 @@ define(['views/maskerable-view', 'handlebars', 'text!/static/templates/timeline.
                         min: this._start,
                         max: this._end,
                     },
+                    yaxis: {
+                        tickFormatter: function (val, axis) {
+                            return val + '(ms)';
+                        }
+                    },
                     crosshair: {
                         mode: "x",
                         color: "gray",
