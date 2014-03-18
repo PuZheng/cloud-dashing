@@ -79,7 +79,7 @@ define(['jquery', 'backbone', 'handlebars', 'text!/static/templates/table-view.h
                         if(!(k in trs)){
                             trs[k] = [];
                         }
-                        var valueColumn = $("<td></td>").addClass("text-center").html(v);
+                        var valueColumn = $("<td></td>").addClass("text-center").html(parseInt(v));
                         trs[k].push(valueColumn);
                     });
                 });
