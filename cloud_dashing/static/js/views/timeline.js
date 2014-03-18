@@ -302,6 +302,7 @@ define(['views/maskerable-view', 'handlebars', 'text!/static/templates/timeline.
                             latency = -1
                         }
                         timespot = new TimeSpot({
+                            time: point1.x,
                             agent: agent,
                             latency: latency,
                             name: agentName,
@@ -389,6 +390,7 @@ define(['views/maskerable-view', 'handlebars', 'text!/static/templates/timeline.
                     this._start = new Date(utils.getMonday(this._start - common.MS_A_WEEK)).getTime();
                     this._end = this._start + common.MS_A_WEEK;
                 }
+                Backbone.Notifications.trigger("time_backward", this._start, this._end);
                 this.pause();
                 this._hasChanged = true;
                 this.makePlot(this._viewpoint);
@@ -414,6 +416,7 @@ define(['views/maskerable-view', 'handlebars', 'text!/static/templates/timeline.
                     this._end = this._start + common.MS_A_WEEK;
                 }
                 Backbone.Notifications.trigger("toastShow");
+                Backbone.Notifications.trigger("time_backward", this._start, this._end);
                 this.pause();
                 this._hasChanged = true;
                 this.makePlot(this._viewpoint);
@@ -457,11 +460,13 @@ define(['views/maskerable-view', 'handlebars', 'text!/static/templates/timeline.
                     top: this._plot.offset().top + this._plot.height() / 2
                 }).show();
                 var data = [];
+                var that = this;
                 _.forEach(report.data["网络性能"], function (netStatus) {
                     var agent = _.find(agents.models, function (agent) {
                         return agent.get("id") == netStatus.id;
                     });
                     data.push(new TimeSpot({
+                        time: that._markedPosition.x,
                         agent: agent,
                         services: {"计算性能": report.data["计算性能"], "磁盘性能": report.data["磁盘性能"]},
                         latency: parseFloat(netStatus["延迟"]),
