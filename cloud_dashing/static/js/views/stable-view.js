@@ -39,7 +39,7 @@ define(['views/maskerable-view', 'toastr', 'handlebars', 'collections/daily-repo
                 var dateSpans = this._getDateSpans();
                 var dataColumns = _.map(data, function (series, agentId) {
                     var html = $("<tr></tr>");
-                    html.append($("<td></td>").addClass("text-center").text(agents.get(agentId).get("provider")));
+                    html.append($("<td></td>").addClass("text-center").text(agents.get(agentId).get("name")));
                     _.each(dateSpans, function (date) {
                         var val = series[date.getTime()/1000];
                         var td = $("<td></td>").addClass("text-center");

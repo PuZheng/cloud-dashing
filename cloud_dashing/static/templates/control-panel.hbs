@@ -3,7 +3,7 @@
     <i class="fa fa-map-marker fa-fw"></i>
     <select id="viewpoint" name="viewpoint" style="width: 80%">
       {{#each agents}}
-      <option value="{{this.id}}">{{this.provider}}</option> 
+      <option value="{{this.id}}">{{this.name}}</option>
       {{/each}}
     </select>
   </div>
@@ -13,7 +13,7 @@
       <li class="list-group-item list-group-item-info" value="{{this.id}}" data-enabled='true' data-agent-id={{this.id}}>
         <i class="fa fa-check"></i>
         <i class="fa fa-square" style="color: {{this.color}}" data-color="{{this.color}}"></i>
-        <small>{{this.id}}.{{this.provider}} -</small>
+        <small>{{this.id}}.{{this.name}} -</small>
       </li>
       {{/each}}
     </ul>
