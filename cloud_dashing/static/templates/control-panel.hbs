@@ -3,7 +3,7 @@
     <i class="fa fa-map-marker fa-fw"></i>
     <select id="viewpoint" name="viewpoint" style="width: 80%">
       {{#each agents}}
-      <option value="{{this.id}}">{{this.name}}</option>
+      <option value="{{this.id}}">{{this.provider}} - {{ this.location }}</option> 
       {{/each}}
     </select>
   </div>
