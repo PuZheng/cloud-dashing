@@ -70,66 +70,64 @@
 }
 
 
-@media screen {
-    @media (min-width: 979px) {
-        body {
-            /* for nav bar */
-            padding-top: 15px !important;
-        }
-
-        .timeline {
-            margin-top: 10px;    
-        }
-
-        .timeline-view {
-            padding: 10px;
-            margin-top: 5px;
-        }
-
-        .timeline-plot {
-            height: 196px;
-            margin-left: 50px;
-        }
-
-        .map {
-            background-color: #d9edf7;
-        }
-
-        .map, .stat {
-            height: 360px;
-        }
-
-        .map-block {
-            height: 100%;
-        }
-
-
-        .mask {
-            width: 100%;
-            background-color: #EEEEEE;
-        }
-        
-        .control-panel .mask {
-            height: 600px;
-            padding-top: 200px;
-        }
-
-        .timeline .mask {
-            height: 196px;
-            padding-top: 70px;
-        }
-        
-        #avail .mask, #avg-latency .mask, #cpu-score .mask, #hd-score .mask {
-            height: 300px;
-            padding-top: 130px;
-        }
-
-
-        .control-panel select {
-            width: 220px;
-        }
-
+@media screen and (min-width: 979px) {
+    body {
+        /* for nav bar */
+        padding-top: 15px !important;
     }
+
+    .timeline {
+        margin-top: 10px;    
+    }
+
+    .timeline-view {
+        padding: 10px;
+        margin-top: 5px;
+    }
+
+    .timeline-plot {
+        height: 196px;
+        margin-left: 50px;
+    }
+
+    .map {
+        background-color: #d9edf7;
+    }
+
+    .map, .stat {
+        height: 360px;
+    }
+
+    .map-block {
+        height: 100%;
+    }
+
+
+    .mask {
+        width: 100%;
+        background-color: #EEEEEE;
+    }
+
+    .control-panel .mask {
+        height: 600px;
+        padding-top: 200px;
+    }
+
+    .timeline .mask {
+        height: 196px;
+        padding-top: 70px;
+    }
+
+    #avail .mask, #avg-latency .mask, #cpu-score .mask, #hd-score .mask {
+        height: 300px;
+        padding-top: 130px;
+    }
+
+
+    .control-panel select {
+        width: 220px;
+    }
+
 }
 
 
