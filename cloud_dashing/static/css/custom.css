@@ -1,11 +1,9 @@
-@media screen {
-    @media (min-width: 979px) {
-        body {
-            /* for nav bar */
-            padding-top: 60px !important;
-        }
-
+@media screen and (min-width: 979px) {
+    body {
+        /* for nav bar */
+        padding-top: 60px !important;
     }
+
 }
 
 
