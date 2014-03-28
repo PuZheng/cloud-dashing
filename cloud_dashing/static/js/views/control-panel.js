@@ -24,7 +24,6 @@ define(['jquery', 'backbone', 'handlebars', 'text',
 
             events: {
                 'change #viewpoint': '_onViewpointSet',
-                'change #cloud': '_onCloudSet',
                 'change #delay': '_onDelayTypeSet',
                 'click li.list-group-item': function (e) {
                     this._toggleAgent($(e.target));
@@ -51,10 +50,6 @@ define(['jquery', 'backbone', 'handlebars', 'text',
                 });
             },
 
-            _onCloudSet: function() {
-                var cloud = agents.get(this.$('#cloud').val()).toJSON();
-                this.$("#cloud-icon").css("color", cloud.color);
-            },
 
             _onDelayTypeSet: function() {
                 this.trigger('delayType-set', this.$('#delay').val());
