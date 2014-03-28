@@ -4,7 +4,7 @@
   "dependencies": {
     "bootstrap": "~3.1.0",
     "fancybox": "latest",
-    "select2": "~3.4.5",
+    "select2": "latest",
     "requirejs": "latest",
     "holderjs": "latest",
     "normalize-css": "latest",

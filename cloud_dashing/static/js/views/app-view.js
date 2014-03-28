@@ -17,12 +17,14 @@ define(['backbone', 'views/map-view', 'views/control-panel', 'views/timeline', '
                         deferred.promise().then(that._render.bind(that));
                         collection.each(function (agent) {
                             myGeo.getPoint(agent.get('location'), function (point) {
-                                agent.set('point', point);
-                                var pointsAllSet = collection.every(function (agent, index, array) {
-                                    return !!agent.get('point');
-                                });
-                                if (pointsAllSet) {
-                                    deferred.resolve();
+                                if (!!point) {
+                                    agent.set('point', point);
+                                    var pointsAllSet = collection.every(function (agent, index, array) {
+                                        return !!agent.get('point');
+                                    });
+                                    if (pointsAllSet) {
+                                        deferred.resolve();
+                                    }
                                 }
                             });
                         });
@@ -99,8 +101,13 @@ define(['backbone', 'views/map-view', 'views/control-panel', 'views/timeline', '
                 }, this);
                 this._cp.on('viewpoint-set', this._onViewpointSet, this);
                 this._cp.on('agent-toggle', this._onAgentToggle, this);
+                this._cp.on('delayType-set', this._onDelayTypeSet, this);
                 this._cp.render();
                 this._toast = new ToastView();
+            },
+
+            _onDelayTypeSet: function(type) {
+                this._tl.updateDelayType(type);
             },
 
             _onViewpointSet: function (viewpoint) {
