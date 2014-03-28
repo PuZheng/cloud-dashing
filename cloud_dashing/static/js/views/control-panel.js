@@ -3,18 +3,28 @@ define(['jquery', 'backbone', 'handlebars', 'text',
     'text!/static/templates/control-panel.hbs', 'select2'],
     function ($, Backbone, Handlebars, text, agents, controlPanelTemplate) {
 
+        Handlebars.default.registerHelper("compare", function(target, source, options) {
+           if(target>source) {
+               return options.fn(this);
+           } else{
+               return options.inverse(this);
+           }
+        });
+
         var ControlPanel = Backbone.View.extend({
             _template: Handlebars.default.compile(controlPanelTemplate),
 
             render: function () {
                 this.$el.html(this._template({agents: agents.toJSON()}));
                 $('select').select2();
+                this._onCloudSet();
                 this._onViewpointSet();
                 return this;
             },
 
             events: {
-                'change select': '_onViewpointSet',
+                'change #viewpoint': '_onViewpointSet',
+                'change #delay': '_onDelayTypeSet',
                 'click li.list-group-item': function (e) {
                     this._toggleAgent($(e.target));
                 },
@@ -29,7 +39,7 @@ define(['jquery', 'backbone', 'handlebars', 'text',
             },
 
             _onViewpointSet: function (e) {
-                var viewpoint = agents.get(this.$('select').val()).toJSON();
+                var viewpoint = agents.get(this.$('#viewpoint').val()).toJSON();
                 this.trigger('viewpoint-set', viewpoint);
                 this.$("ul li").each(function (index) {
                     if ($(this).attr('data-agent-id') == viewpoint.id) {
@@ -38,6 +48,11 @@ define(['jquery', 'backbone', 'handlebars', 'text',
                         $(this).show();
                     }
                 });
+            },
+
+
+            _onDelayTypeSet: function() {
+                this.trigger('delayType-set', this.$('#delay').val());
             },
 
             _toggleAgent: function (el) {

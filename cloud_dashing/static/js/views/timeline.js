@@ -2,6 +2,9 @@ define(['views/maskerable-view', 'handlebars', 'text!/static/templates/timeline.
     'collections/reports', 'collections/agents', 'models/timespot', 'common', 'utils', 'toastr',
     'jquery.plot', 'jquery.plot.crosshair', 'jquery.plot.symbol', 'jquery.plot.time'],
     function (MaskerableView, Handlebars, timelineTemplate, Reports, agents, TimeSpot, common, utils, toastr) {
+        var delayType = ["tcp", "udp", "icmp"];
+        // 暂时不能动态生成
+
         var Timeline = MaskerableView.extend({
             _template: Handlebars.default.compile(timelineTemplate),
 
@@ -14,6 +17,7 @@ define(['views/maskerable-view', 'handlebars', 'text!/static/templates/timeline.
                     "positionClass": "toast-bottom-full-width",
                     "timeOut": "1000"
                 };
+                this._type = "tcp";
                 this._playing = false;
                 this.render();
             },
@@ -97,14 +101,14 @@ define(['views/maskerable-view', 'handlebars', 'text!/static/templates/timeline.
                                     if (agent.selected && status_.latency == null) {
                                         var from = null;
                                         if (i == 0) {
-                                            from = report.at;
+                                            from = report.time * 1000;
                                         } else {
-                                            from = that._reports.get(i - 1).at;
+                                            from = that._reports.get(i - 1).time * 1000;
                                         }
 
                                         var to = null;
                                         if (i + 1 < that._reports.length) {
-                                            to = that._reports.get(i + 1).at;
+                                            to = that._reports.get(i + 1).time * 1000;
                                         } else {
                                             to = new Date().getTime();
                                         }
@@ -161,101 +165,126 @@ define(['views/maskerable-view', 'handlebars', 'text!/static/templates/timeline.
                 var pointSeriesMap = {};
                 var _reportsSize = this._reports.models.length;
 
-                function getLatency(report, agentId) {
+                function getLatency(report, agentId, type) {
                     var netStatus = report.get("data")["网络性能"];
                     var agentStatus = _.find(netStatus, function (status) {
                         return status.id == agentId;
                     });
                     if (!!agentStatus) {
-                        return  parseFloat(agentStatus["延迟"]);
+                        return  parseFloat(agentStatus[type]);
                     }
+                    return null;
                 }
 
                 for (var i = 0; i < _reportsSize; i++) {
                     var report = this._reports.models[i];
-                    var netStatusList = report.get('data')["网络性能"];
-                    if (!!netStatusList) {
-                        for (var j = 0; j < netStatusList.length; ++j) {
-                            var agentStatus = netStatusList[j];
-                            var latency = parseFloat(agentStatus["延迟"]);
+                    var allNetStatus = report.get('data')["网络性能"];
+                    if (!!allNetStatus) {
+                        _.each(allNetStatus, function (val, key) {
+                            key = parseInt(key);
+                            _.each(delayType, function (type) {
+                                var latency = val[type];
 
-                            if (agentStatus["crashed"] === 0) {
-                                if (!(agentStatus.id in lineSeriesMap)) {
-                                    lineSeriesMap[agentStatus.id] = [];
+                                if (!(type in lineSeriesMap)) {
+                                    lineSeriesMap[type] = {};
                                 }
-                                lineSeriesMap[agentStatus.id].push([report.get('time') * 1000, latency,report.get('data')["计算性能"],
-                                    report.get('data')["磁盘性能"]]);
-                            } else {
-                                if (!(agentStatus.id in pointSeriesMap)) {
-                                    pointSeriesMap[agentStatus.id] = [];
+                                if (!(type in pointSeriesMap)) {
+                                    pointSeriesMap[type] = {};
                                 }
-
-                                if (i < _reportsSize - 1) {
-                                    var nextLatency = getLatency(this._reports.models[i + 1], agentStatus.id);
-                                }
-                                if (i > 0) {
-                                    var prevLatency = getLatency(this._reports.models[i - 1], agentStatus.id);
-                                }
-                                if (nextLatency && prevLatency) {
-                                    latency = (nextLatency + prevLatency) / 2
+                                if (val["crashed"] === 0) {
+                                    if (!(key in lineSeriesMap[type])) {
+                                        lineSeriesMap[type] [key] = [];
+                                    }
+                                    lineSeriesMap[type] [key].push([report.get('time') * 1000, latency, report.get('data')["计算性能"],
+                                        report.get('data')["磁盘性能"]]);
                                 } else {
-                                    latency = nextLatency || prevLatency;
+                                    if (!(key in pointSeriesMap[type])) {
+                                        pointSeriesMap[type][key] = [];
+                                    }
+
+                                    if (i < _reportsSize - 1) {
+                                        var nextVal = getLatency(this._reports.models[i + 1], val.id, type);
+                                    }
+                                    if (i > 0) {
+                                        var preVal = getLatency(this._reports.models[i - 1], val.id, type);
+                                    }
+                                    if (nextVal && preVal) {
+                                        latency = (nextVal + preVal) / 2;
+                                    } else {
+                                        latency = nextVal || preVal;
+                                    }
+                                    pointSeriesMap[type][key].push([report.get('time') * 1000, latency, report.get('data')["计算性能"],
+                                        report.get('data')["磁盘性能"], "crashed"]);
                                 }
-                                pointSeriesMap[agentStatus.id].push([report.get('time') * 1000, latency, report.get('data')["计算性能"],
-                                    report.get('data')["磁盘性能"], "crashed"]);
-                            }
-                        }
+                            });
+
+                        });
                     }
                 }
-                for (var id in lineSeriesMap) {
-                    data.push({
-                        agentId: id,
-                        data: lineSeriesMap[id],
-                        dataType: "lines"
-                    });
+                for (var type in lineSeriesMap) {
+                    for (var id in lineSeriesMap[type]) {
+                        data.push({
+                            type: type,
+                            agentId: id,
+                            data: lineSeriesMap[type][id],
+                            dataType: "lines"
+                        });
+                    }
                 }
-                for (var id in pointSeriesMap) {
-                    data.push({
-                        agentId: id,
-                        data: pointSeriesMap[id],
-                        dataType: "points"
-                    });
+                for (var type in pointSeriesMap) {
+                    for (var id in pointSeriesMap[type]) {
+                        data.push({
+                            agentId: id,
+                            data: pointSeriesMap[type][id],
+                            dataType: "points"
+                        });
+                    }
                 }
-                this._plot = $.plot(this.$container, this._hideDisabledAgents(data), this._options());
+                this._plotData = data;
+                this._plot = $.plot(this.$container, this._hideDisabledAgents(), this._options());
                 this._updateTimeSpot(this._markedPosition);
                 this._hasChanged = false;
             },
 
-            _hideDisabledAgents: function (data) {
-                for (var i = 0; i < data.length; ++i) {
-                    var series = data[i];
-                    var agent = agents.get(series.agentId);
-                    var selected = agent.get('selected');
-                    if (series.dataType == "lines") {
-                        series.lines = {show: selected};
-                        series.color = selected ? agent.get('color') : '#ccc';
-                    } else if (series.dataType == "points") {
-                        series.points = {show: selected, symbol: "cross"};
-                        series.color = "red";
+            _hideDisabledAgents: function () {
+                var data = [];
+                if (!!this._plotData) {
+                    for (var i = 0; i < this._plotData.length; ++i) {
+                        var series = this._plotData[i];
+                        if (series.type === this._type) {
+                            var agent = agents.get(series.agentId);
+                            var selected = agent.get('selected');
+                            if (series.dataType == "lines") {
+                                series.lines = {show: selected};
+                                series.color = selected ? agent.get('color') : '#ccc';
+                            } else if (series.dataType == "points") {
+                                series.points = {show: selected, symbol: "cross"};
+                                series.color = "red";
+                            }
+                            data.push(series);
+                        }
                     }
                 }
                 return data;
             },
 
             _updateTimeSpot: function (pos) {
-                function unionDataset(dataset, x) {
+                function unionDataset(dataset, type) {
                     var newDataset = {};
                     _.forEach(dataset, function (series) {
-                        if(!(series.agentId in newDataset)) {
+                        if (!(series.agentId in newDataset)) {
                             newDataset[series.agentId] = [];
                         }
-                        var data = _.union(newDataset[series.agentId], series.data);
-                        newDataset[series.agentId] = _.sortBy(data, function (val) {
-                            return val[0];
-                        });
+                        if (series.type === type) {
+                            var data = _.union(newDataset[series.agentId], series.data);
+                            newDataset[series.agentId] = _.sortBy(data, function (val) {
+                                return val[0];
+                            });
+                        }
                     });
                     return newDataset;
                 }
+
                 function Point(data) {
                     if (!!data) {
                         this.x = data[0];
@@ -267,9 +296,9 @@ define(['views/maskerable-view', 'handlebars', 'text!/static/templates/timeline.
                         this.crashed = data[4] || false;
                     }
                 }
-                
+
                 var i, j, dataset = this._plot.getData();
-                var newDataSet = unionDataset(dataset);
+                var newDataSet = unionDataset(dataset, this._type);
                 var data = [];
                 _.each(newDataSet, function (value, idx) {
                     // Find the nearest points, x-wise
@@ -356,7 +385,7 @@ define(['views/maskerable-view', 'handlebars', 'text!/static/templates/timeline.
             },
 
             toggleAgent: function (agent) {
-                this._plot = $.plot(this.$container, this._hideDisabledAgents(this._plot.getData()), this._options());
+                this._plot = $.plot(this.$container, this._hideDisabledAgents(), this._options());
             },
 
             _getMode: function () {
@@ -470,16 +499,27 @@ define(['views/maskerable-view', 'handlebars', 'text!/static/templates/timeline.
                     var agent = _.find(agents.models, function (agent) {
                         return agent.get("id") == netStatus.id;
                     });
-                    data.push(new TimeSpot({
-                        time: that._markedPosition.x,
-                        agent: agent,
-                        services: {"计算性能": report.data["计算性能"], "磁盘性能": report.data["磁盘性能"]},
-                        latency: parseFloat(netStatus["延迟"]),
-                        name: agent.get("name") || ""
-                    }));
+                    if (!!agent) {
+                        data.push(new TimeSpot({
+                            time: that._markedPosition.x,
+                            agent: agent,
+                            services: {"计算性能": report.data["计算性能"], "磁盘性能": report.data["磁盘性能"]},
+                            latency: parseFloat(netStatus[this._type]),
+                            name: agent.get("name") || ""
+                        }));
+                    }
                 });
                 this.trigger('time-changed', data);
-            }
+            },
+
+            updateDelayType: function (type) {
+                this._type = type;
+                this._plot = $.plot(this.$container, this._hideDisabledAgents(), this._options());
+                this._updateTimeSpot(this._markedPosition);
+                this.pause();
+                this._hasChanged = true;
+            },
+
         });
         return Timeline;
     });
