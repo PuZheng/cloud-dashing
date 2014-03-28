@@ -17,7 +17,6 @@ define(['jquery', 'backbone', 'handlebars', 'text',
             render: function () {
                 this.$el.html(this._template({agents: agents.toJSON()}));
                 $('select').select2();
-                this._onCloudSet();
                 this._onViewpointSet();
                 return this;
             },
