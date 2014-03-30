@@ -1,47 +1,104 @@
 /**
  * Created by Young on 14-2-27.
  */
-define(['jquery', 'underscore', 'handlebars', 'text!/static/templates/mult-agent-brief.hbs', 'common', 'bootstrap'], function ($, _, Handlebars, agentBriefTemplate, common) {
+define(['jquery', 'underscore', 'handlebars', 'kineticjs', 'text!/static/templates/mult-agent-brief.hbs', 'common', 'bootstrap'], function ($, _, Handlebars, Kinetic, agentBriefTemplate, common) {
     var location2agents = {};
     var _template = Handlebars.default.compile(agentBriefTemplate);
+    var layer = null;
+    var agent2markerTag = {};
+    var agent2line = {};
 
-    var MultAgentMarker = function () {
-        this._agents = [];
-        this._length = 32;
+    var MultAgentMarker = function (agents) {
+        this._agents = agents;
+        this._length = 50;
     };
-    MultAgentMarker.initMarkers = function (agents) {
-        agents.each(function (agent) {
-            var location = agent.get("location");
-            var marker;
-            if (location in location2agents) {
-                marker = location2agents[location];
-            } else {
-                marker = new MultAgentMarker();
-                location2agents[location] = marker;
-            }
-            marker.addAgent(agent);
+
+    MultAgentMarker.initMarkers = function (agents, layer_) {
+        layer = layer_;
+        var location2agents = agents.groupBy(function (agent) {
+            return agent.get('location');
         });
-        return _.values(location2agents);
+        return _.values(location2agents).map(function (agents) {
+            return new MultAgentMarker(agents);
+        });
+        //for (location_ in location2agents) {
+            
+        //}
+        //agents.each(function (agent) {
+            //var location = agent.get("location");
+            //var marker;
+            //if (location in location2agents) {
+                //marker = location2agents[location];
+            //} else {
+                //marker = new MultAgentMarker();
+                //location2agents[location] = marker;
+            //}
+            //marker.addAgent(agent);
+        //});
+        //return _.values(location2agents);
     };
 
     MultAgentMarker.prototype = new BMap.Overlay();
 
-    MultAgentMarker.prototype.addAgent = function (agent) {
-        this._agents.push(agent);
-    };
+    //MultAgentMarker.prototype.addAgent = function (agent) {
+        //this._agents.push(agent);
+    //};
 
 
     MultAgentMarker.prototype.initialize = function (map) {
         this._map = map;
+        this._lines = [];
         this._tag = $("<div class='agent-marker'></div>").css({
             position: 'absolute',
             width: this._length + 'px',
             height: this._length + 'px',
         });
+        if (this._agents.length === 1) {
+            this._tag.addClass('single-agent-marker');
+        }
         map.getPanes().labelPane.appendChild(this._tag[0]);
+        if (this._agents.length === 1) {
+            var agent = this._agents[0];
+            var tag = $('<span class="fa-stack" data-marker="' + agent.id + '"><i class="fa fa-cloud fa-stack-1x" style="color:' + agent.get('color') + '"></i><small class="fa-stack-1x">' + agent.id + '</small></span>');
+            this._tag.append(tag);
+            tag.css({
+                position: 'absolute',
+                left:  (this._length - tag.width()) / 2 + 'px',
+                top: (this._length - tag.height()) / 2 + 'px'
+            });
+            agent2markerTag[agent.id] = tag;
+        } else {
+            this._agents.forEach((function (agent, idx) {
+                var tag = $('<span class="fa-stack"><i class="fa fa-cloud fa-stack-1x" style="color:' + agent.get('color') + '"></i><small class="fa-stack-1x">' + agent.id + '</small></span>');
+                this._tag.append(tag);
+                tag.css({
+                    position: 'absolute',
+                    left: Math.round(Math.cos(2 * Math.PI * idx / this._agents.length) * 15) + (this._length - tag.width()) / 2 + 'px',
+                    top: Math.round(Math.sin(2 * Math.PI * idx / this._agents.length) * 15) + (this._length - tag.height()) / 2 + 'px',
+                });
+                agent2markerTag[agent.id] = tag;
+            }).bind(this));
+        }
+        $.each(this._agents, function (idx, agent) {
+            var markerTag = agent2markerTag[agent.id];
+            var line = new Kinetic.Line({
+                stroke: agent.get('color'),
+                strokeWidth: 0,
+                lineCap: 'round',
+                lineJoin: 'round',
+            });                                
+            line.hide();
+            layer.add(line);
+            agent2line[agent.id] = line;
+            this._lines.push(line);
+
+        }.bind(this));
         return this._tag[0];
     };
 
+    MultAgentMarker.prototype.getLines = function () {
+        return this._lines;
+    }
 
     MultAgentMarker.prototype.updateTooltip = function (viewpoint) {
         this._viewpoint = viewpoint;
@@ -58,6 +115,14 @@ define(['jquery', 'underscore', 'handlebars', 'text!/static/templates/mult-agent
             placement: 'right',
             container: 'body',
         });
+        var endPos = this._map.pointToOverlayPixel(this._viewpoint.point);
+        $.each(this._agents, function (idx, agent) {
+            var markerTag = agent2markerTag[agent.id];
+            var startX = markerTag.parent().position().left + markerTag.position().left + markerTag.width() / 2;
+            var startY = markerTag.parent().position().top + markerTag.position().top + markerTag.height() / 2;
+            var line = agent2line[agent.id];
+            line.points([startX, startY, endPos.x, endPos.y]);
+        }.bind(this));
     };
 
     MultAgentMarker.prototype.toggleAgent = function () {
@@ -68,42 +133,49 @@ define(['jquery', 'underscore', 'handlebars', 'text!/static/templates/mult-agent
 
     MultAgentMarker.prototype.draw = function () {
         var position = this._map.pointToOverlayPixel(this._agents[0].get('point'));
+        
+        this._center = position;
         this._tag.css({
             left: position.x - this._length / 2 + "px",
             top: position.y - this._length / 2 + "px"
         });
     };
 
+    MultAgentMarker.prototype._getStrokeWidth = function (latency) {
+        return 3;
+        if (!latency) {
+            return 0;
+        } else if (latency >= common.BAD_LATENCY_THRESHHOLD) {
+            return 1;
+        } else if (latency >= common.ACCEPTABLE_LATENCY_THRESHHOLD) {
+            return 2;
+        } else if (latency == -1) {
+            return -1
+        } else {
+            return 3;
+        }
+    }
+
     MultAgentMarker.prototype.update = function (data) {
         this._data = data;
-        this._tag.find('i').remove();
-        var warningICON = '<i class="fa fa-warning"/>';
-        var frownICON = '<i class="fa fa-frown-o"/>';
-        var questionICON = '<i class="fa fa-question"/>';
-        var banICON = '<i class="fa fa-ban"/>';
-        var simleICON = '<i class="fa fa-smile-o"/>';
-        var html = "";
-        var _agents = this._agents;
-        var _viewpoint_id = this._viewpoint.id;
-        $.each(_agents, function (idx, agent) {
-            if (agent.get("selected") === true && agent.id != _viewpoint_id) {
-                var latency = data[agent.id];
-                var icon;
-                if (!latency) {
-                    icon = questionICON;
-                } else if (latency >= common.BAD_LATENCY_THRESHHOLD) {
-                    icon = warningICON;
-                } else if (latency >= common.ACCEPTABLE_LATENCY_THRESHHOLD) {
-                    icon = frownICON;
-                } else if (latency == -1) {
-                    icon = banICON;
-                } else {
-                    icon = simleICON;
+        var endPos = this._map.pointToOverlayPixel(this._viewpoint.point);
+        $.each(this._agents, function (idx, agent) {
+            var markerTag = agent2markerTag[agent.id];
+            var line = agent2line[agent.id];
+            if (agent.get("selected") === true && agent.id != this._viewpoint.id) {
+                markerTag.show();
+                var strokeWidth = this._getStrokeWidth(data[agent.id]);
+                if (strokeWidth > 0) {
+                    var line = agent2line[agent.id];
+                    line.show();
+                    line.strokeWidth(strokeWidth);
+                    line.dash([(5 - strokeWidth) * 2, (5 - strokeWidth) * 2]);
                 }
-                html += (agent.id + icon + "<br>");
+            } else {
+                markerTag.hide();
+                line.hide();
             }
-        });
-        this._tag.html($("<div></div>").addClass("panel panel-default").html(html));
+        }.bind(this));
     };
     return MultAgentMarker;
 });
