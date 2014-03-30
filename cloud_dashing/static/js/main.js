@@ -3,6 +3,7 @@ require.config({
     paths: {
         jquery: 'jquery/jquery.min',
         underscore: 'underscore/underscore',
+        kineticjs: 'kineticjs/kinetic.min',
         backbone: 'backbone/backbone',
         handlebars: 'handlebars/handlebars.amd.min',
         select2: 'select2/select2.min',
