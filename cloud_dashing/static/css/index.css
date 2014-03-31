@@ -73,7 +73,7 @@
 @media screen and (min-width: 979px) {
     body {
         /* for nav bar */
-        padding-top: 15px !important;
+        padding-top: 0px !important;
     }
 
     .timeline {
@@ -95,7 +95,7 @@
     }
 
     .map, .stat {
-        height: 660px;
+        height: 640px;
     }
 
     .map-block {
