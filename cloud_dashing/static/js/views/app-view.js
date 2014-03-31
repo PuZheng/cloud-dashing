@@ -63,12 +63,16 @@ define(['backbone', 'views/map-view', 'views/control-panel', 'views/timeline', '
                         this.$('div.stat').hide();
                         this.$('div.select-div').show();
                         this.$('div.delayType').show();
-                        if (!!this._tl) {
-                            this._tl.makePlot(this._viewpoint);
-                        }
                         if (!!this._cp) {
                             this._cp.triggerSelect(true);
-                            this._cp.triggerDelayType(false);
+                            this._cp.triggerCheckClouds(false);
+                            this._cp.triggerDelayType(true);
+                            if(!!this._tl) {
+                                this._tl.toggleAgent();
+                            }
+                        }
+                        if (!!this._tl) {
+                            this._tl.makePlot(this._viewpoint);
                         }
                         break;
                     case 'stat':
@@ -123,6 +127,7 @@ define(['backbone', 'views/map-view', 'views/control-panel', 'views/timeline', '
 
             _onCloudSet: function(cloud) {
                 this._stat.updateCloud(cloud);
+                this._table.updateCloud(cloud);
             },
             _onDelayTypeSet: function (type) {
                 this._tl.updateDelayType(type);

@@ -20,6 +20,7 @@ define(['views/maskerable-view', 'handlebars', 'text!/static/templates/timeline.
                 this._type = "tcp";
                 this._playing = false;
                 this.render();
+                Backbone.Notifications.on("updateCloud", this._updateCloud, this);
             },
 
             events: {
@@ -177,6 +178,7 @@ define(['views/maskerable-view', 'handlebars', 'text!/static/templates/timeline.
                 }
 
                 for (var i = 0; i < _reportsSize; i++) {
+                    var _reports = this._reports.models;
                     var report = this._reports.models[i];
                     var allNetStatus = report.get('data')["网络性能"];
                     if (!!allNetStatus) {
@@ -195,26 +197,24 @@ define(['views/maskerable-view', 'handlebars', 'text!/static/templates/timeline.
                                     if (!(key in lineSeriesMap[type])) {
                                         lineSeriesMap[type] [key] = [];
                                     }
-                                    lineSeriesMap[type] [key].push([report.get('time') * 1000, latency, report.get('data')["计算性能"],
-                                        report.get('data')["磁盘性能"]]);
+                                    lineSeriesMap[type] [key].push([report.get('time') * 1000, latency]);
                                 } else {
                                     if (!(key in pointSeriesMap[type])) {
                                         pointSeriesMap[type][key] = [];
                                     }
 
                                     if (i < _reportsSize - 1) {
-                                        var nextVal = getLatency(this._reports.models[i + 1], val.id, type);
+                                        var nextVal = getLatency(_reports[i + 1], val.id, type);
                                     }
                                     if (i > 0) {
-                                        var preVal = getLatency(this._reports.models[i - 1], val.id, type);
+                                        var preVal = getLatency(_reports[i - 1], val.id, type);
                                     }
                                     if (nextVal && preVal) {
                                         latency = (nextVal + preVal) / 2;
                                     } else {
                                         latency = nextVal || preVal;
                                     }
-                                    pointSeriesMap[type][key].push([report.get('time') * 1000, latency, report.get('data')["计算性能"],
-                                        report.get('data')["磁盘性能"], "crashed"]);
+                                    pointSeriesMap[type][key].push([report.get('time') * 1000, latency, "crashed"]);
                                 }
                             });
 
@@ -234,6 +234,7 @@ define(['views/maskerable-view', 'handlebars', 'text!/static/templates/timeline.
                 for (var type in pointSeriesMap) {
                     for (var id in pointSeriesMap[type]) {
                         data.push({
+                            type: type,
                             agentId: id,
                             data: pointSeriesMap[type][id],
                             dataType: "points"
@@ -289,10 +290,6 @@ define(['views/maskerable-view', 'handlebars', 'text!/static/templates/timeline.
                     if (!!data) {
                         this.x = data[0];
                         this.latency = data[1];
-                        this.cpu_crashed = data[2]["crashed"];
-                        this.cpu = parseFloat(data[2]["分数"]);
-                        this.hd = parseFloat(data[3]["分数"]);
-                        this.hd_crashed = data[3]["crashed"];
                         this.crashed = data[4] || false;
                     }
                 }
@@ -324,13 +321,9 @@ define(['views/maskerable-view', 'handlebars', 'text!/static/templates/timeline.
                         if (agent) {
                             agentName = agent.get("name");
                         }
-                        var cpu = point1.cpu;
-                        var hd = point1.hd;
                         var latency = Math.floor(point1.latency);
                         if (point1.x != point2.x) {
                             latency = Math.floor(point1.latency + (point2.latency - point1.latency) * (pos.x - point1.x) / (point2.x - point1.x));
-                            cpu = (point1.cpu + point2.cpu) / 2;
-                            hd = (point1.hd + point2.hd) / 2;
                         }
                         if (point1.crashed || point2.crashed) {
                             latency = -1
@@ -339,9 +332,7 @@ define(['views/maskerable-view', 'handlebars', 'text!/static/templates/timeline.
                             time: point1.x,
                             agent: agent,
                             latency: latency,
-                            name: agentName,
-                            services: {"计算性能": {"crashed": point1.cpu_crashed || point2.cpu_crashed, "分数": cpu},
-                                "磁盘性能": {"crashed": point1.hd_crashed || point2.hd_crashed, "分数": hd}}
+                            name: agentName
                         });
                     }
                     data.push(timespot);
@@ -384,7 +375,7 @@ define(['views/maskerable-view', 'handlebars', 'text!/static/templates/timeline.
                 return [report1 && report1.toJSON(), report2 && report2.toJSON()];
             },
 
-            toggleAgent: function (agent) {
+            toggleAgent: function () {
                 this._plot = $.plot(this.$container, this._hideDisabledAgents(), this._options());
             },
 
@@ -505,7 +496,6 @@ define(['views/maskerable-view', 'handlebars', 'text!/static/templates/timeline.
                         data.push(new TimeSpot({
                             time: that._markedPosition.x,
                             agent: agent,
-                            services: {"计算性能": report.data["计算性能"], "磁盘性能": report.data["磁盘性能"]},
                             latency: parseInt(netStatus[this._type]),
                             name: agent.get("name") || ""
                         }));
@@ -522,6 +512,14 @@ define(['views/maskerable-view', 'handlebars', 'text!/static/templates/timeline.
                 this._hasChanged = true;
             },
 
+            _updateCloud: function(cloud) {
+                this.pause();
+                this._hasChanged = true;
+                agents.each(function (agent) {
+                    agent.set("selected", agent.id === cloud.id);
+                });
+                this._plot = $.plot(this.$container, this._hideDisabledAgents(), this._options());
+            }
         });
         return Timeline;
     });

@@ -31,6 +31,12 @@ define(['jquery', 'backbone', 'handlebars', 'text',
 
             triggerCheckClouds: function(bool) {
                 this._triggerDom(bool, "#check-clouds");
+                if(!bool) {
+                    var selectedAgentId = parseInt($("#select-clouds").val());
+                    agents.each(function (agent) {
+                        agent.set("selected", agent.id === selectedAgentId);
+                    });
+                }
             },
 
             triggerDelayType: function (bool) {
@@ -62,6 +68,9 @@ define(['jquery', 'backbone', 'handlebars', 'text',
                 var cloud = agents.get(this.$('#select-clouds').val()).toJSON();
                 this.$("#cloud-icon").css("color", cloud.color);
                 this.trigger("cloud-set", cloud);
+                if(this.$('#select-clouds').is(":visible") && this.$("#check-clouds").is(":hidden")) {
+                    Backbone.Notifications.trigger("updateCloud", cloud);
+                }
             },
 
             _onViewpointSet: function (e) {
