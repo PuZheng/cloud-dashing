@@ -1,5 +1,6 @@
 /**
  * Created by Young on 14-2-14.
+ * 周服务稳定性统计
  */
 define(['views/maskerable-view', 'toastr', 'handlebars', 'collections/daily-reports', 'common', 'utils', 'collections/agents',
     'text!/static/templates/daily-stable-view.hbs'],
@@ -24,16 +25,20 @@ define(['views/maskerable-view', 'toastr', 'handlebars', 'collections/daily-repo
 
             _tbody: function () {
                 var data = {};
-                agents.each(function (agent) {
-                    data[agent.id]  = {};
-                });
-
+                var _id = null;
+                if (!!this._cloud) {
+                    _id = this._cloud.id
+                }
+                if(!_id) {
+                    return;
+                }
+                data[_id] = {};
                 if (this._dailyReports.length) {
                     this._dailyReports.each(function (dailyReport) {
                         var at = dailyReport.get("time");
-                        agents.each(function (agent) {
-                            data[agent.id][at] = dailyReport.agentCrashNum(agent.id);
-                        });
+                        if(!!_id) {
+                            data[_id][at] = dailyReport.agentCrashNum(_id);
+                        }
                     });
                 }
                 var dateSpans = this._getDateSpans();
@@ -77,7 +82,7 @@ define(['views/maskerable-view', 'toastr', 'handlebars', 'collections/daily-repo
                 return columns;
             },
 
-            _renderReports: function () {
+            _renderDetail: function () {
                 this.unmask();
                 if (this._dailyReports) {
                     this.$el.empty();
@@ -85,12 +90,23 @@ define(['views/maskerable-view', 'toastr', 'handlebars', 'collections/daily-repo
                 }
             },
 
+            renderReports: function () {
+                if (this._viewpoint && this._cloud) {
+                    this.mask();
+                    this._dailyReports = new DailyReports(this._viewpoint, this._cloud, this._start, this._end);
+                    this._dailyReports.fetch({reset: true});
+                    this._dailyReports.on('reset', this._renderDetail, this);
+                }
+            },
+
             updateViewpoint: function (viewpoint) {
-                this.mask();
                 this._viewpoint = viewpoint;
-                this._dailyReports = new DailyReports(this._viewpoint, this._start, this._end);
-                this._dailyReports.fetch({reset: true});
-                this._dailyReports.on('reset', this._renderReports, this);
+                this.renderReports();
+            },
+
+            updateCloud: function(cloud) {
+                this._cloud = cloud;
+                this.renderReports();
             },
 
             moveBack: function () {
@@ -111,7 +127,7 @@ define(['views/maskerable-view', 'toastr', 'handlebars', 'collections/daily-repo
                 this.updateViewpoint(this._viewpoint);
             },
             toggleAgent: function () {
-                this._renderReports();
+                this._renderDetail();
             }
         });
 
@@ -142,7 +158,10 @@ define(['views/maskerable-view', 'toastr', 'handlebars', 'collections/daily-repo
             },
             moveForward: function () {
                 this._stableTableView.moveForward();
-            }
+            },
+            updateCloud: function(cloud) {
+                this._stableTableView.updateCloud(cloud);
+            },
         });
         return StableView;
     });

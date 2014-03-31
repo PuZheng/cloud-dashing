@@ -10,7 +10,7 @@
     </select>
   </div>
   <div class="panel-body">
-    <ul class="list-group">
+    <ul class="list-group" id="check-clouds">
         {{#each agents}}
           <li class="list-group-item list-group-item-info" value="{{this.id}}" data-enabled='true' data-agent-id={{this.id}}>
             <i class="fa fa-check"></i>
@@ -19,10 +19,21 @@
           </li>
         {{/each}}
     </ul>
+    <div id="select-div">
+      <i class="fa fa-cloud fa-fw" id="cloud-icon"></i>
+      <select name="clouds" id="select-clouds" style="width: 80%">
+          {{#each agents}}
+              {{#compare this.type 1}}
+              {{else}}
+                <option value="{{this.id}}">{{this.id}} - {{ this.name }}</option>
+              {{/compare}}
+          {{/each}}
+      </select>
+    </div>
   </div>
 </div>
 
-<div class="panel panel-info">
+<div class="panel panel-info" id="delayType">
   <div class="panel-heading">
     <h3 class="panel-title">延迟</h3>
   </div>

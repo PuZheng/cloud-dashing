@@ -1,10 +1,10 @@
 define(['handlebars', 'views/stat-bar-plot', 'text!/static/templates/cpu-score-view.hbs', 'collections/daily-cpu-reports', 'collections/agents'], function (Handlebars, StatBarPlot, cpuScoreViewTemplate, DailyCpuReports, agents) {
-    
+
     var CpuScoreView = StatBarPlot.extend({
         _template: Handlebars.default.compile(cpuScoreViewTemplate),
 
         getDailyReports: function () {
-            return new DailyCpuReports(this._viewpoint, this._start, this._end);
+            return new DailyCpuReports(this._viewpoint, this._cloud, this._start, this._end);
         },
 
         container: function () {
@@ -12,10 +12,15 @@ define(['handlebars', 'views/stat-bar-plot', 'text!/static/templates/cpu-score-v
         },
 
         _renderPlot: function () {
+            if(!this._dailyReports) {
+                return;
+            }
             var data = [];
             var series = [];
             this._dailyReports.each(function (dailyReport) {
-                series.push([dailyReport.get('time') * 1000,  
+                var time = new Date(dailyReport.get('time') * 1000);
+                var date = new Date(time.getFullYear(), time.getMonth(), time.getDate());
+                series.push([date.getTime(),
                     parseInt(dailyReport.get('data')['计算性能']['分数'])]);
             });
             data.push({
@@ -24,7 +29,7 @@ define(['handlebars', 'views/stat-bar-plot', 'text!/static/templates/cpu-score-v
                     show: true,
                     lineWidth: 0,
                     fill: true,
-                    fillColor: agents.get(this._viewpoint.id).get('color'),
+                    fillColor: agents.get(this._cloud.id).get('color'),
                     align: 'center',
                     barWidth: (4 * 60 * 60 * 1000),
                 },
@@ -35,7 +40,8 @@ define(['handlebars', 'views/stat-bar-plot', 'text!/static/templates/cpu-score-v
 
         getMaskView: function () {
             return this.$('.mask');
-        }
+        },
+
 
     });
 

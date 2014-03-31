@@ -1,6 +1,6 @@
 define(['backbone', 'views/map-view', 'views/control-panel', 'views/timeline', 'views/table-view',
     'collections/agents', 'collections/timespots', 'router/app-router', 'views/stat-view', 'views/toast-view'],
-    function (Backbone, MapView, ControlPanel, Timeline, TableView,  agents, timespots, router, StatView, ToastView) {
+    function (Backbone, MapView, ControlPanel, Timeline, TableView, agents, timespots, router, StatView, ToastView) {
         Backbone.Notifications = {};
         _.extend(Backbone.Notifications, Backbone.Events);
         var AppView = Backbone.View.extend({
@@ -47,11 +47,16 @@ define(['backbone', 'views/map-view', 'views/control-panel', 'views/timeline', '
                         this.$('div.timeline').show();
                         this.$('div.table-view').hide();
                         this.$('div.stat').hide();
-                        if(!!this._map) {
+
+                        if (!!this._map) {
                             this._map.drawMap();
                         }
                         if (!!this._tl) {
                             this._tl.makePlot(this._viewpoint);
+                        }
+                        if (!!this._cp) {
+                            this._cp.triggerSelect(false);
+                            this._cp.triggerDelayType(true);
                         }
                         break;
                     case 'table':
@@ -59,9 +64,14 @@ define(['backbone', 'views/map-view', 'views/control-panel', 'views/timeline', '
                         this.$('div.timeline').show();
                         this.$('div.table-view').show();
                         this.$('div.stat').hide();
-
+                        this.$('div.select-div').show();
+                        this.$('div.delayType').show();
                         if (!!this._tl) {
                             this._tl.makePlot(this._viewpoint);
+                        }
+                        if (!!this._cp) {
+                            this._cp.triggerSelect(true);
+                            this._cp.triggerDelayType(false);
                         }
                         break;
                     case 'stat':
@@ -69,12 +79,18 @@ define(['backbone', 'views/map-view', 'views/control-panel', 'views/timeline', '
                         this.$('div.timeline').hide();
                         this.$('div.table-view').hide();
                         this.$('div.stat').show();
-
+                        this.$('div.select-div').show();
+                        this.$('div.delayType').hide();
                         if (!!this._stat) {
                             // 展示后必须重画
                             this._stat.updateViewpoint(this._viewpoint);
                             this._tl.pause();
                             this._cp.updateLatency();
+                        }
+                        if (!!this._cp) {
+                            this._cp.triggerSelect(true);
+                            this._cp.triggerDelayType(false);
+                            this._cp.triggerCheckClouds(false);
                         }
                         break;
                     default:
@@ -85,7 +101,7 @@ define(['backbone', 'views/map-view', 'views/control-panel', 'views/timeline', '
 
             _render: function () {
                 this._table = new TableView({el: this.$(".table-view")}).render();
-                if(!!this._map) {
+                if (!!this._map) {
                     this._map.drawMap();
                 }
                 this.$(".table-view").append(this._table.el);
@@ -102,11 +118,16 @@ define(['backbone', 'views/map-view', 'views/control-panel', 'views/timeline', '
                 this._cp.on('viewpoint-set', this._onViewpointSet, this);
                 this._cp.on('agent-toggle', this._onAgentToggle, this);
                 this._cp.on('delayType-set', this._onDelayTypeSet, this);
+                this._cp.on('cloud-set', this._onCloudSet, this);
                 this._cp.render();
+                this.$("#select-div").hide();
                 this._toast = new ToastView();
             },
 
-            _onDelayTypeSet: function(type) {
+            _onCloudSet: function(cloud) {
+                this._stat.updateCloud(cloud);
+            },
+            _onDelayTypeSet: function (type) {
                 this._tl.updateDelayType(type);
             },
 

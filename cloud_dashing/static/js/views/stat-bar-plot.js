@@ -1,3 +1,6 @@
+/**
+ * 父类
+ */
 define(['views/maskerable-view', 'toastr', 'common', 'utils', 'collections/agents', 'jquery.plot', 'jquery.plot.time', 'jquery.plot.tooltip'],
     function (MaskerableView, toastr, common, utils, agents) {
         var StatBarPlot = MaskerableView.extend({
@@ -55,16 +58,18 @@ define(['views/maskerable-view', 'toastr', 'common', 'utils', 'collections/agent
             updateViewpoint: function (viewpoint) {
                 if (!!viewpoint && (this._viewpoint != viewpoint || this._hasChanged == true)) {
                     this._viewpoint = viewpoint;
-                    this.mask();
-                    this._dailyReports = this.getDailyReports();
-                    this._dailyReports.fetch({reset: true});
-                    this._dailyReports.on('reset', this._doRender, this);
+                    if (this._viewpoint && this._cloud) {
+                        this.mask();
+                        this._dailyReports = this.getDailyReports();
+                        this._dailyReports.fetch({reset: true});
+                        this._dailyReports.on('reset', this._doRender, this);
+                    }
                 } else {
                     this._renderPlot();
                 }
             },
 
-            _doRender: function() {
+            _doRender: function () {
                 this.unmask();
                 this._renderPlot();
             },
@@ -88,6 +93,20 @@ define(['views/maskerable-view', 'toastr', 'common', 'utils', 'collections/agent
                 this._hasChanged = true;
                 this.updateViewpoint(this._viewpoint);
             },
+
+            updateCloud: function (cloud) {
+                if (!!cloud && (this._cloud != cloud || this._hasChanged == true)) {
+                    this._cloud = cloud;
+                    if (this._viewpoint && this._cloud) {
+                        this.mask();
+                        this._dailyReports = this.getDailyReports();
+                        this._dailyReports.fetch({reset: true});
+                        this._dailyReports.on('reset', this._doRender, this);
+                    }
+                } else {
+                    this._renderPlot();
+                }
+            }
         });
         return StatBarPlot;
     });
