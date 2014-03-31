@@ -15,7 +15,7 @@ define(['jquery', 'underscore', 'handlebars', 'kineticjs', 'text!/static/templat
 
     MultAgentMarker.initMarkers = function (agents, layer_) {
         layer = layer_;
-        var location2agents = agents.groupBy(function (agent) {
+        var location2agents = _.groupBy(agents, function (agent) {
             return agent.get('location');
         });
         return _.values(location2agents).map(function (agents) {
@@ -142,7 +142,6 @@ define(['jquery', 'underscore', 'handlebars', 'kineticjs', 'text!/static/templat
     };
 
     MultAgentMarker.prototype._getStrokeWidth = function (latency) {
-        return 3;
         if (!latency) {
             return 0;
         } else if (latency >= common.BAD_LATENCY_THRESHHOLD) {

@@ -495,20 +495,22 @@ define(['views/maskerable-view', 'handlebars', 'text!/static/templates/timeline.
                 }).show();
                 var data = [];
                 var that = this;
-                _.forEach(report.data["网络性能"], function (netStatus) {
+
+                for (agentId in report.data['网络性能']) {
+                    var netStatus = report.data['网络性能'][agentId];
                     var agent = _.find(agents.models, function (agent) {
-                        return agent.get("id") == netStatus.id;
+                        return agent.get("id") == agentId;
                     });
                     if (!!agent) {
                         data.push(new TimeSpot({
                             time: that._markedPosition.x,
                             agent: agent,
                             services: {"计算性能": report.data["计算性能"], "磁盘性能": report.data["磁盘性能"]},
-                            latency: parseFloat(netStatus[this._type]),
+                            latency: parseInt(netStatus[this._type]),
                             name: agent.get("name") || ""
                         }));
                     }
-                });
+                }
                 this.trigger('time-changed', data);
             },
 

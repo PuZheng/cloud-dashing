@@ -5,23 +5,20 @@ define(['backbone', 'handlebars', 'collections/agents', 'widgets/mult-agent-mark
         _helpModalTemplate: Handlebars.default.compile(helpModalTemplate),
 
         render: function () {
-            $("<div class='map-block'><i class='fa fa-spinner fa-spin fa-4x'></i></div>").appendTo(this.$el);
-            this.$el.append(this._helpModalTemplate());
+            $("<div class='map-block'></div>").appendTo(this.$el);
             return this;
         },
 
         drawMap: function () {
             if (this.$el.is(":visible") && this._map == undefined) {
-                var chinaGeoCenter = new BMap.Point(103.336594, 35.849248);
+                var chinaGeoCenter = new BMap.Point(103.336594, 38.849248);
                 var map = new BMap.Map(this.$('.map-block')[0]);
-                map.centerAndZoom(chinaGeoCenter, 4);
+                map.centerAndZoom(chinaGeoCenter, 5);
                 var mapStyle = {
                     features: ["water", "land"]
                 };
                 map.setMapStyle(mapStyle);
-                map.addControl(new BMap.NavigationControl());
-                var mapHelpButton = new MapHelpButton('.map-help-modal');
-                map.addOverlay(mapHelpButton);
+                //map.addControl(new BMap.NavigationControl());
                 this._map = map;
                 this.$el.append('<div id="latency-flow"></div>');
                 var mapPos = this.$('.map-block').position();
@@ -42,7 +39,7 @@ define(['backbone', 'handlebars', 'collections/agents', 'widgets/mult-agent-mark
                 });
                 var layer = new Kinetic.Layer();
                 this._stage.add(layer);
-                this._markers = MultAgentMarker.initMarkers(agents, layer);
+                this._markers = MultAgentMarker.initMarkers(agents.filter(function (agent) {return agent.get('type') != 1;}), layer);
                 _.each(this._markers, function (marker) {
                     that._map.addOverlay(marker);
                 });
