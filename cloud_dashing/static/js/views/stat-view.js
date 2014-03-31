@@ -1,4 +1,7 @@
-define(['backbone', 'handlebars', 'views/avg-daily-latency', 'views/cpu-score-view', 'views/hd-score-view', 'views/stable-view', 'text!/static/templates/stat-view.hbs'], 
+/**
+ * 统计
+ */
+define(['backbone', 'handlebars', 'views/avg-daily-latency', 'views/cpu-score-view', 'views/hd-score-view', 'views/stable-view', 'text!/static/templates/stat-view.hbs'],
         function (Backbone, Handlebars, AvgDailyLatencyView, CpuScoreView, HdScoreView, StableView, statViewTemplate) {
             var StatView = Backbone.View.extend({
 
@@ -37,6 +40,13 @@ define(['backbone', 'handlebars', 'views/avg-daily-latency', 'views/cpu-score-vi
                     this._avgDailyLatencyView.toggleAgent(agent);
                     this._stableView.toggleAgent(agent);
                 },
+
+                updateCloud: function(cloud) {
+                    this._stableView.updateCloud(cloud);
+                    this._avgDailyLatencyView.updateCloud(cloud);
+                    this._hdScoreView.updateCloud(cloud);
+                    this._cpuScoreView.updateCloud(cloud);
+                }
 
             });
 

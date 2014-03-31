@@ -4,16 +4,6 @@ define(['backbone'], function (Backbone) {
             time: '',
             data: [], 
         }, 
-
-        parse: function (response, options) {
-            return {
-                time: response.time,
-                data: response.data.map(function (v) { 
-                    v.latency = v.icmp;
-                    return v;
-                }),
-            }; 
-        }
     });
     return DailyNetReport;
 });

@@ -57,7 +57,7 @@ define(['jquery', 'backbone', 'handlebars', 'text!/static/templates/table-view.h
                     this._at = data[0].get("time") / 1000;
                     this.$el.append(this._template({agent: this._viewpoint}));
                     this.$('table').append(this._renderDetail(data[0]));
-                    this._renderReports();
+                    this._renderDetail();
                 }
             },
 
@@ -91,7 +91,7 @@ define(['jquery', 'backbone', 'handlebars', 'text!/static/templates/table-view.h
             },
 
 
-            _renderReports: function () {
+            _renderDetail: function () {
                 if(!!this._reports && !!this._reports.models) {
                     var at = this._at;
                     var current_report = null;
@@ -119,7 +119,7 @@ define(['jquery', 'backbone', 'handlebars', 'text!/static/templates/table-view.h
             _updateReports: function () {
                 this._reports = new DetailReports(this._viewpoint, this._start, this._end);
                 this._reports.fetch({"reset": true});
-                this._reports.on('reset', this._renderReports, this);
+                this._reports.on('reset', this._renderDetail, this);
             }
 
         });

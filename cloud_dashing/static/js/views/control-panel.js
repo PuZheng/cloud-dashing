@@ -3,12 +3,12 @@ define(['jquery', 'backbone', 'handlebars', 'text',
     'text!/static/templates/control-panel.hbs', 'select2'],
     function ($, Backbone, Handlebars, text, agents, controlPanelTemplate) {
 
-        Handlebars.default.registerHelper("compare", function(target, source, options) {
-           if(target>source) {
-               return options.fn(this);
-           } else{
-               return options.inverse(this);
-           }
+        Handlebars.default.registerHelper("compare", function (target, source, options) {
+            if (target > source) {
+                return options.fn(this);
+            } else {
+                return options.inverse(this);
+            }
         });
 
         var ControlPanel = Backbone.View.extend({
@@ -17,13 +17,34 @@ define(['jquery', 'backbone', 'handlebars', 'text',
             render: function () {
                 this.$el.html(this._template({agents: agents.toJSON()}));
                 $('select').select2();
+                this._onCloudsSet();
                 this._onViewpointSet();
                 return this;
+            },
+            _triggerDom: function (bool, select) {
+                if (bool) {
+                    this.$(select).show();
+                } else {
+                    this.$(select).hide();
+                }
+            },
+
+            triggerCheckClouds: function(bool) {
+                this._triggerDom(bool, "#check-clouds");
+            },
+
+            triggerDelayType: function (bool) {
+                this._triggerDom(bool, "#delayType");
+            },
+
+            triggerSelect: function (bool) {
+                this._triggerDom(bool, "#select-div");
             },
 
             events: {
                 'change #viewpoint': '_onViewpointSet',
                 'change #delay': '_onDelayTypeSet',
+                'change #select-clouds': '_onCloudsSet',
                 'click li.list-group-item': function (e) {
                     this._toggleAgent($(e.target));
                 },
@@ -35,6 +56,12 @@ define(['jquery', 'backbone', 'handlebars', 'text',
                     this._toggleAgent($(e.target).parent());
                     return false;
                 }
+            },
+
+            _onCloudsSet: function () {
+                var cloud = agents.get(this.$('#select-clouds').val()).toJSON();
+                this.$("#cloud-icon").css("color", cloud.color);
+                this.trigger("cloud-set", cloud);
             },
 
             _onViewpointSet: function (e) {
@@ -50,7 +77,7 @@ define(['jquery', 'backbone', 'handlebars', 'text',
             },
 
 
-            _onDelayTypeSet: function() {
+            _onDelayTypeSet: function () {
                 this.trigger('delayType-set', this.$('#delay').val());
             },
 
