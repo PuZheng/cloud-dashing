@@ -4,7 +4,7 @@ define(['jquery', 'backbone', 'handlebars', 'text',
     function ($, Backbone, Handlebars, text, agents, controlPanelTemplate) {
 
         Handlebars.default.registerHelper("compare", function (target, source, options) {
-            if (target == source) {
+            if (target === source) {
                 return options.fn(this);
             } else {
                 return options.inverse(this);
