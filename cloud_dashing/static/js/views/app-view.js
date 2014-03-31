@@ -47,13 +47,13 @@ define(['backbone', 'views/map-view', 'views/control-panel', 'views/timeline', '
                         this.$('div.timeline').show();
                         this.$('div.table-view').hide();
                         this.$('div.stat').hide();
-                        if (!!this._tl) {
-                            this._tl.makePlot(this._viewpoint);
-                        }
                         if (!!this._cp) {
                             this._cp.triggerSelect(false);
                             this._cp.triggerDelayType(true);
                             this._cp.triggerCheckClouds(true);
+                        }
+                        if (!!this._tl) {
+                            this._tl.makePlot(this._viewpoint);
                         }
                         break;
                     case 'table':
@@ -67,9 +67,6 @@ define(['backbone', 'views/map-view', 'views/control-panel', 'views/timeline', '
                             this._cp.triggerSelect(true);
                             this._cp.triggerCheckClouds(false);
                             this._cp.triggerDelayType(true);
-                            if(!!this._tl) {
-                                this._tl.toggleAgent();
-                            }
                         }
                         if (!!this._tl) {
                             this._tl.makePlot(this._viewpoint);
@@ -125,7 +122,7 @@ define(['backbone', 'views/map-view', 'views/control-panel', 'views/timeline', '
                 this._toast = new ToastView();
             },
 
-            _onCloudSet: function(cloud) {
+            _onCloudSet: function (cloud) {
                 this._stat.updateCloud(cloud);
                 this._table.updateCloud(cloud);
             },

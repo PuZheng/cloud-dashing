@@ -31,7 +31,12 @@ define(['jquery', 'backbone', 'handlebars', 'text',
 
             triggerCheckClouds: function(bool) {
                 this._triggerDom(bool, "#check-clouds");
-                if(!bool) {
+                if (bool) {
+                    $.each(this.$("li.list-group-item"), function (idx, item) {
+                        var agent = agents.get($(this).val());
+                        agent.set("selected", $(this).attr("data-enabled"));
+                    });
+                } else {
                     var selectedAgentId = parseInt($("#select-clouds").val());
                     agents.each(function (agent) {
                         agent.set("selected", agent.id === selectedAgentId);
