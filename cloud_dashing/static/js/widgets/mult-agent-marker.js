@@ -1,7 +1,7 @@
 /**
  * Created by Young on 14-2-27.
  */
-define(['jquery', 'underscore', 'handlebars', 'kineticjs', 'text!/static/templates/mult-agent-brief.hbs', 'common', 'bootstrap'], function ($, _, Handlebars, Kinetic, agentBriefTemplate, common) {
+define(['jquery', 'underscore', 'handlebars', 'kineticjs', 'text!/static/templates/agent-brief.hbs', 'common', 'bootstrap'], function ($, _, Handlebars, Kinetic, agentBriefTemplate, common) {
     var location2agents = {};
     var _template = Handlebars.default.compile(agentBriefTemplate);
     var layer = null;
@@ -21,29 +21,9 @@ define(['jquery', 'underscore', 'handlebars', 'kineticjs', 'text!/static/templat
         return _.values(location2agents).map(function (agents) {
             return new MultAgentMarker(agents);
         });
-        //for (location_ in location2agents) {
-            
-        //}
-        //agents.each(function (agent) {
-            //var location = agent.get("location");
-            //var marker;
-            //if (location in location2agents) {
-                //marker = location2agents[location];
-            //} else {
-                //marker = new MultAgentMarker();
-                //location2agents[location] = marker;
-            //}
-            //marker.addAgent(agent);
-        //});
-        //return _.values(location2agents);
     };
 
     MultAgentMarker.prototype = new BMap.Overlay();
-
-    //MultAgentMarker.prototype.addAgent = function (agent) {
-        //this._agents.push(agent);
-    //};
-
 
     MultAgentMarker.prototype.initialize = function (map) {
         this._map = map;
@@ -66,6 +46,16 @@ define(['jquery', 'underscore', 'handlebars', 'kineticjs', 'text!/static/templat
                 left:  (this._length - tag.width()) / 2 + 'px',
                 top: (this._length - tag.height()) / 2 + 'px'
             });
+            tag.tooltip('destroy').tooltip({
+                title: function () {
+                    return _template({
+                        agent: agent.toJSON(),
+                    });
+                },
+                html: true,
+                placement: 'right',
+                container: 'body',
+            });
             agent2markerTag[agent.id] = tag;
         } else {
             this._agents.forEach((function (agent, idx) {
@@ -75,6 +65,16 @@ define(['jquery', 'underscore', 'handlebars', 'kineticjs', 'text!/static/templat
                     position: 'absolute',
                     left: Math.round(Math.cos(2 * Math.PI * idx / this._agents.length) * 15) + (this._length - tag.width()) / 2 + 'px',
                     top: Math.round(Math.sin(2 * Math.PI * idx / this._agents.length) * 15) + (this._length - tag.height()) / 2 + 'px',
+                });
+                tag.tooltip('destroy').tooltip({
+                    title: function () {
+                        return _template({
+                            agent: agent.toJSON(),
+                        });
+                    },
+                    html: true,
+                    placement: 'right',
+                    container: 'body',
                 });
                 agent2markerTag[agent.id] = tag;
             }).bind(this));
@@ -104,16 +104,6 @@ define(['jquery', 'underscore', 'handlebars', 'kineticjs', 'text!/static/templat
         this._viewpoint = viewpoint;
         var agents = _.map(this._agents, function (agent) {
             return agent.toJSON();
-        });
-        this._tag.tooltip('destroy').tooltip({
-            title: function () {
-                return _template({
-                    agents: agents,
-                });
-            },
-            html: true,
-            placement: 'right',
-            container: 'body',
         });
         var endPos = this._map.pointToOverlayPixel(this._viewpoint.point);
         $.each(this._agents, function (idx, agent) {

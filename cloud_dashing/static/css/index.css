@@ -138,6 +138,10 @@
     .single-agent-marker {
         background-color: rgba(0, 0, 0, 0); 
     }
+
+    #latency-flow {
+        pointer-events: none;
+    }
 }
 
 
