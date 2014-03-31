@@ -2,20 +2,35 @@
   <div class="panel-heading">
     <i class="fa fa-map-marker fa-fw"></i>
     <select id="viewpoint" name="viewpoint" style="width: 80%">
-      {{#each agents}}
-      <option value="{{this.id}}">{{this.provider}} - {{ this.location }}</option> 
-      {{/each}}
+        {{#each agents}}
+            {{#compare this.type 1}}
+              <option value="{{this.id}}">{{this.name}} - {{ this.location }}</option>
+            {{/compare}}
+        {{/each}}
     </select>
   </div>
   <div class="panel-body">
     <ul class="list-group">
-      {{#each agents}}
-      <li class="list-group-item list-group-item-info" value="{{this.id}}" data-enabled='true' data-agent-id={{this.id}}>
-        <i class="fa fa-check"></i>
-        <i class="fa fa-square" style="color: {{this.color}}" data-color="{{this.color}}"></i>
-        <small>{{this.id}}.{{this.name}} -</small>
-      </li>
-      {{/each}}
+        {{#each agents}}
+          <li class="list-group-item list-group-item-info" value="{{this.id}}" data-enabled='true' data-agent-id={{this.id}}>
+            <i class="fa fa-check"></i>
+            <i class="fa fa-square" style="color: {{this.color}}" data-color="{{this.color}}"></i>
+            <small>{{this.id}}.{{this.name}} -</small>
+          </li>
+        {{/each}}
     </ul>
+  </div>
+</div>
+
+<div class="panel panel-info">
+  <div class="panel-heading">
+    <h3 class="panel-title">延迟</h3>
+  </div>
+  <div class="panel-body">
+    <select name="delay" id="delay" style="width: 100%;">
+      <option value="tcp">TCP</option>
+      <option value="udp">UDP</option>
+      <option value="icmp">ICMP</option>
+    </select>
   </div>
 </div>

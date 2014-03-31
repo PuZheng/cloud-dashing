@@ -50,7 +50,7 @@ define(['handlebars', 'collections/daily-net-reports', 'collections/agents', 'te
                 },
 
                 _hideDisabledAgents: function (data) {
-                    
+
                     for (var i=0; i < data.length; ++i) {
                         var series = data[i];
                         var agent = agents.get(series.agentId);
