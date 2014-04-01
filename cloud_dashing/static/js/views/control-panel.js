@@ -34,7 +34,7 @@ define(['jquery', 'backbone', 'handlebars', 'text',
                 if (bool) {
                     $.each(this.$("li.list-group-item"), function (idx, item) {
                         var agent = agents.get($(this).val());
-                        agent.set("selected", $(this).attr("data-enabled"));
+                        agent.set("selected", $(this).attr("data-enabled") === 'true');
                     });
                 } else {
                     var selectedAgentId = parseInt($("#select-clouds").val());
