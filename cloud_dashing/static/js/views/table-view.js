@@ -1,6 +1,6 @@
-define(['jquery', 'backbone', 'handlebars', 'text!/static/templates/table-view.hbs', 'collections/detail-reports', 'common', 'collections/agents'],
-    function ($, Backbone, Handlebars, tableViewTemplate, DetailReports, common, agents) {
-        var TableView = Backbone.View.extend({
+define(['jquery', 'backbone', 'handlebars', 'views/maskerable-view', 'text!/static/templates/table-view.hbs', 'collections/detail-reports', 'common', 'collections/agents'],
+    function ($, Backbone, Handlebars, MaskerableView, tableViewTemplate, DetailReports, common, agents) {
+        var TableView = MaskerableView.extend({
             _template: Handlebars.default.compile(tableViewTemplate),
 
             initialize: function () {
@@ -12,59 +12,63 @@ define(['jquery', 'backbone', 'handlebars', 'text!/static/templates/table-view.h
                 Backbone.Notifications.on("time_forward", this._forward, this);
             },
 
+            render: function() {
+                this.$el.append(this._template());
+                this.maskerView(this.$("table"), $(".mask"));
+                return this;
+            },
+
             _backward: function (start, end) {
                 this._start = start;
                 this._end = end;
                 this._updateReports();
             },
 
-            _forward: function(start, end) {
+            _forward: function (start, end) {
                 this._start = start;
                 this._end = end;
                 this._updateReports();
             },
 
             _renderService: function (name, vals) {
-                var th = $("<tr></tr>").append($("<th></th>").attr("rowspan", 2).html(name + '<i class="fa fa-question-circle fa-fw"></i>').addClass("text-center").attr('valign', 'middle').css('vertical-align', 'middle'));
+                var head = $("<th></th>").html(name + '<i class="fa fa-question-circle fa-fw"></i>').addClass("text-center").attr('valign', 'middle').css('vertical-align', 'middle').attr("rowspan", 2);
+                var th = $("<tr></tr>").append(head);
                 var tds = [];
                 _.each(vals, function (val, key) {
                     th.append($("<th></th>").addClass("text-center").html(key));
-                    if (typeof val == 'boolean') {
-                        if (val) {
-                            val = '是';
-                        } else {
-                            val = '否';
-                        }
+                    if (typeof val == "string") {
+                        var valueColumn = $("<td></td>").addClass("text-center").text(val);
+                        tds.push(valueColumn);
+                    } else {
+                        var html = "";
+                        _.each(val, function (v, k) {
+                            html += k + " : " + v + "<br>";
+                        });
+                        tds.push($("<td></td>").addClass("text-center").html(html));
                     }
-                    var valueColumn = $("<td></td>").addClass("text-center").text(val);
-                    tds.push(valueColumn);
                 });
                 return th.add($("<tr></tr>").append(tds));
             },
 
-            _renderDetail: function (data) {
-                var columns = [];
-                var that = this;
-                _.each(data.get("services"), function (val, key) {
-                    columns.push(that._renderService(key, val));
-                });
-                return $("<tbody></tbody>").append(columns);
-            },
 
             updateTimeSpot: function (data) {
-                this.$el.empty();
                 if (!!data[0]) {
                     this._at = data[0].get("time") / 1000;
-                    this.$el.append(this._template({agent: this._viewpoint}));
-                    this.$('table').append(this._renderDetail(data[0]));
                     this._renderDetail();
+                } else {
+                    this.$("table").empty();
                 }
             },
 
-            _renderNetwork: function(value) {
-                var th = $("<tr></tr>").attr("id","network").append($("<th></th>").attr("rowspan", 4).html("网络性能" + '<i class="fa fa-question-circle fa-fw"></i>').addClass("text-center").attr('valign', 'middle').css('vertical-align', 'middle'));
+            _updateCloudName: function (cloud) {
+                this.$("#cloud-name").html(cloud.name + "服务详情表");
+            },
+
+            _renderNetwork: function (value) {
+
+                var th = $("<tr></tr>").attr("id", "network").append($("<th></th>").attr("rowspan", 4).html("网络性能" + '<i class="fa fa-question-circle fa-fw"></i>').addClass("text-center").attr('valign', 'middle').css('vertical-align', 'middle'));
                 var trs = {};
-                if(!!value) {
+                if (!!value) {
                     th.append($("<th></th>").addClass("text-center").html("延迟"));
                 }
                 _.each(value, function (val) {
@@ -73,10 +77,10 @@ define(['jquery', 'backbone', 'handlebars', 'text!/static/templates/table-view.h
                     }).get("name");
                     th.append($("<th></th>").addClass("text-center").html(agent_name));
                     _.each(val, function (v, k) {
-                        if(k === "id"){
+                        if (k === "id") {
                             return;
                         }
-                        if(!(k in trs)){
+                        if (!(k in trs)) {
                             trs[k] = [];
                         }
                         var valueColumn = $("<td></td>").addClass("text-center").html(parseInt(v));
@@ -92,20 +96,24 @@ define(['jquery', 'backbone', 'handlebars', 'text!/static/templates/table-view.h
 
 
             _renderDetail: function () {
-                if(!!this._reports && !!this._reports.models) {
+                this.unmask();
+                if (!!this._reports && !!this._reports.models) {
+                    this.$("table").empty();
                     var at = this._at;
                     var current_report = null;
                     var reports = _.sortBy(this._reports.models, function (report) {
                         return report.get("time");
                     });
-                    for(var i =0; i< reports.length; i++) {
-                        if(reports[i].get("time") >= at) {
+                    for (var i = 0; i < reports.length; i++) {
+                        if (reports[i].get("time") >= at) {
                             current_report = reports[i];
                             break;
                         }
                     }
                     if (!!current_report) {
-                        this.$("table tbody").append(this._renderNetwork(current_report.get("data")["网络性能"]));
+                        this.$("table").append(this._renderService("计算性能", current_report.get("data")["计算性能"]));
+                        this.$("table").append(this._renderService("磁盘性能", current_report.get("data")["磁盘性能"]));
+                        this.$("table").append(this._renderNetwork(current_report.get("data")["网络性能"]));
                     }
                 }
                 return null;
@@ -116,10 +124,19 @@ define(['jquery', 'backbone', 'handlebars', 'text!/static/templates/table-view.h
                 this._updateReports();
             },
 
+            updateCloud: function (cloud) {
+                this._cloud = cloud;
+                this._updateCloudName(this._cloud);
+                this._updateReports();
+            },
+
             _updateReports: function () {
-                this._reports = new DetailReports(this._viewpoint, this._start, this._end);
-                this._reports.fetch({"reset": true});
-                this._reports.on('reset', this._renderDetail, this);
+                if (this._viewpoint && this._cloud) {
+                    this.mask();
+                    this._reports = new DetailReports(this._viewpoint, this._cloud, this._start, this._end);
+                    this._reports.fetch({"reset": true});
+                    this._reports.on('reset', this._renderDetail, this);
+                }
             }
 
         });

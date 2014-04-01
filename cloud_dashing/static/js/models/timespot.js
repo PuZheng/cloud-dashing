@@ -6,7 +6,6 @@ define(['backbone'], function (Backbone) {
         agent: null,
         latency: 0,
         name: "",
-        services: {}
     });
     return TimeSpot;
 });
