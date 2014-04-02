@@ -10,6 +10,7 @@
     </title>
     {% block head_block %}
       <link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}">
+      {% if config.DEBUG %}
       <link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap.min.css') }}" />
       <link rel="stylesheet" href="{{ url_for('static', filename='components/fancybox/source/jquery.fancybox.css') }}" />
       <link rel="stylesheet" href="{{ url_for('static', filename='components/normalize-css/normalize.css') }}" />
@@ -17,6 +18,9 @@
       <link rel="stylesheet" href="{{ url_for('static', filename='components/Font-Awesome/css/font-awesome.min.css') }}" />
       <link rel="stylesheet" href="{{ url_for('static', filename='css/custom.css') }}"/>
       <link rel="stylesheet" href="{{ url_for('static', filename='components/toastr/toastr.min.css') }}"/>
+      {% else %}
+        <link rel="stylesheet" href="{{ url_for('static', filename='dist/css/style.css') }}"/>
+      {% endif %}
       <!--[if lt IE 9]>
           <script src="{{ url_for('static', filename='components/html5shiv/dist/html5shiv.js') }}"></script>
       <![endif]-->

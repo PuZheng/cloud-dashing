@@ -1,4 +1,4 @@
-define(['jquery', 'backbone', 'handlebars', 'views/maskerable-view', 'text!/static/templates/table-view.hbs', 'collections/detail-reports', 'common', 'collections/agents'],
+define(['jquery', 'backbone', 'handlebars', 'views/maskerable-view', 'text!templates/table-view.hbs', 'collections/detail-reports', 'common', 'collections/agents'],
     function ($, Backbone, Handlebars, MaskerableView, tableViewTemplate, DetailReports, common, agents) {
         var TableView = MaskerableView.extend({
             _template: Handlebars.default.compile(tableViewTemplate),

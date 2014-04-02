@@ -1,4 +1,4 @@
-define(['views/maskerable-view', 'handlebars', 'text!/static/templates/timeline.hbs',
+define(['views/maskerable-view', 'handlebars', 'text!templates/timeline.hbs',
     'collections/reports', 'collections/agents', 'models/timespot', 'common', 'utils', 'toastr',
     'jquery.plot', 'jquery.plot.crosshair', 'jquery.plot.symbol', 'jquery.plot.time'],
     function (MaskerableView, Handlebars, timelineTemplate, Reports, agents, TimeSpot, common, utils, toastr) {

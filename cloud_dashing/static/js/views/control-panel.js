@@ -1,6 +1,6 @@
 define(['jquery', 'backbone', 'handlebars', 'text',
     'collections/agents',
-    'text!/static/templates/control-panel.hbs', 'select2'],
+    'text!templates/control-panel.hbs', 'select2'],
     function ($, Backbone, Handlebars, text, agents, controlPanelTemplate) {
 
         Handlebars.default.registerHelper("compare", function (target, source, options) {

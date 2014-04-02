@@ -1,7 +1,7 @@
 /**
  * Created by Young on 14-2-27.
  */
-define(['jquery', 'underscore', 'handlebars', 'kineticjs', 'text!/static/templates/agent-brief.hbs', 'common', 'bootstrap'], function ($, _, Handlebars, Kinetic, agentBriefTemplate, common) {
+define(['jquery', 'underscore', 'handlebars', 'kineticjs', 'text!templates/agent-brief.hbs', 'common', 'bootstrap'], function ($, _, Handlebars, Kinetic, agentBriefTemplate, common) {
     var location2agents = {};
     var _template = Handlebars.default.compile(agentBriefTemplate);
     var layer = null;

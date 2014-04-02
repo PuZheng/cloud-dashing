@@ -1,4 +1,4 @@
-define(['handlebars', 'views/stat-bar-plot', 'text!/static/templates/cpu-score-view.hbs', 'collections/daily-cpu-reports', 'collections/agents'], function (Handlebars, StatBarPlot, cpuScoreViewTemplate, DailyCpuReports, agents) {
+define(['handlebars', 'views/stat-bar-plot', 'text!templates/cpu-score-view.hbs', 'collections/daily-cpu-reports', 'collections/agents'], function (Handlebars, StatBarPlot, cpuScoreViewTemplate, DailyCpuReports, agents) {
 
     var CpuScoreView = StatBarPlot.extend({
         _template: Handlebars.default.compile(cpuScoreViewTemplate),

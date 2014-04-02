@@ -4,8 +4,13 @@
   <!--[if lte IE 8]>
     <script type="text/javascript" src="{{ url_for('static', filename='components/flot/excanvas.min.js') }}"></script>
     <![endif]-->
-  <link rel="stylesheet" href="{{ url_for('static', filename='css/index.css') }}"/>
-  <link rel="stylesheet" href="{{ url_for('static', filename='css/toast.css') }}"/>
+    {% if config.DEBUG %}
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/index.css') }}"/>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/toast.css') }}"/>
+    {% else %}
+    <link rel="stylesheet" href="{{ url_for('static', filename='dist/css/index.css') }}"/>
+    <link rel="stylesheet" href="{{ url_for('static', filename='dist/css/toast.css') }}"/>
+    {% endif %}
 {% endblock %}
 {% block main %}
   <div class="container-fluid">
@@ -44,7 +49,10 @@
 {% block tail_block %}
   {{ super() }}
   <script type="text/javascript" src="http://api.map.baidu.com/api?v=2.0&ak=SwpHSZo7lxB794VNXA9U2d5q"></script>
+  {% if config.DEBUG %}
   <script type="text/javascript" data-main="{{ url_for('static', filename='js/main.js', bust=time) }}" src="{{ url_for('static', filename='components/requirejs/require.js') }}"></script>
-
+  {% else %}
+  <script type="text/javascript" data-main="{{ url_for('static', filename='dist/js/main.js', bust=time) }}" src="{{ url_for('static', filename='components/requirejs/require.js') }}"></script>
+  {% endif %}
 {% endblock %}
 

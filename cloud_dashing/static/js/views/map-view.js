@@ -1,4 +1,4 @@
-define(['backbone', 'handlebars', 'collections/agents', 'widgets/mult-agent-marker', 'widgets/map-help-button', 'underscore', 'text!/static/templates/map-help-modal.hbs', 'kineticjs'], function (Backbone, Handlebars, agents, MultAgentMarker, MapHelpButton, _, helpModalTemplate, Kinetic) {
+define(['backbone', 'handlebars', 'collections/agents', 'widgets/mult-agent-marker', 'widgets/map-help-button', 'underscore', 'text!templates/map-help-modal.hbs', 'kineticjs'], function (Backbone, Handlebars, agents, MultAgentMarker, MapHelpButton, _, helpModalTemplate, Kinetic) {
 
     var MapView = Backbone.View.extend({
 
