@@ -1,4 +1,4 @@
-define(['handlebars', 'views/stat-bar-plot', 'text!/static/templates/hd-score-view.hbs', 'collections/daily-hd-reports', 'collections/agents'], function (Handlebars, StatBarPlot, hdScoreViewTemplate, DailyHdReports, agents) {
+define(['handlebars', 'views/stat-bar-plot', 'text!templates/hd-score-view.hbs', 'collections/daily-hd-reports', 'collections/agents'], function (Handlebars, StatBarPlot, hdScoreViewTemplate, DailyHdReports, agents) {
 
     var HdScoreView = StatBarPlot.extend({
         _template: Handlebars.default.compile(hdScoreViewTemplate),

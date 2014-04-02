@@ -3,7 +3,7 @@
  * 周服务稳定性统计
  */
 define(['views/maskerable-view', 'toastr', 'handlebars', 'collections/daily-reports', 'common', 'utils', 'collections/agents',
-    'text!/static/templates/daily-stable-view.hbs'],
+    'text!templates/daily-stable-view.hbs'],
     function (MaskerableView, toastr, Handlebars, DailyReports, common, utils, agents, dailyStableViewTemplate) {
         var monthNames = ["一月", "二月", "三月", "四月", "五月", "六月", "七月", "八月", "九月", "十月", "十一月", "十二月"];
 

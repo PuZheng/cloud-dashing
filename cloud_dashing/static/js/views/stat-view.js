@@ -1,7 +1,7 @@
 /**
  * 统计
  */
-define(['backbone', 'handlebars', 'views/avg-daily-latency', 'views/cpu-score-view', 'views/hd-score-view', 'views/stable-view', 'text!/static/templates/stat-view.hbs'],
+define(['backbone', 'handlebars', 'views/avg-daily-latency', 'views/cpu-score-view', 'views/hd-score-view', 'views/stable-view', 'text!templates/stat-view.hbs'],
         function (Backbone, Handlebars, AvgDailyLatencyView, CpuScoreView, HdScoreView, StableView, statViewTemplate) {
             var StatView = Backbone.View.extend({
 

@@ -1,4 +1,4 @@
-define(['handlebars', 'collections/daily-net-reports', 'collections/agents', 'text!/static/templates/avg-daily-latency.hbs', 'views/stat-bar-plot'],
+define(['handlebars', 'collections/daily-net-reports', 'collections/agents', 'text!templates/avg-daily-latency.hbs', 'views/stat-bar-plot'],
     function (Handlebars, DailyNetReports, agents, avgDailyLatencyTemplate, StatBarPlot) {
         var delayTypes = ["tcp", "udp", "icmp"];
 

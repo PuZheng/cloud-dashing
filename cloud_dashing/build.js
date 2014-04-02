@@ -1,4 +1,4 @@
-require.config({
+({
     baseUrl: 'static',
     paths: {
         /* 3rd party */ 
@@ -15,7 +15,7 @@ require.config({
         'jquery.plot.tooltip': 'components/flot.tooltip/js/jquery.flot.tooltip.min',
         'jquery.plot.symbol': 'components/flot/jquery.flot.symbol',
         'moment': 'components/moment/min/moment.min',
-        'toastr': 'components/toastr/toastr.min',
+        'toastr': 'components/toastr/toastr',
         'text': 'components/text/text',
         /* customized */
         'jquery.plot.time': 'js/misc/jquery.flot.time',
@@ -57,7 +57,6 @@ require.config({
         'widgets/mult-agent-marker': 'js/widgets/mult-agent-marker',
         'router/app-router': 'js/router/app-router'
     },
-    urlArgs: "bust=" + (new Date()).getTime(),
     shim: {
         'jquery.plot': {
             deps: ['jquery'],
@@ -67,9 +66,6 @@ require.config({
         'jquery.plot.time': ['jquery.plot'],
         'jquery.plot.tooltip': ['jquery.plot'],
         'jquery.plot.symbol': ['jquery.plot'],
-        'toastr': {
-            exports: 'toastr',
-        },
         'underscore': {
             exports: '_',
         }, 
@@ -86,6 +82,10 @@ require.config({
             exports: '$.fn.select2',
         },
     },
-});
-
-requirejs(['app']);
+    dir: "static/dist",
+    //out: "static/dist/js/main.js",
+    name: 'js/main',
+    removeCombined: true,
+    preserveLicenseComments: false,
+    optimizeCss: "standard",
+})

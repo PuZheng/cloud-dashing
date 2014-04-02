@@ -1,4 +1,4 @@
-define(['jquery', 'handlebars', 'text!/static/templates/agent-brief.hbs', 'collections/agents', 'bootstrap'], function ($, Handlebars, agentBriefTemplate, agents) {
+define(['jquery', 'handlebars', 'text!templates/agent-brief.hbs', 'collections/agents', 'bootstrap'], function ($, Handlebars, agentBriefTemplate, agents) {
     var acceptableThreshhold = 50; // 可以接受的网络延迟门槛
     var badThreshhold = 80; // 不可接受的网络延迟门槛
     var _template = Handlebars.default.compile(agentBriefTemplate);
