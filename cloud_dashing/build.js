@@ -18,6 +18,7 @@
         'toastr': 'empty:',
         'text': 'components/text/text',
         /* customized */
+        'jquery-plugins': 'js/jquery-plugins',
         'jquery.plot.time': 'js/misc/jquery.flot.time',
         'common': 'js/common',
         'config': 'js/config',
@@ -83,8 +84,17 @@
         },
     },
     dir: "static/dist",
-    //out: "static/dist/js/main.js",
-    name: 'js/main',
+    modules: [
+        {
+            name: 'js/main',
+            exclude: [
+                'jquery.plot.crosshair', 
+                'jquery.plot.time', 
+                'jquery.plot.tooltip', 
+                'jquery.plot.symbol'
+                    ],
+        },
+    ],
     removeCombined: true,
     preserveLicenseComments: false,
     optimizeCss: "standard",

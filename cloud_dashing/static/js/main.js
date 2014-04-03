@@ -2,7 +2,7 @@ require.config({
     baseUrl: 'static',
     paths: {
         /* 3rd party */
-        jquery: ['//cdn.staticfile.org/jquery/2.1.1-beta1/jquery.min', 'components/jquery/jquery.min'],
+        jquery: ['http://cdn.staticfile.org/jquery/2.1.1-beta1/jquery.min', 'components/jquery/jquery.min'],
         'jquery-map': ['//cdn.staticfile.org/jquery/2.1.1-beta1/jquery.min.map', 'components/jquery/jquery.min.map'],
         underscore: ['//cdn.staticfile.org/underscore.js/1.6.0/underscore-min', 'components/underscore/underscore'],
         kineticjs: ['//cdn.staticfile.org/kineticjs/5.0.1/kinetic.min', 'components/kineticjs/kinetic.min'],
@@ -16,10 +16,11 @@ require.config({
         'jquery.plot.symbol': ['//cdn.staticfile.org/flot/0.8.2/jquery.flot.symbol.min', 'components/flot/jquery.flot.symbol'],
         'moment': ['//cdn.staticfile.org/moment.js/2.5.1/moment.min', 'components/moment/min/moment.min'],
         'toastr': ['//cdn.staticfile.org/toastr.js/latest/js/toastr.min', 'components/toastr/toastr.min'],
-
         //text库如果使用CDN， 则无法打包
         'text': 'components/text/text',
+
         /* customized */
+        'jquery-plugins': 'js/jquery-plugins',
         'jquery.plot.time': 'js/misc/jquery.flot.time',
         'common': 'js/common',
         'config': 'js/config',
