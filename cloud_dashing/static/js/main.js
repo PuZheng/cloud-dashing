@@ -1,21 +1,23 @@
 require.config({
     baseUrl: 'static',
     paths: {
-        /* 3rd party */ 
-        jquery: 'components/jquery/jquery.min',
-        'jquery-map': 'components/jquery/jquery.min.map',
-        underscore: 'components/underscore/underscore',
-        kineticjs: 'components/kineticjs/kinetic.min',
-        backbone: 'components/backbone/backbone',
-        handlebars: 'components/handlebars/handlebars.amd.min',
-        select2: 'components/select2/select2.min',
-        bootstrap: 'components/bootstrap/dist/js/bootstrap.min',
-        'jquery.plot': 'components/flot/jquery.flot',
-        'jquery.plot.crosshair': 'components/flot/jquery.flot.crosshair',
+        /* 3rd party */
+        jquery: ['//cdn.staticfile.org/jquery/2.1.1-beta1/jquery.min', 'components/jquery/jquery.min'],
+        'jquery-map': ['//cdn.staticfile.org/jquery/2.1.1-beta1/jquery.min.map', 'components/jquery/jquery.min.map'],
+        underscore: ['//cdn.staticfile.org/underscore.js/1.6.0/underscore-min', 'components/underscore/underscore'],
+        kineticjs: ['//cdn.staticfile.org/kineticjs/5.0.1/kinetic.min', 'components/kineticjs/kinetic.min'],
+        backbone: ['//cdn.staticfile.org/backbone.js/1.1.2/backbone-min', 'components/backbone/backbone'],
+        handlebars: ['//cdn.staticfile.org/handlebars.js/1.3.0/handlebars.amd.min', 'components/handlebars/handlebars.amd.min'],
+        select2: ['//cdn.staticfile.org/select2/3.4.6/select2.min', 'components/select2/select2.min'],
+        bootstrap: ['//cdn.staticfile.org/twitter-bootstrap/3.1.1/js/bootstrap.min', 'components/bootstrap/dist/js/bootstrap.min'],
+        'jquery.plot': ['//cdn.staticfile.org/flot/0.8.2/jquery.flot.min', 'components/flot/jquery.flot'],
+        'jquery.plot.crosshair': ['//cdn.staticfile.org/flot/0.8.2/jquery.flot.crosshair.min', 'components/flot/jquery.flot.crosshair'],
         'jquery.plot.tooltip': 'components/flot.tooltip/js/jquery.flot.tooltip.min',
-        'jquery.plot.symbol': 'components/flot/jquery.flot.symbol',
-        'moment': 'components/moment/min/moment.min',
-        'toastr': 'components/toastr/toastr.min',
+        'jquery.plot.symbol': ['//cdn.staticfile.org/flot/0.8.2/jquery.flot.symbol.min', 'components/flot/jquery.flot.symbol'],
+        'moment': ['//cdn.staticfile.org/moment.js/2.5.1/moment.min', 'components/moment/min/moment.min'],
+        'toastr': ['//cdn.staticfile.org/toastr.js/latest/js/toastr.min', 'components/toastr/toastr.min'],
+
+        //text库如果使用CDN， 则无法打包
         'text': 'components/text/text',
         /* customized */
         'jquery.plot.time': 'js/misc/jquery.flot.time',
@@ -33,9 +35,9 @@ require.config({
         'views/avg-daily-latency': 'js/views/avg-daily-latency',
         'views/cpu-score-view': 'js/views/cpu-score-view',
         'views/hd-score-view': 'js/views/hd-score-view',
-        'views/stable-view':'js/views/stable-view',
-        'views/toast-view':'js/views/toast-view',
-        'views/maskerable-view':'js/views/maskerable-view',
+        'views/stable-view': 'js/views/stable-view',
+        'views/toast-view': 'js/views/toast-view',
+        'views/maskerable-view': 'js/views/maskerable-view',
         'collections/agents': 'js/collections/agents',
         'collections/reports': 'js/collections/reports',
         'collections/timespots': 'js/collections/timespots',
@@ -51,7 +53,7 @@ require.config({
         'models/daily-net-report': 'js/models/daily-net-report',
         'models/daily-cpu-report': 'js/models/daily-cpu-report',
         'models/daily-hd-report': 'js/models/daily-hd-report',
-        'models/detail-report':'js/models/detail-report',
+        'models/detail-report': 'js/models/detail-report',
         'widgets/agent-marker': 'js/widgets/agent-marker',
         'widgets/map-help-button': 'js/widgets/map-help-button',
         'widgets/mult-agent-marker': 'js/widgets/mult-agent-marker',
@@ -61,7 +63,7 @@ require.config({
     shim: {
         'jquery.plot': {
             deps: ['jquery'],
-            exports:'$.plot'
+            exports: '$.plot'
         },
         'jquery.plot.crosshair': ['jquery.plot'],
         'jquery.plot.time': ['jquery.plot'],
@@ -72,7 +74,7 @@ require.config({
         },
         'underscore': {
             exports: '_',
-        }, 
+        },
         'backbone': {
             deps: ['jquery', 'underscore'],
             exports: 'Backbone',
