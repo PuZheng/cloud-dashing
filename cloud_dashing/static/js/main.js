@@ -2,8 +2,8 @@ require.config({
     baseUrl: 'static',
     paths: {
         /* 3rd party */
-        jquery: ['http://cdn.staticfile.org/jquery/2.1.1-beta1/jquery.min', 'components/jquery/jquery.min'],
-        'jquery-map': ['//cdn.staticfile.org/jquery/2.1.1-beta1/jquery.min.map', 'components/jquery/jquery.min.map'],
+        jquery: ['http://cdn.staticfile.org/jquery/2.1.0/jquery.min', 'components/jquery/jquery.min'],
+        'jquery-map': ['//cdn.staticfile.org/jquery/2.1.0/jquery.min.map', 'components/jquery/jquery.min.map'],
         underscore: ['//cdn.staticfile.org/underscore.js/1.6.0/underscore-min', 'components/underscore/underscore'],
         kineticjs: ['//cdn.staticfile.org/kineticjs/5.0.1/kinetic.min', 'components/kineticjs/kinetic.min'],
         backbone: ['//cdn.staticfile.org/backbone.js/1.1.2/backbone-min', 'components/backbone/backbone'],
