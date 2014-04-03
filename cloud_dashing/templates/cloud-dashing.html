@@ -4,13 +4,12 @@
   <!--[if lte IE 8]>
     <script type="text/javascript" src="{{ url_for('static', filename='components/flot/excanvas.min.js') }}"></script>
     <![endif]-->
-    {% if config.DEBUG %}
+  {% if config.DEBUG %}
     <link rel="stylesheet" href="{{ url_for('static', filename='css/index.css') }}"/>
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/toast.css') }}"/>
-    {% else %}
+  {% else %}
     <link rel="stylesheet" href="{{ url_for('static', filename='dist/css/index.css') }}"/>
-    <link rel="stylesheet" href="{{ url_for('static', filename='dist/css/toast.css') }}"/>
-    {% endif %}
+  {% endif %}
+  <link rel="stylesheet" href="//cdn.staticfile.org/toastr.js/latest/css/toastr.min.css"/>
 {% endblock %}
 {% block main %}
   <div class="container-fluid">
@@ -31,14 +30,14 @@
             <div class="stat" style='display: none'></div>
             <div class="timeline">
               <div class='mask text-center'>
-                <i class="fa fa-spinner fa-spin fa-4x" style='vertical-align: middle'></i> 
+                <i class="fa fa-spinner fa-spin fa-4x" style='vertical-align: middle'></i>
               </div>
             </div>
           </div>
         </div>
         <div class="control-panel col-lg-2 col-md-2 col-sm-2 col-xs-2 text-cener">
           <div class='mask text-center'>
-            <i class="fa fa-spinner fa-spin fa-4x" style='vertical-align: middle'></i> 
+            <i class="fa fa-spinner fa-spin fa-4x" style='vertical-align: middle'></i>
           </div>
         </div>
       </div>
@@ -50,9 +49,9 @@
   {{ super() }}
   <script type="text/javascript" src="http://api.map.baidu.com/api?v=2.0&ak=SwpHSZo7lxB794VNXA9U2d5q"></script>
   {% if config.DEBUG %}
-  <script type="text/javascript" data-main="{{ url_for('static', filename='js/main.js', bust=time) }}" src="{{ url_for('static', filename='components/requirejs/require.js') }}"></script>
+    <script type="text/javascript" data-main="{{ url_for('static', filename='js/main.js', bust=time) }}" src="{{ url_for('static', filename='components/requirejs/require.js') }}"></script>
   {% else %}
-  <script type="text/javascript" data-main="{{ url_for('static', filename='dist/js/main.js', bust=time) }}" src="{{ url_for('static', filename='components/requirejs/require.js') }}"></script>
+    <script type="text/javascript" data-main="{{ url_for('static', filename='dist/js/main.js', bust=time) }}" src="{{ url_for('static', filename='components/requirejs/require.js') }}"></script>
   {% endif %}
 {% endblock %}
 
