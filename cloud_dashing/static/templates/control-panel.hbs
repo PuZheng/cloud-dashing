@@ -1,35 +1,51 @@
-<div class="panel panel-primary">
+<div class="panel panel-default">
   <div class="panel-heading">
     <i class="fa fa-map-marker fa-fw"></i>
+    <span>监控点</span>
+  </div>
+  <div class="panel-body">
     <select id="viewpoint" name="viewpoint" style="width: 80%">
         {{#each agents}}
-            {{#compare this.type 1}}
+            {{#ge this.type 1}}
               <option value="{{this.id}}">{{this.name}} - {{ this.location }}</option>
-            {{/compare}}
+            {{/ge}}
         {{/each}}
     </select>
   </div>
+</div>
+<div class="clouds-list panel panel-default">
+  <div class="panel-heading">
+    <i class="fa fa-map-marker fa-fw"></i>
+    <span>公有云列表</span>
+  </div>
   <div class="panel-body">
-    <ul class="list-group" id="check-clouds">
+    <ul class="list-group">
         {{#each agents}}
-          <li class="list-group-item list-group-item-info" value="{{this.id}}" data-enabled='true' data-agent-id={{this.id}}>
-            <i class="fa fa-check"></i>
-            <i class="fa fa-square" style="color: {{this.color}}" data-color="{{this.color}}"></i>
-            <small>{{this.id}}.{{this.name}} -</small>
-          </li>
+          {{#neq this.type 1}}
+            <li class="list-group-item list-group-item-info" value="{{this.id}}" data-enabled='true' data-agent-id={{this.id}}>
+              <i class="fa fa-check"></i>
+              <i class="fa fa-square" style="color: {{this.color}}" data-color="{{this.color}}"></i>
+              <small>{{this.id}}.{{this.name}}({{ this.location }}) -</small>
+            </li>
+          {{/neq}}
         {{/each}}
     </ul>
-    <div id="select-div">
-      <i class="fa fa-cloud fa-fw" id="cloud-icon"></i>
-      <select name="clouds" id="select-clouds" style="width: 80%">
-          {{#each agents}}
-              {{#compare this.type 1}}
-              {{else}}
-                <option value="{{this.id}}">{{this.id}} - {{ this.name }}</option>
-              {{/compare}}
-          {{/each}}
-      </select>
-    </div>
+  </div>
+</div>
+<div class="current-cloud panel panel-default">
+  <div class="panel-heading">
+    <i class="fa fa-map-marker fa-fw"></i>
+    <span>公有云</span>
+  </div>
+  <div class="panel-body">
+    <i class="fa fa-cloud fa-fw" id="cloud-icon"></i>
+    <select name="clouds" id="select-clouds" style="width: 80%">
+        {{#each agents}}
+            {{#neq this.type 1}}
+              <option value="{{this.id}}">{{this.id}} - {{ this.name }}</option>
+            {{/neq}}
+        {{/each}}
+    </select>
   </div>
 </div>
 

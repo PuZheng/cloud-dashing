@@ -16,17 +16,30 @@ define(['backbone', 'views/map-view', 'views/control-panel', 'views/timeline', '
                         var deferred = $.Deferred();
                         deferred.promise().then(that._render.bind(that));
                         collection.each(function (agent) {
-                            myGeo.getPoint(agent.get('location'), function (point) {
-                                if (!!point) {
-                                    agent.set('point', point);
-                                    var pointsAllSet = collection.every(function (agent, index, array) {
-                                        return !!agent.get('point');
-                                    });
-                                    if (pointsAllSet) {
-                                        deferred.resolve();
-                                    }
+                            if (!!agent.get('geoCoord')) {
+                                var point = agent.get('geoCoord');
+                                point = point.split(',');
+                                var point = new BMap.Point(point[0], point[1]);
+                                agent.set('point', point);
+                                var pointsAllSet = collection.every(function (agent, index, array) {
+                                    return !!agent.get('point');
+                                });
+                                if (pointsAllSet) {
+                                    deferred.resolve();
                                 }
-                            });
+                            } else {
+                                myGeo.getPoint(agent.get('location'), function (point) {
+                                    if (!!point) {
+                                        agent.set('point', point);
+                                        var pointsAllSet = collection.every(function (agent, index, array) {
+                                            return !!agent.get('point');
+                                        });
+                                        if (pointsAllSet) {
+                                            deferred.resolve();
+                                        }
+                                    }
+                                });
+                            }
                         });
                     }
                 });
@@ -48,9 +61,9 @@ define(['backbone', 'views/map-view', 'views/control-panel', 'views/timeline', '
                         this.$('div.table-view').hide();
                         this.$('div.stat').hide();
                         if (!!this._cp) {
-                            this._cp.triggerSelect(false);
-                            this._cp.triggerDelayType(true);
-                            this._cp.triggerCheckClouds(true);
+                            this._cp.toggleSelect(false);
+                            this._cp.toggleDelayType(true);
+                            this._cp.toggleCheckClouds(true);
                         }
                         if (!!this._tl) {
                             this._tl.makePlot(this._viewpoint);
@@ -61,12 +74,10 @@ define(['backbone', 'views/map-view', 'views/control-panel', 'views/timeline', '
                         this.$('div.timeline').show();
                         this.$('div.table-view').show();
                         this.$('div.stat').hide();
-                        this.$('div.select-div').show();
-                        this.$('div.delayType').show();
                         if (!!this._cp) {
-                            this._cp.triggerSelect(true);
-                            this._cp.triggerCheckClouds(false);
-                            this._cp.triggerDelayType(true);
+                            this._cp.toggleSelect(true);
+                            this._cp.toggleCheckClouds(false);
+                            this._cp.toggleDelayType(true);
                         }
                         if (!!this._tl) {
                             this._tl.makePlot(this._viewpoint);
@@ -77,8 +88,6 @@ define(['backbone', 'views/map-view', 'views/control-panel', 'views/timeline', '
                         this.$('div.timeline').hide();
                         this.$('div.table-view').hide();
                         this.$('div.stat').show();
-                        this.$('div.select-div').show();
-                        this.$('div.delayType').hide();
                         if (!!this._stat) {
                             // 展示后必须重画
                             this._stat.updateViewpoint(this._viewpoint);
@@ -86,9 +95,9 @@ define(['backbone', 'views/map-view', 'views/control-panel', 'views/timeline', '
                             this._cp.updateLatency();
                         }
                         if (!!this._cp) {
-                            this._cp.triggerSelect(true);
-                            this._cp.triggerDelayType(false);
-                            this._cp.triggerCheckClouds(false);
+                            this._cp.toggleSelect(true);
+                            this._cp.toggleDelayType(false);
+                            this._cp.toggleCheckClouds(false);
                         }
                         break;
                     default:
@@ -117,8 +126,7 @@ define(['backbone', 'views/map-view', 'views/control-panel', 'views/timeline', '
                 this._cp.on('agent-toggle', this._onAgentToggle, this);
                 this._cp.on('delayType-set', this._onDelayTypeSet, this);
                 this._cp.on('cloud-set', this._onCloudSet, this);
-                this._cp.render();
-                this.$("#select-div").hide();
+                this._cp.render(this._filter);
                 this._toast = new ToastView();
             },
 
@@ -134,7 +142,7 @@ define(['backbone', 'views/map-view', 'views/control-panel', 'views/timeline', '
                 Backbone.Notifications.trigger("toastShow");
                 this._viewpoint = viewpoint;
                 this._tl.makePlot(viewpoint);
-                this._map.updateTooltip(viewpoint);
+                this._map.updateViewpoint(viewpoint);
                 this._stat.updateViewpoint(viewpoint);
                 this._table.updateViewpoint(viewpoint);
             },

@@ -100,7 +100,7 @@ define(['jquery', 'underscore', 'handlebars', 'kineticjs', 'text!templates/agent
         return this._lines;
     }
 
-    MultAgentMarker.prototype.updateTooltip = function (viewpoint) {
+    MultAgentMarker.prototype.updateViewpoint = function (viewpoint, hideLine) {
         this._viewpoint = viewpoint;
         var agents = _.map(this._agents, function (agent) {
             return agent.toJSON();
@@ -108,10 +108,16 @@ define(['jquery', 'underscore', 'handlebars', 'kineticjs', 'text!templates/agent
         var endPos = this._map.pointToOverlayPixel(this._viewpoint.point);
         $.each(this._agents, function (idx, agent) {
             var markerTag = agent2markerTag[agent.id];
+            if (!markerTag.is(':visible')) {
+                markerTag.show();
+            }
             var startX = markerTag.parent().position().left + markerTag.position().left + markerTag.width() / 2;
             var startY = markerTag.parent().position().top + markerTag.position().top + markerTag.height() / 2;
             var line = agent2line[agent.id];
-            line.points([startX, startY, endPos.x, endPos.y]);
+            line.points([startX + this._map.offsetX, startY + this._map.offsetY, endPos.x + this._map.offsetX, endPos.y + this._map.offsetY]);
+            if (!!hideLine) {
+                line.hide();
+            }
         }.bind(this));
     };
 
@@ -153,6 +159,9 @@ define(['jquery', 'underscore', 'handlebars', 'kineticjs', 'text!templates/agent
             var line = agent2line[agent.id];
             if (agent.get("selected") === true && agent.id != this._viewpoint.id) {
                 markerTag.show();
+                markerTag.parent().css({
+                    'pointer-events': 'auto',
+                });
                 var strokeWidth = this._getStrokeWidth(data[agent.id]);
                 if (strokeWidth > 0) {
                     var line = agent2line[agent.id];
@@ -162,6 +171,9 @@ define(['jquery', 'underscore', 'handlebars', 'kineticjs', 'text!templates/agent
                 }
             } else {
                 markerTag.hide();
+                markerTag.parent().css({
+                    'pointer-events': 'none',
+                });
                 line.hide();
             }
         }.bind(this));

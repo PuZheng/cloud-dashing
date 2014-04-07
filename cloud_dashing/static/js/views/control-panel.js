@@ -3,8 +3,16 @@ define(['jquery', 'backbone', 'handlebars', 'text',
     'text!templates/control-panel.hbs', 'select2'],
     function ($, Backbone, Handlebars, text, agents, controlPanelTemplate) {
 
-        Handlebars.default.registerHelper("compare", function (target, source, options) {
-            if (target === source) {
+        Handlebars.default.registerHelper("ge", function (target, source, options) {
+            if (target >= source) {
+                return options.fn(this);
+            } else {
+                return options.inverse(this);
+            }
+        });
+
+        Handlebars.default.registerHelper("neq", function (target, source, options) {
+            if (target != source) {
                 return options.fn(this);
             } else {
                 return options.inverse(this);
@@ -14,14 +22,18 @@ define(['jquery', 'backbone', 'handlebars', 'text',
         var ControlPanel = Backbone.View.extend({
             _template: Handlebars.default.compile(controlPanelTemplate),
 
-            render: function () {
+            render: function (filter) {
                 this.$el.html(this._template({agents: agents.toJSON()}));
+                filter = filter || 'map';
+                this.toggleSelect(filter != 'map');
+                this.toggleDelayType(filter == 'map');
+                this.toggleCheckClouds(filter == 'map');
                 $('select').select2();
                 this._onCloudsSet();
                 this._onViewpointSet();
                 return this;
             },
-            _triggerDom: function (bool, select) {
+            _toggleDom: function (bool, select) {
                 if (bool) {
                     this.$(select).show();
                 } else {
@@ -29,8 +41,8 @@ define(['jquery', 'backbone', 'handlebars', 'text',
                 }
             },
 
-            triggerCheckClouds: function(bool) {
-                this._triggerDom(bool, "#check-clouds");
+            toggleCheckClouds: function(bool) {
+                this._toggleDom(bool, ".clouds-list");
                 if (bool) {
                     $.each(this.$("li.list-group-item"), function (idx, item) {
                         var agent = agents.get($(this).val());
@@ -44,18 +56,18 @@ define(['jquery', 'backbone', 'handlebars', 'text',
                 }
             },
 
-            triggerDelayType: function (bool) {
-                this._triggerDom(bool, "#delayType");
+            toggleDelayType: function (bool) {
+                this._toggleDom(bool, "#delayType");
             },
 
-            triggerSelect: function (bool) {
-                this._triggerDom(bool, "#select-div");
+            toggleSelect: function (bool) {
+                this._toggleDom(bool, ".current-cloud");
             },
 
             events: {
                 'change #viewpoint': '_onViewpointSet',
                 'change #delay': '_onDelayTypeSet',
-                'change #select-clouds': '_onCloudsSet',
+                'change .current-cloud': '_onCloudsSet',
                 'click li.list-group-item': function (e) {
                     this._toggleAgent($(e.target));
                 },
@@ -73,7 +85,7 @@ define(['jquery', 'backbone', 'handlebars', 'text',
                 var cloud = agents.get(this.$('#select-clouds').val()).toJSON();
                 this.$("#cloud-icon").css("color", cloud.color);
                 this.trigger("cloud-set", cloud);
-                if(this.$('#select-clouds').is(":visible") && this.$("#check-clouds").is(":hidden")) {
+                if(this.$('#select-clouds').is(":visible") && this.$(".clouds-list").is(":hidden")) {
                     Backbone.Notifications.trigger("updateCloud", cloud);
                 }
             },

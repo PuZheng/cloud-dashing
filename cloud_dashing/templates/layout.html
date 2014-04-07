@@ -11,17 +11,16 @@
   {% block head_block %}
     <link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}">
     {% if config.DEBUG %}
-      <link rel="stylesheet" href="//cdn.staticfile.org/twitter-bootstrap/3.1.1/css/bootstrap.min.css"/>
-      <link rel="stylesheet" href="//cdn.staticfile.org/twitter-bootstrap/3.1.1/css/bootstrap.min.css"/>
-      <link rel="stylesheet" href="//cdn.staticfile.org/fancybox/2.1.5/jquery.fancybox.min.css"/>
-      <link rel="stylesheet" href="//cdn.staticfile.org/normalize/3.0.1/normalize.min.css"/>
-      <link rel="stylesheet" href="//cdn.staticfile.org/select2/3.4.6/select2.min.css"/>
-      <link rel="stylesheet" href="//cdn.staticfile.org/font-awesome/4.0.3/css/font-awesome.min.css"/>
-      <link rel="stylesheet" href="//cdn.staticfile.org/toastr.js/latest/css/toastr.min.css"/>
+      <link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap.min.css') }}" />
+      <link rel="stylesheet" href="{{ url_for('static', filename='components/fancybox/source/jquery.fancybox.css') }}" />
+      <link rel="stylesheet" href="{{ url_for('static', filename='components/normalize-css/normalize.css') }}" />
+      <link rel="stylesheet" href="{{ url_for('static', filename='components/select2/select2.css') }}" />
+      <link rel="stylesheet" href="{{ url_for('static', filename='components/Font-Awesome/css/font-awesome.min.css') }}" />
       <link rel="stylesheet" href="{{ url_for('static', filename='css/custom.css') }}"/>
-    {% else %}
-      <link rel="stylesheet" href="{{ url_for('static', filename='dist/css/style.css') }}"/>
-    {% endif %}
+      <link rel="stylesheet" href="{{ url_for('static', filename='components/toastr/toastr.min.css') }}"/>
+     {% else %}
+        <link rel="stylesheet" href="{{ url_for('static', filename='dist/css/style.css') }}"/>
+     {% endif %}
     <!--[if lt IE 9]>
           <script src="{{ url_for('static', filename='components/html5shiv/dist/html5shiv.js') }}"></script>
       <![endif]-->

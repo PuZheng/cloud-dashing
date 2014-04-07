@@ -18,7 +18,7 @@ define(['backbone', 'handlebars', 'collections/agents', 'widgets/mult-agent-mark
                     features: ["water", "land"]
                 };
                 map.setMapStyle(mapStyle);
-                //map.addControl(new BMap.NavigationControl());
+                map.addControl(new BMap.NavigationControl());
                 this._map = map;
                 this.$el.append('<div id="latency-flow"></div>');
                 var mapPos = this.$('.map-block').position();
@@ -40,12 +40,35 @@ define(['backbone', 'handlebars', 'collections/agents', 'widgets/mult-agent-mark
                 var layer = new Kinetic.Layer();
                 this._stage.add(layer);
                 this._markers = MultAgentMarker.initMarkers(agents.filter(function (agent) {return agent.get('type') != 1;}), layer);
+                this._layer = layer;
                 _.each(this._markers, function (marker) {
                     that._map.addOverlay(marker);
                 });
+                map.addEventListener('movestart', function () {
+                    this._layer.hide();
+                }.bind(this));
+                map.addEventListener('zoomstart', function () {
+                    this._layer.hide();
+                }.bind(this));
+                map.addEventListener('moveend', function () {
+                    if (!!this._markers) {
+                        _.forEach(this._markers, function (marker) {
+                            marker.updateViewpoint(this._viewpoint, false);
+                        }.bind(this));
+                    }
+                    this._layer.show();
+                }.bind(this));
+                map.addEventListener('zoomend', function () {
+                    if (!!this._markers) {
+                        _.forEach(this._markers, function (marker) {
+                            marker.updateViewpoint(this._viewpoint, false);
+                        }.bind(this));
+                    }
+                    this._layer.show();
+                }.bind(this));
             }
             if (!!this._viewpoint) {
-                this.updateTooltip(this._viewpoint);
+                this.updateViewpoint(this._viewpoint, true);
             }
             var anim = new Kinetic.Animation((function (lines, step) {
                     return function (frame) {
@@ -124,11 +147,11 @@ define(['backbone', 'handlebars', 'collections/agents', 'widgets/mult-agent-mark
             }, 1500);
         },
 
-        updateTooltip: function (viewpoint) {
+        updateViewpoint: function (viewpoint) {
             this._setViewpoint(viewpoint);
             if (!!this._markers) {
                 _.forEach(this._markers, function (marker) {
-                    marker.updateTooltip(viewpoint);
+                    marker.updateViewpoint(viewpoint, true);
                 });
             }
         }
