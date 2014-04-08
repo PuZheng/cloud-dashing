@@ -20,7 +20,7 @@ define(['handlebars', 'views/stat-bar-plot', 'text!templates/hd-score-view.hbs',
             this._dailyReports.each(function (dailyReport) {
                 var time = new Date(dailyReport.get('time') * 1000);
                 var date = new Date(time.getFullYear(), time.getMonth(), time.getDate());
-                series.push([date.getTime(), parseInt(dailyReport.get('data')['磁盘性能']['分数'])]);
+                series.push([date.getTime(), parseInt(dailyReport.get('data')['存储性能']['分数'])]);
             });
             data.push({
                 data: series,

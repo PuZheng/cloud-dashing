@@ -25,9 +25,9 @@ define(['backbone', 'models/detail-report', 'collections/agents'], function (Bac
                         console.log(val.time + '没有提供计算性能');
                         data['计算性能'] = null;
                     }
-                    if (!data.hasOwnProperty('磁盘性能')) {
-                        console.log(val.time + '没有提供磁盘性能');
-                        data['磁盘性能'] = null;
+                    if (!data.hasOwnProperty('存储性能')) {
+                        console.log(val.time + '没有提供存储性能');
+                        data['存储性能'] = null;
                     }
                     if (!data.hasOwnProperty('网络性能')) {
                         console.log(val.time + '没有提供网络性能');

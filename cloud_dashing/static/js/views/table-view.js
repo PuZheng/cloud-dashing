@@ -112,7 +112,7 @@ define(['jquery', 'backbone', 'handlebars', 'views/maskerable-view', 'text!templ
                     }
                     if (!!current_report) {
                         this.$("table").append(this._renderService("计算性能", current_report.get("data")["计算性能"]));
-                        this.$("table").append(this._renderService("磁盘性能", current_report.get("data")["磁盘性能"]));
+                        this.$("table").append(this._renderService("存储性能", current_report.get("data")["存储性能"]));
                         this.$("table").append(this._renderNetwork(current_report.get("data")["网络性能"]));
                     }
                 }
