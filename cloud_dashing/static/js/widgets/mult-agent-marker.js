@@ -33,9 +33,6 @@ define(['jquery', 'underscore', 'handlebars', 'kineticjs', 'text!templates/agent
             width: this._length + 'px',
             height: this._length + 'px',
         });
-        if (this._agents.length === 1) {
-            this._tag.addClass('single-agent-marker');
-        }
         map.getPanes().labelPane.appendChild(this._tag[0]);
         if (this._agents.length === 1) {
             var agent = this._agents[0];
@@ -79,6 +76,7 @@ define(['jquery', 'underscore', 'handlebars', 'kineticjs', 'text!templates/agent
                 agent2markerTag[agent.id] = tag;
             }).bind(this));
         }
+        this._tag.css('border-color', this._agents[0].get('color'));
         $.each(this._agents, function (idx, agent) {
             var markerTag = agent2markerTag[agent.id];
             var line = new Kinetic.Line({
