@@ -86,7 +86,7 @@
     }
 
     .timeline-plot {
-        height: 196px;
+        height: 360px;
         margin-left: 50px;
     }
 
@@ -114,7 +114,7 @@
     }
 
     .timeline .mask {
-        height: 196px;
+        height: 360px;
         padding-top: 70px;
     }
 

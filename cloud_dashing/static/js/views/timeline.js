@@ -64,8 +64,16 @@ define(['views/maskerable-view', 'handlebars', 'text!templates/timeline.hbs',
                 }
             },
 
-            _options: function () {
+            _options: function (max) {
                 var that = this;
+                var ticks = [];
+                var step = this._maxLatencies[this._type] > 1000? 100: 25;
+                for (var i = 0; i < this._maxLatencies[this._type] && i < 1000; i += step) {
+                    ticks.push(i); 
+                }
+                for (var i = 1000; i < this._maxLatencies[this._type]; i += 1000) {
+                    ticks.push(i);
+                }
                 return {
                     xaxis: {
                         mode: 'time',
@@ -74,9 +82,13 @@ define(['views/maskerable-view', 'handlebars', 'text!templates/timeline.hbs',
                         max: this._end,
                     },
                     yaxis: {
-                        tickFormatter: function (val, axis) {
-                            return val + '(ms)';
-                        }
+                        tickFormatter: (function (val, axis) {
+                            if (this._maxLatencies[this._type] < 1000 || val >= 1000 || val % 200 === 0) {
+                                return val + '(ms)';
+                            }
+                            return '';
+                        }).bind(this),
+                        ticks: ticks,
                     },
                     crosshair: {
                         mode: "x",
@@ -177,6 +189,11 @@ define(['views/maskerable-view', 'handlebars', 'text!templates/timeline.hbs',
                     return null;
                 }
 
+                var maxLatencies = {
+                    'tcp': 0,
+                    'udp': 0,
+                    'icmp': 0,
+                };
                 for (var i = 0; i < _reportsSize; i++) {
                     var _reports = this._reports.models;
                     var report = this._reports.models[i];
@@ -198,6 +215,9 @@ define(['views/maskerable-view', 'handlebars', 'text!templates/timeline.hbs',
                                         lineSeriesMap[type] [key] = [];
                                     }
                                     lineSeriesMap[type] [key].push([report.get('time') * 1000, latency]);
+                                    if (maxLatencies[type] < latency) {
+                                        maxLatencies[type] = latency;
+                                    }
                                 } else {
                                     if (!(key in pointSeriesMap[type])) {
                                         pointSeriesMap[type][key] = [];
@@ -221,6 +241,7 @@ define(['views/maskerable-view', 'handlebars', 'text!templates/timeline.hbs',
                         });
                     }
                 }
+                this._maxLatencies = maxLatencies;
                 for (var type in lineSeriesMap) {
                     for (var id in lineSeriesMap[type]) {
                         data.push({

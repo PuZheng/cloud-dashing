@@ -19,11 +19,34 @@ define(['jquery', 'backbone', 'handlebars', 'text',
             }
         });
 
+        Handlebars.default.registerHelper("eq", function (target, source, options) {
+            if (target === source) {
+                return options.fn(this);
+            } else {
+                return options.inverse(this);
+            }
+        });
+
         var ControlPanel = Backbone.View.extend({
             _template: Handlebars.default.compile(controlPanelTemplate),
 
             render: function (filter) {
-                this.$el.html(this._template({agents: agents.toJSON()}));
+                this.$el.html(this._template({
+                    agents: agents.toJSON().sort(function (a, b) {
+                        if (a.id >=255) {
+                            return -1;
+                        }
+                        if (b.id >= 255) {
+                            return 1;
+                        }
+                        if (a.id > b.id) {
+                            return 1;
+                        } 
+                        if (a.id < b.id) {
+                            return -1
+                        }
+                        return 0;
+                    })}));
                 filter = filter || 'map';
                 this.toggleSelect(filter != 'map');
                 this.toggleDelayType(filter == 'map');
@@ -65,7 +88,7 @@ define(['jquery', 'backbone', 'handlebars', 'text',
             },
 
             events: {
-                'change #viewpoint': '_onViewpointSet',
+                'change input[name="viewpoint"]': '_onViewpointSet',
                 'change #delay': '_onDelayTypeSet',
                 'change .current-cloud': '_onCloudsSet',
                 'click li.list-group-item': function (e) {
@@ -91,7 +114,7 @@ define(['jquery', 'backbone', 'handlebars', 'text',
             },
 
             _onViewpointSet: function (e) {
-                var viewpoint = agents.get(this.$('#viewpoint').val()).toJSON();
+                var viewpoint = agents.get(this.$('input[name="viewpoint"]:checked').val()).toJSON();
                 this.trigger('viewpoint-set', viewpoint);
                 this.$("ul li").each(function (index) {
                     if ($(this).attr('data-agent-id') == viewpoint.id) {

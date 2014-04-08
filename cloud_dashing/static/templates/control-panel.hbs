@@ -4,13 +4,15 @@
     <span>监控点</span>
   </div>
   <div class="panel-body">
-    <select id="viewpoint" name="viewpoint" style="width: 80%">
-        {{#each agents}}
-            {{#ge this.type 1}}
-              <option value="{{this.id}}">{{this.name}} - {{ this.location }}</option>
-            {{/ge}}
-        {{/each}}
-    </select>
+      {{#each agents}}
+        {{#ge this.type 1}}
+          <div class="radio">
+            <label>
+              <input name="viewpoint" type="radio" value="{{this.id}}" {{#eq @index 0}}checked{{/eq}}/>{{this.name}} - {{ this.location }}
+            </label>
+          </div>
+        {{/ge}}
+      {{/each}}
   </div>
 </div>
 <div class="clouds-list panel panel-default">
