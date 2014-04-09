@@ -1,7 +1,7 @@
-define(['views/maskerable-view', 'handlebars', 'text!templates/timeline.hbs',
+define(['views/maskerable-view', 'handlebars', 'jquery', 'text!templates/timeline.hbs',
     'collections/reports', 'collections/agents', 'models/timespot', 'common', 'utils', 'toastr',
     'jquery.plot', 'jquery.plot.crosshair', 'jquery.plot.symbol', 'jquery.plot.time'],
-    function (MaskerableView, Handlebars, timelineTemplate, Reports, agents, TimeSpot, common, utils, toastr) {
+    function (MaskerableView, Handlebars, $, timelineTemplate, Reports, agents, TimeSpot, common, utils, toastr) {
         var delayType = ["tcp", "udp", "icmp"];
         // 暂时不能动态生成
 
@@ -67,13 +67,14 @@ define(['views/maskerable-view', 'handlebars', 'text!templates/timeline.hbs',
             _options: function (max) {
                 var that = this;
                 var ticks = [];
-                var step = this._maxLatencies[this._type] > 1000? 100: 25;
-                for (var i = 0; i < this._maxLatencies[this._type] && i < 1000; i += step) {
+                var step = this._maxLatency > 1000? 100: 25;
+                for (var i = 0; i < this._maxLatency && i < 1000; i += step) {
                     ticks.push(i); 
                 }
-                for (var i = 1000; i < this._maxLatencies[this._type]; i += 1000) {
+                for (var i = 1000; i < this._maxLatency; i += 1000) {
                     ticks.push(i);
                 }
+                ticks.push(this._maxLatency);
                 return {
                     xaxis: {
                         mode: 'time',
@@ -83,7 +84,7 @@ define(['views/maskerable-view', 'handlebars', 'text!templates/timeline.hbs',
                     },
                     yaxis: {
                         tickFormatter: (function (val, axis) {
-                            if (this._maxLatencies[this._type] < 1000 || val >= 1000 || val % 200 === 0) {
+                            if (this._maxLatency < 1000 || val >= 1000 || val % 200 === 0) {
                                 return val + '(ms)';
                             }
                             return '';
@@ -189,11 +190,6 @@ define(['views/maskerable-view', 'handlebars', 'text!templates/timeline.hbs',
                     return null;
                 }
 
-                var maxLatencies = {
-                    'tcp': 0,
-                    'udp': 0,
-                    'icmp': 0,
-                };
                 for (var i = 0; i < _reportsSize; i++) {
                     var _reports = this._reports.models;
                     var report = this._reports.models[i];
@@ -212,11 +208,14 @@ define(['views/maskerable-view', 'handlebars', 'text!templates/timeline.hbs',
                                 }
                                 if (val["crashed"] === 0) {
                                     if (!(key in lineSeriesMap[type])) {
-                                        lineSeriesMap[type] [key] = [];
+                                        lineSeriesMap[type] [key] = {
+                                            maxLatency: 0,
+                                            data: [],
+                                        };
                                     }
-                                    lineSeriesMap[type] [key].push([report.get('time') * 1000, latency]);
-                                    if (maxLatencies[type] < latency) {
-                                        maxLatencies[type] = latency;
+                                    lineSeriesMap[type] [key].data.push([report.get('time') * 1000, latency]);
+                                    if (lineSeriesMap[type][key].maxLatency < latency) {
+                                        lineSeriesMap[type][key].maxLatency = latency;
                                     }
                                 } else {
                                     if (!(key in pointSeriesMap[type])) {
@@ -241,14 +240,14 @@ define(['views/maskerable-view', 'handlebars', 'text!templates/timeline.hbs',
                         });
                     }
                 }
-                this._maxLatencies = maxLatencies;
                 for (var type in lineSeriesMap) {
                     for (var id in lineSeriesMap[type]) {
                         data.push({
                             type: type,
                             agentId: id,
-                            data: lineSeriesMap[type][id],
-                            dataType: "lines"
+                            data: lineSeriesMap[type][id].data,
+                            dataType: "lines",
+                            maxLatency: lineSeriesMap[type][id].maxLatency,
                         });
                     }
                 }
@@ -271,19 +270,25 @@ define(['views/maskerable-view', 'handlebars', 'text!templates/timeline.hbs',
             _hideDisabledAgents: function () {
                 var data = [];
                 if (!!this._plotData) {
+                    this._maxLatency = 0;
                     for (var i = 0; i < this._plotData.length; ++i) {
                         var series = this._plotData[i];
                         if (series.type === this._type) {
                             var agent = agents.get(series.agentId);
                             var selected = agent.get('selected');
-                            if (series.dataType == "lines") {
-                                series.lines = {show: selected};
-                                series.color = selected ? agent.get('color') : '#ccc';
-                            } else if (series.dataType == "points") {
-                                series.points = {show: selected, symbol: "cross"};
-                                series.color = "red";
+                            if (selected) {
+                                if (series.dataType == "lines") {
+                                    series.lines = {show: selected};
+                                    series.color = selected ? agent.get('color') : '#ccc';
+                                    if (series.maxLatency > this._maxLatency) {
+                                        this._maxLatency = series.maxLatency; 
+                                    }
+                                } else if (series.dataType == "points") {
+                                    series.points = {show: selected, symbol: "cross"};
+                                    series.color = "red";
+                                }
+                                data.push(series);
                             }
-                            data.push(series);
                         }
                     }
                 }

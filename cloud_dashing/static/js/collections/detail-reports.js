@@ -32,6 +32,9 @@ define(['backbone', 'models/detail-report', 'collections/agents'], function (Bac
                     if (!data.hasOwnProperty('网络性能')) {
                         console.log(val.time + '没有提供网络性能');
                         data['网络性能'] = null;
+                    } else {
+                        data['网络性能'] = data['网络性能'][0];
+                        delete data['网络性能']['id'];
                     }
                     result.push({time: val.time, data: data});
                 }

@@ -35,18 +35,22 @@ define(['jquery', 'backbone', 'handlebars', 'views/maskerable-view', 'text!templ
                 var th = $("<tr></tr>").append(head);
                 var tds = [];
                 _.each(vals, function (val, key) {
-                    th.append($("<th></th>").addClass("text-center").html(key));
-                    if (typeof val == "string") {
-                        var valueColumn = $("<td></td>").addClass("text-center").text(val);
-                        tds.push(valueColumn);
-                    } else {
-                        var html = "";
-                        _.each(val, function (v, k) {
-                            html += k + " : " + v + "<br>";
-                        });
-                        tds.push($("<td></td>").addClass("text-center").html(html));
+                    if (key != '评价') {
+                        th.append($("<th></th>").addClass("text-center").html(key));
+                        if (typeof val == "string" || typeof val == 'number') {
+                            var valueColumn = $("<td></td>").addClass("text-center").text(val);
+                            tds.push(valueColumn);
+                        } else {
+                            var html = "";
+                            _.each(val, function (v, k) {
+                                html += k + " : " + v + "<br>";
+                            });
+                            tds.push($("<td></td>").addClass("text-center").html(html));
+                        }
                     }
                 });
+                th.append($("<th></th>").addClass("text-center").html('评价'));
+                tds.push($("<td></td>").addClass("text-center").html(vals['评价']));
                 return th.add($("<tr></tr>").append(tds));
             },
 
@@ -83,7 +87,8 @@ define(['jquery', 'backbone', 'handlebars', 'views/maskerable-view', 'text!templ
                         if (!(k in trs)) {
                             trs[k] = [];
                         }
-                        var valueColumn = $("<td></td>").addClass("text-center").html(parseInt(v));
+                        //var valueColumn = $("<td></td>").addClass("text-center").html(parseInt(v));
+                        var valueColumn = $("<td></td>").addClass("text-center").html(v);
                         trs[k].push(valueColumn);
                     });
                 });
@@ -113,7 +118,7 @@ define(['jquery', 'backbone', 'handlebars', 'views/maskerable-view', 'text!templ
                     if (!!current_report) {
                         this.$("table").append(this._renderService("计算性能", current_report.get("data")["计算性能"]));
                         this.$("table").append(this._renderService("存储性能", current_report.get("data")["存储性能"]));
-                        this.$("table").append(this._renderNetwork(current_report.get("data")["网络性能"]));
+                        this.$("table").append(this._renderService("网络性能", current_report.get("data")["网络性能"]));
                     }
                 }
                 return null;

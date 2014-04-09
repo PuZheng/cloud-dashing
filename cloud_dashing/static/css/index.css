@@ -139,6 +139,10 @@
     #latency-flow {
         pointer-events: none;
     }
+
+    table.details-table td:last-child, table.details-table th:last-child {
+        border-right: 1px solid #dddddd !important; 
+    }
 }
 
 
