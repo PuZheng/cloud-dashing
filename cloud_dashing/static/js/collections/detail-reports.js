@@ -1,7 +1,7 @@
 /**
  * Created by Young on 14-3-17.
  */
-define(['backbone', 'models/detail-report', 'collections/agents'], function (Backbone, DetailReport, agents) {
+define(['backbone', 'models/detail-report', 'collections/agents', 'common'], function (Backbone, DetailReport, agents, common) {
     var DetailReports = Backbone.Collection.extend({
 
         model: DetailReport,
@@ -14,7 +14,7 @@ define(['backbone', 'models/detail-report', 'collections/agents'], function (Bac
             Backbone.Collection.apply(this, arguments);
         },
         url: function () {
-            return 'http://115.28.137.212/api/details?cloud-id-list=' + this.cloud.id + '&at=' + this.start / 1000 + ',' + this.end / 1000 + "&clouds=" + this.viewpoint.id;
+            return 'http://' + common.SERVER_IP + '/api/details?cloud-id-list=' + this.cloud.id + '&at=' + this.start / 1000 + ',' + this.end / 1000 + "&clouds=" + this.viewpoint.id;
         },
         parse: function (resp, options) {
             var result = [];

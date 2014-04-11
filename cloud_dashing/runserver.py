@@ -10,9 +10,9 @@ OPTIONS
     -s  <host>
         the ip of the server runs on
 """
-
 from getopt import getopt
 import sys
+
 opts, _ = getopt(sys.argv[1:], "s:p:h")
 
 host = '0.0.0.0'

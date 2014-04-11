@@ -1,12 +1,15 @@
 {% extends "layout.html" %}
 {% block head_block %}
   {{ super() }}
+  {% if config.DEBUG %}
   <!--[if lte IE 8]>
     <script type="text/javascript" src="{{ url_for('static', filename='components/flot/excanvas.min.js') }}"></script>
     <![endif]-->
-  {% if config.DEBUG %}
     <link rel="stylesheet" href="{{ url_for('static', filename='css/index.css') }}"/>
   {% else %}
+    <!--[if lte IE 8]>
+      <script type="text/javascript" src="{{ url_for('static', filename='dist/components/flot/excanvas.min.js') }}"></script>
+    <![endif]-->
     <link rel="stylesheet" href="{{ url_for('static', filename='dist/css/index.css') }}"/>
   {% endif %}
   <link rel="stylesheet" href="//cdn.staticfile.org/toastr.js/latest/css/toastr.min.css"/>
@@ -51,7 +54,7 @@
   {% if config.DEBUG %}
     <script type="text/javascript" data-main="{{ url_for('static', filename='js/main.js', bust=time) }}" src="{{ url_for('static', filename='components/requirejs/require.js') }}"></script>
   {% else %}
-    <script type="text/javascript" data-main="{{ url_for('static', filename='dist/js/main.js', bust=time) }}" src="{{ url_for('static', filename='components/requirejs/require.js') }}"></script>
+    <script type="text/javascript" data-main="{{ url_for('static', filename='dist/js/main.js', bust=time) }}" src="{{ url_for('static', filename='dist/components/requirejs/require.js') }}"></script>
   {% endif %}
 {% endblock %}
 

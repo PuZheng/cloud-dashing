@@ -53,7 +53,7 @@ class LoginForm(Form):
     password = PasswordField('password', validators=[DataRequired()])
 
 
-@user.route('/login', methods=['GET', 'POST'])
+@user.route('/login.html', methods=['GET', 'POST'])
 def login():
     form = LoginForm()
     if request.method == "GET":
@@ -84,7 +84,7 @@ def login():
                                form=form), 403
 
 
-@user.route("/logout")
+@user.route("/logout.html")
 @login_required
 def logout():
     try:

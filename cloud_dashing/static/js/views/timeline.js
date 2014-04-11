@@ -67,7 +67,7 @@ define(['views/maskerable-view', 'handlebars', 'jquery', 'text!templates/timelin
             _options: function (max) {
                 var that = this;
                 var ticks = [];
-                var step = this._maxLatency > 1000? 100: 25;
+                var step = this._maxLatency > 1000? 100: (this._maxLatency > 500? 50: 25);
                 for (var i = 0; i < this._maxLatency && i < 1000; i += step) {
                     ticks.push(i); 
                 }
@@ -198,7 +198,7 @@ define(['views/maskerable-view', 'handlebars', 'jquery', 'text!templates/timelin
                         _.each(allNetStatus, function (val, key) {
                             key = parseInt(key);
                             _.each(delayType, function (type) {
-                                var latency = val[type];
+                                var latency = parseFloat(val[type]);
 
                                 if (!(type in lineSeriesMap)) {
                                     lineSeriesMap[type] = {};
@@ -213,7 +213,7 @@ define(['views/maskerable-view', 'handlebars', 'jquery', 'text!templates/timelin
                                             data: [],
                                         };
                                     }
-                                    lineSeriesMap[type] [key].data.push([report.get('time') * 1000, latency]);
+                                    lineSeriesMap[type][key].data.push([report.get('time') * 1000, latency]);
                                     if (lineSeriesMap[type][key].maxLatency < latency) {
                                         lineSeriesMap[type][key].maxLatency = latency;
                                     }

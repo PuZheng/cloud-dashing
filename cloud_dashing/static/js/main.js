@@ -60,7 +60,6 @@ require.config({
         'widgets/mult-agent-marker': 'js/widgets/mult-agent-marker',
         'router/app-router': 'js/router/app-router'
     },
-    urlArgs: "bust=" + (new Date()).getTime(),
     shim: {
         'jquery.plot': {
             deps: ['jquery'],

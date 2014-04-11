@@ -1,7 +1,7 @@
-define(['jquery', 'backbone', 'models/agent'], function ($, Backbone, Agent) {
+define(['jquery', 'backbone', 'models/agent', 'common'], function ($, Backbone, Agent, common) {
     var Agents = Backbone.Collection.extend({
         model: Agent,
-        url: 'http://115.28.137.212/api/cloud-list',
+        url: 'http://' + common.SERVER_IP + '/api/cloud-list',
     });
 
     return new Agents();
