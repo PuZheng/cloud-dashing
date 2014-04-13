@@ -54,6 +54,7 @@ define(['jquery', 'backbone', 'handlebars', 'text',
                 $('select').select2();
                 this._onCloudsSet();
                 this._onViewpointSet();
+                this._onDelayTypeSet();
                 return this;
             },
             _toggleDom: function (bool, select) {

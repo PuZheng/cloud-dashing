@@ -16,9 +16,9 @@ define(['backbone', 'views/map-view', 'views/control-panel', 'views/timeline', '
                         var deferred = $.Deferred();
                         deferred.promise().then(that._render.bind(that));
                         collection.each(function (agent) {
-                            if (!!agent.get('geoCoord')) {
-                                var point = agent.get('geoCoord');
-                                point = point.split(',');
+                            if (!!agent.get('coordinates')) {
+                                var point = agent.get('coordinates');
+                                point = point.split(':');
                                 var point = new BMap.Point(point[0], point[1]);
                                 agent.set('point', point);
                                 var pointsAllSet = collection.every(function (agent, index, array) {
@@ -28,6 +28,7 @@ define(['backbone', 'views/map-view', 'views/control-panel', 'views/timeline', '
                                     deferred.resolve();
                                 }
                             } else {
+                                debugger;
                                 myGeo.getPoint(agent.get('location'), function (point) {
                                     if (!!point) {
                                         agent.set('point', point);

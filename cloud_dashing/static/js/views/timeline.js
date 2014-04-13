@@ -17,7 +17,6 @@ define(['views/maskerable-view', 'handlebars', 'jquery', 'text!templates/timelin
                     "positionClass": "toast-bottom-full-width",
                     "timeOut": "1000"
                 };
-                this._type = "tcp";
                 this._playing = false;
                 this.render();
                 Backbone.Notifications.on("updateCloud", this._updateCloud, this);
@@ -68,13 +67,16 @@ define(['views/maskerable-view', 'handlebars', 'jquery', 'text!templates/timelin
                 var that = this;
                 var ticks = [];
                 var step = this._maxLatency > 1000? 100: (this._maxLatency > 500? 50: 25);
-                for (var i = 0; i < this._maxLatency && i < 1000; i += step) {
+                var i = 0; 
+                for (i = 0; i < this._maxLatency && i < 1000; i += step) {
                     ticks.push(i); 
                 }
-                for (var i = 1000; i < this._maxLatency; i += 1000) {
-                    ticks.push(i);
+                if (this._maxLatency >= 1000) {
+                    for (i = 1000; i < this._maxLatency; i += 1000) {
+                        ticks.push(i);
+                    }
                 }
-                ticks.push(this._maxLatency);
+                ticks.push(i);
                 return {
                     xaxis: {
                         mode: 'time',
