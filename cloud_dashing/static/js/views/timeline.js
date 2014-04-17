@@ -2,7 +2,7 @@ define(['views/maskerable-view', 'handlebars', 'jquery', 'text!templates/timelin
     'collections/reports', 'collections/agents', 'models/timespot', 'common', 'utils', 'toastr',
     'jquery.plot', 'jquery.plot.crosshair', 'jquery.plot.symbol', 'jquery.plot.time'],
     function (MaskerableView, Handlebars, $, timelineTemplate, Reports, agents, TimeSpot, common, utils, toastr) {
-        var delayType = ["tcp", "udp", "icmp"];
+        var delayType = ["tcp", "udp", "icmp", 'http'];
         // 暂时不能动态生成
 
         var Timeline = MaskerableView.extend({

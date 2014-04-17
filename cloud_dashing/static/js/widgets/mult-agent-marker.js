@@ -98,7 +98,7 @@ define(['jquery', 'underscore', 'handlebars', 'kineticjs', 'text!templates/agent
         return this._lines;
     }
 
-    MultAgentMarker.prototype.updateViewpoint = function (viewpoint, hideLine) {
+    MultAgentMarker.prototype.updateViewpoint = function (viewpoint) {
         this._viewpoint = viewpoint;
         var agents = _.map(this._agents, function (agent) {
             return agent.toJSON();
@@ -113,8 +113,9 @@ define(['jquery', 'underscore', 'handlebars', 'kineticjs', 'text!templates/agent
             var startY = markerTag.parent().position().top + markerTag.position().top + markerTag.height() / 2;
             var line = agent2line[agent.id];
             line.points([startX + this._map.offsetX, startY + this._map.offsetY, endPos.x + this._map.offsetX, endPos.y + this._map.offsetY]);
-            if (!!hideLine) {
+            if (!agent.get('selected')) {
                 line.hide();
+                markerTag.hide();
             }
         }.bind(this));
     };

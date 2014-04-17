@@ -28,7 +28,6 @@ define(['backbone', 'views/map-view', 'views/control-panel', 'views/timeline', '
                                     deferred.resolve();
                                 }
                             } else {
-                                debugger;
                                 myGeo.getPoint(agent.get('location'), function (point) {
                                     if (!!point) {
                                         agent.set('point', point);
@@ -68,6 +67,11 @@ define(['backbone', 'views/map-view', 'views/control-panel', 'views/timeline', '
                         }
                         if (!!this._tl) {
                             this._tl.makePlot(this._viewpoint);
+                        }
+                        if (!!this._map) {
+                            setTimeout(_.bind(function () {
+                                this._map.updateViewpoint(this._viewpoint);
+                            }, this), 10);
                         }
                         break;
                     case 'table':
@@ -143,7 +147,9 @@ define(['backbone', 'views/map-view', 'views/control-panel', 'views/timeline', '
                 Backbone.Notifications.trigger("toastShow");
                 this._viewpoint = viewpoint;
                 this._tl.makePlot(viewpoint);
-                this._map.updateViewpoint(viewpoint);
+                if (this.$('div.map').is(":visible")) {
+                    this._map.updateViewpoint(viewpoint);
+                }
                 this._stat.updateViewpoint(viewpoint);
                 this._table.updateViewpoint(viewpoint);
             },

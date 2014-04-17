@@ -53,7 +53,7 @@ define(['backbone', 'handlebars', 'collections/agents', 'widgets/mult-agent-mark
                 map.addEventListener('moveend', function () {
                     if (!!this._markers) {
                         _.forEach(this._markers, function (marker) {
-                            marker.updateViewpoint(this._viewpoint, false);
+                            marker.updateViewpoint(this._viewpoint);
                         }.bind(this));
                     }
                     this._layer.show();
@@ -61,7 +61,7 @@ define(['backbone', 'handlebars', 'collections/agents', 'widgets/mult-agent-mark
                 map.addEventListener('zoomend', function () {
                     if (!!this._markers) {
                         _.forEach(this._markers, function (marker) {
-                            marker.updateViewpoint(this._viewpoint, false);
+                            marker.updateViewpoint(this._viewpoint);
                         }.bind(this));
                     }
                     this._layer.show();
@@ -151,7 +151,7 @@ define(['backbone', 'handlebars', 'collections/agents', 'widgets/mult-agent-mark
             this._setViewpoint(viewpoint);
             if (!!this._markers) {
                 _.forEach(this._markers, function (marker) {
-                    marker.updateViewpoint(viewpoint, true);
+                    marker.updateViewpoint(viewpoint);
                 });
             }
         }

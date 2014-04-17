@@ -14,6 +14,7 @@ define(['jquery', 'backbone', 'underscore', 'models/report', 'collections/agents
         url: function () {
             return 'http://' + common.SERVER_IP + '/api/basic/' + this.viewpoint.id + '?at=' + this.start / 1000 + ',' + this.end / 1000;
         },
+
     });
 
     return Reports;
