@@ -404,7 +404,9 @@ define(['views/maskerable-view', 'handlebars', 'jquery', 'text!templates/timelin
             },
 
             toggleAgent: function () {
-                this._plot = $.plot(this.$container, this._hideDisabledAgents(), this._options());
+                if (!this.isMasked) {
+                    this._plot = $.plot(this.$container, this._hideDisabledAgents(), this._options());
+                }
             },
 
             _getMode: function () {
@@ -546,7 +548,9 @@ define(['views/maskerable-view', 'handlebars', 'jquery', 'text!templates/timelin
                 agents.each(function (agent) {
                     agent.set("selected", agent.id === cloud.id);
                 });
-                this._plot = $.plot(this.$container, this._hideDisabledAgents(), this._options());
+                if (!this.isMasked) {
+                    this._plot = $.plot(this.$container, this._hideDisabledAgents(), this._options());
+                }
             }
         });
         return Timeline;

@@ -19,6 +19,14 @@ define(['jquery', 'backbone', 'handlebars', 'text',
             }
         });
 
+        Handlebars.default.registerHelper("in", function (target, lower, upper, options) {
+            if (target < upper && target >= lower) {
+                return options.fn(this);
+            } else {
+                return options.inverse(this);
+            }
+        });
+        
         Handlebars.default.registerHelper("eq", function (target, source, options) {
             if (target === source) {
                 return options.fn(this);
@@ -102,6 +110,12 @@ define(['jquery', 'backbone', 'handlebars', 'text',
                 'click li.list-group-item small': function (e) {
                     this._toggleAgent($(e.target).parent());
                     return false;
+                },
+                'change :checkbox': function (e) {
+                    var checked = $(e.target).is(':checked');
+                    this.$(':checkbox + span').text(checked? '全不选': '全选'); 
+                    this.$('li.list-group-item').attr('data-enabled', checked? '': 'true'); // note, toggle will revert
+                    this._toggleAgent(this.$('li.list-group-item')); 
                 }
             },
 
@@ -131,23 +145,27 @@ define(['jquery', 'backbone', 'handlebars', 'text',
                 this.trigger('delayType-set', this.$('#delay').val());
             },
 
-            _toggleAgent: function (el) {
-                var enabled = !el.attr('data-enabled');
-                el.attr('data-enabled', enabled ? 'true' : '');
-                el.toggleClass('list-group-item-info', enabled);
-                el.toggleClass('text-muted', !enabled);
-                el.children('i').toggleClass('fa-check', enabled);
-                var square = el.children('i.fa-square');
-                if (enabled) {
-                    el.css('text-decoration', '');
-                    square.css('color', square.attr('data-color'));
-                } else {
-                    el.css('text-decoration', 'line-through');
-                    square.css('color', '#ccc');
-                }
-                var agent = agents.get(el.val());
-                agent.set('selected', enabled);
-                this.trigger('agent-toggle', agent.toJSON());
+            _toggleAgent: function (els) {
+                var data = {};
+                els.each(function () {
+                    var el = $(this);
+                    var enabled = !el.attr('data-enabled');
+                    el.attr('data-enabled', enabled ? 'true' : '');
+                    el.toggleClass('list-group-item-info', enabled);
+                    el.toggleClass('text-muted', !enabled);
+                    el.children('i').toggleClass('fa-check', enabled);
+                    var square = el.children('i.fa-square');
+                    if (enabled) {
+                        el.css('text-decoration', '');
+                        square.css('color', square.attr('data-color'));
+                    } else {
+                        el.css('text-decoration', 'line-through');
+                        square.css('color', '#ccc');
+                    }
+                    var agent = agents.get(el.val());
+                    agent.set('selected', enabled);
+                });
+                this.trigger('agent-toggle');
             },
 
             updateLatency: function (data) {

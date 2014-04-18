@@ -143,6 +143,11 @@
     table.details-table td:last-child, table.details-table th:last-child {
         border-right: 1px solid #dddddd !important; 
     }
+    
+    .control-panel input[type=checkbox] {
+        margin-left: 10px;
+    }
+
 }
 
 

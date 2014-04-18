@@ -157,7 +157,6 @@ define(['backbone', 'views/map-view', 'views/control-panel', 'views/timeline', '
             _onAgentToggle: function (agent) {
                 this._tl.toggleAgent(agent);
                 this._map.toggleAgent(agent);
-                this._stat.toggleAgent(agent);
             }
 
         });

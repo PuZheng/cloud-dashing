@@ -7,7 +7,7 @@ define(['jquery', 'backbone'], function ($, Backbone) {
             if (_.isObject(options)) {
                 this._maskedView = options.maskedView;
             }
-
+            this.isMasked = false;
         },
 
         maskerView: function (masked, mask) {
@@ -21,12 +21,14 @@ define(['jquery', 'backbone'], function ($, Backbone) {
             }
             this._maskedView.hide();
             this._mask.show();
+            this.isMasked = true;
             return true;
         },
 
         unmask: function () {
             this._mask.hide();
             this._maskedView.show();
+            this.isMasked = false;
             return true;
         }
     });

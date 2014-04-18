@@ -5,13 +5,13 @@
   </div>
   <div class="panel-body">
       {{#each agents}}
-        {{#ge this.type 1}}
+        {{#in this.type 1 3}}
           <div class="radio">
             <label>
               <input name="viewpoint" type="radio" value="{{this.id}}" {{#eq @index 0}}checked{{/eq}}/>{{this.name}} - {{ this.location }}
             </label>
           </div>
-        {{/ge}}
+        {{/in}}
       {{/each}}
   </div>
 </div>
@@ -19,6 +19,7 @@
   <div class="panel-heading">
     <i class="fa fa-map-marker fa-fw"></i>
     <span>公有云列表</span>
+    <input type="checkbox" checked=''><span>全不选</span>
   </div>
   <div class="panel-body">
     <ul class="list-group">
