@@ -1,0 +1,143 @@
+{% extends "layout.html" %}
+{% block nav_bar_block %}
+  <nav class="navbar navbar-default navbar-fixed-top" role="navigation">
+    <div class="container">
+      <!-- Brand and toggle get grouped for better mobile display -->
+      <div class="navbar-header">
+        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+          <span class="sr-only">Toggle navigation</span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+        <img class='float-left' src="{{ url_for('static', filename='assets/logo.png') }}" alt="" />
+      </div>
+      <!-- Collect the nav links, forms, and other content for toggling -->
+      <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+        <ul class="nav navbar-nav">
+          <li><a href="/">主页</a></li>
+          <li class='active'><a href="{{ url_for('.faq') }}">常见问题</a></li>
+          <li><a href="{{ url_for('.about') }}">关于</a></li>
+          <li>
+            <a id="embed-link" data-toggle="modal" data-target="#modal" type="button" href="#model">
+              <i class="fa fa-external-link"></i> 嵌入
+            </a>
+          </li>
+        </ul>
+      </div>
+      <!-- /.navbar-collapse -->
+    </div>
+    <!-- /.container-fluid -->
+  </nav>
+{% endblock %}
+
+{% block main %}
+  <div class="modal fade" id="modal" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+          <h4 class="modal-title">复制</h4>
+        </div>
+        <div class="modal-body">
+          <p>将下面内容复制到您的网页中</p>
+
+          <input type="text" class="form-control" id="copy-input"/>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+
+  <div class="row">
+    <div class="col-md-6 col-md-offset-3">
+      <h3>
+        Q1. 为什么要对公有云进行监控？
+      </h3>
+      <p>
+        云服务在被越来越多的企业所采用. 据Gartner预测, 2013年公有云的市场份额将会以18%的增长率从2012年的1110亿美金增长至1310亿美金.
+      </p>
+      <p>
+        在IaaS(Infrastructure as a Service)方面, 增长速度为47.3%, 市场份额为90亿美金. 2012年, IaaS 增长了42.4%. 2016年, 公有云的市场大小会达到2100亿美金, 增长率为17.7%, 而在IaaS方面 会保持41.3%的增长率.
+      </p> 	 		
+      <p>
+        然而, 随着大量中小型企业的CIO在考虑把公司的数据和应用迁移到云计算平台上, 伴随而 来的是对云计算的服务质量(Quality of Service)的担忧.
+      </p>	
+      <p>
+        UCBerkeley计算机系RAD实验室的Michael Armbrust等在2009年2月发表了关于对云计算服 务的论文­­”Above the Clouds:A Berkeley View of Cloud Computing”. 文中Berkeley提出了其理解 的云计算概念模型, 并提出了云服务必须克服的10大障碍.
+      </p>
+      <p>
+        在这10大障碍中, 1(Availability of Service), 2(Data Confidentiality and Auditability), 5(Performance Unpredictability), 6(Scalable Storage), 7(Bugs in Large­Scale Distributed Systems), 8(Scaling Quickly) 都与云计算质量紧密相关. Berkeley在对可用性(Availability)的解释中, 还特别提到了DDoS攻 击对云计算带来的危害和需要防范的措施.
+      </p>
+      <p>
+另外, 据来自Newvem的调查数据报告, 有35%的亚马逊的AWS用户对宕机基本上没有防范 措施; 40%的AWS用户没有定期做数据的备份. TeamQuest最近对许多企业的CIO做了一次 调查, 接受调查的的CIO有40%的表示他们在使用云计算的时候发生了机群宕机现象.
+      </p>		
+      <p>
+2012年, 许多著名的公有云计算数据中心都发生了重大的安全事故.下面是一些典型的案例:
+      </p>
+					
+				
+      <ul>
+        <li>
+          2012年2月29日和7月26日, 微软的Azure发生事故, 时间分别为长达9个小时和2.5个小时, 许 多北美和欧洲的用户无法正常管理和使用其公司正常业务, 有的彻底丢失了他们最新的数 据.
+        </li>
+        <li>
+          2012年6月14日, 6月29日, 10月22日和圣诞节期间的12月24日, 亚马逊AWS发生了严重云 服务缓慢和崩溃无法访问的问题, 影响的租户包括许多重要的互联网公司, 例如Netflix, pInterest, twitter, Instagram等等. 每次事故导致用户无法正常使用服务的时间长达9个小时 和更多.
+        </li>
+        <li>
+          2012年7月10日, 著名的SaaS(Service as a Service)公司Salesforce的服务出现重大停顿. 其原 因是提供Salesforce公司IaaS服务的公司(Equinix)的数据中心电源失效. Equinix据说在1分钟内 就恢复了电源. 但Salesforce花费了接近9个小时来完整的恢复其相关业务.
+        </li>
+        <li>
+          2012年9月10日, 著名的DNS服务提供商GoDaddy的数据中心服务暂停. GoDaddy管理着接 近5千万个域名和5百万个WEB站点. 这次服务无法正常使用长达7个小时. 其原因被解释为 路由器的数据被破坏. 也有媒体报道是GoDaddy遭遇到了强大的DDoS攻击. 但这一声称被 GoDaddy否认.
+        </li>
+        <li>
+          2012年10月26日, 谷歌的App Engine云服务出现暂停, 时间长达4个小时. 事后谷歌没有发 表具体原因解释.
+        </li>
+        <li>
+          2012年10月26日, 著名的云存储提供商Dropbox的服务出现暂停, 时间长达10个小时. 其具 体原因不详.
+        </li>
+      </ul>
+					
+      <p>
+        由上可见, 伴随着云计算本身具备的无可争议的巨大价值, 云计算带来的诸多服务质量问 题也正变得越来越明显. 所以, 对公有云服务的监控, 对政府, 企业, 和个人云用户都具备非常重要的意义.
+      </p>
+			<br />
+			<br />
+      <h3>
+        Q2. MoloCloud监控系统如何帮助您选择云服务商？
+      </h3>
+
+      <p>
+        使用云服务，您需要关注的是您最终服务人群的所在和需求特征， 举例来说：
+      </p>
+      <ol>
+        <li>
+          若您是企业用户，希望为自己的公司选择云服务。那么您需要： 
+          <ul>
+            <li>
+              查看某个云到到您公司所在地的网络延迟
+            </li>
+            <li>
+              考察该云服务其他的性能指标
+            </li>
+            <li>
+              最重要的，查看统计性能
+            </li>
+          </ul>
+        </li>
+        <li>
+          若您是开发者，希望选择云服务提供自己的互联网应用。那么您就更需要关注各个观察点到某个云服务的网络延迟，而非某一地的网络延迟。
+        </li>
+      </ol>
+    </div>
+  </div>
+
+  <hr/>
+
+  <footer class="footer visible-md visible-lg">
+    <div class="container">
+      copyright by 公有云监控@2014
+    </div>
+  </footer>
+{% endblock %}
+

@@ -1,24 +1,4 @@
 {% extends "layout.html" %}
-{% block head_block %}
-  {{ super() }}
-  <!-- Latest compiled and minified CSS -->
-  {% if config.DEBUG %}
-    <script src="{{ url_for('static', filename='components/jquery/dist/jquery.min.js') }}"></script>
-    <script type="text/javascript" src="{{ url_for('static', filename='components/bootstrap/dist/js/bootstrap.min.js') }}"></script>
-  {% else %}
-    <script src="{{ url_for('static', filename='dist/components/jquery/dist/jquery.min.js') }}"></script>
-    <script type="text/javascript" src="{{ url_for('static', filename='dist/components/bootstrap/dist/js/bootstrap.min.js') }}"></script>
-  {% endif %}
-  <!-- Latest compiled and minified JavaScript -->
-  <script>
-    $(function () {
-      $("#modal").on("show.bs.modal", function () {
-        $("#copy-input").val($("<iframe width='1200' height='1100'></iframe>").attr("src", location.origin + $("iframe").attr("src"))[0].outerHTML);
-      });
-    });
-  </script>
-{% endblock %}
-
 {% block nav_bar_block %}
   <nav class="navbar navbar-default navbar-fixed-top" role="navigation">
     <div class="container">
@@ -35,9 +15,9 @@
       <!-- Collect the nav links, forms, and other content for toggling -->
       <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
         <ul class="nav navbar-nav">
-          <li class="active"><a href="#">主页</a></li>
+          <li><a href="/">主页</a></li>
           <li><a href="{{ url_for('.faq') }}">常见问题</a></li>
-          <li><a href="{{ url_for('.about') }}">关于</a></li>
+          <li class='active'><a href="{{ url_for('.about') }}">关于</a></li>
           <li>
             <a id="embed-link" data-toggle="modal" data-target="#modal" type="button" href="#model">
               <i class="fa fa-external-link"></i> 嵌入
@@ -67,8 +47,33 @@
       </div>
     </div>
   </div>
+  
 
-  <iframe id="main" src="{{ url_for('cloud_dashing') }}" width="100%" height="900" style="border: 0 solid #000000;"></iframe>
+  <div class="row text-center">
+    <div class="col-md-10 text-center col-md-offset-1">
+      <img src="{{ url_for('static', filename='assets/molo.png') }}" alt="" class='center=block' style="max-width: 60%"/>
+      <div class="row">
+        <div class='col-md-8 col-md-offset-2'>
+          <h1>
+        欢迎使用MoLoCloud的云服务安全监控安全SaaS服务系统!
+        我们的系统目前在Beta初步测试中, 希望您能提出宝贵的反馈意见. 
+          </h1>
+        </div>
+      </div>
+
+      <p>
+        <i>
+        MOLOCloud研发组
+        </i>
+      </p>
+      <p>
+        <i>
+        Email: <a href="mailto://huailin@gmail.com">huailin@gmail.com</a>
+        </i>
+      </p>
+    </div>
+  </div>
+
   <hr/>
 
   <footer class="footer visible-md visible-lg">

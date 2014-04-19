@@ -12,3 +12,12 @@ def index():
 @app.route("/cloud-dashing.html")
 def cloud_dashing():
     return render_template('cloud-dashing.html', time=time.time())
+
+
+@app.route('/faq.html')
+def faq():
+    return render_template('faq.html', time=time.time());
+
+@app.route('/about.html')
+def about():
+    return render_template('about.html', time=time.time());
