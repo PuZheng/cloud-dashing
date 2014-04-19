@@ -325,6 +325,7 @@ define(['views/maskerable-view', 'handlebars', 'jquery', 'text!templates/timelin
                 var i, j, dataset = this._plot.getData();
                 var newDataSet = unionDataset(dataset, this._type);
                 var data = [];
+                var latencyType = this._type;
                 _.each(newDataSet, function (value, idx) {
                     // Find the nearest points, x-wise
                     var point1 = null;
@@ -341,10 +342,11 @@ define(['views/maskerable-view', 'handlebars', 'jquery', 'text!templates/timelin
                         }
                     }
                     var timespot = null;
+                    var agent = _.find(agents.models, function (agent) {
+                        return agent.get("id") == idx
+                    });
+                    agent.unset('latency');
                     if (point1 && point2 && point1.latency && point2.latency) {
-                        var agent = _.find(agents.models, function (agent) {
-                            return agent.get("id") == idx
-                        });
                         var agentName = "";
                         if (agent) {
                             agentName = agent.get("name");
@@ -356,6 +358,11 @@ define(['views/maskerable-view', 'handlebars', 'jquery', 'text!templates/timelin
                         if (point1.crashed || point2.crashed) {
                             latency = -1
                         }
+                        agent.set('latency', 
+                                {
+                                    type: latencyType, 
+                                    value: (latency == -1)? '??': latency
+                                });
                         timespot = new TimeSpot({
                             time: point1.x,
                             agent: agent,

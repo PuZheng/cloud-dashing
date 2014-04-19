@@ -7,6 +7,24 @@
     <th>所在地</th>
     <td>{{agent.location}}</td>
   </tr>
+  {{#if agent.latency}}
+  <tr>
+  	<th>{{agent.latency.type}}</th>
+    <td>{{agent.latency.value}}ms</td>
+  </tr>
+  {{/if}}
+  <!--<tr>-->
+    <!--<th>tcp</th>-->
+    <!--<td>{{agent.latency.tcp}}</td>-->
+  <!--</tr>-->
+  <!--<tr>-->
+    <!--<th>udp</th>-->
+    <!--<td>{{agent.latency.udp}}</td>-->
+  <!--</tr>-->
+  <!--<tr>-->
+    <!--<th>http</th>-->
+    <!--<td>{{agent.latency.http}}</td>-->
+  <!--</tr>-->
   <!--<tr>-->
     <!--<th>官方网站</th>-->
     <!--<td>{{agent.official_site}}</td>-->

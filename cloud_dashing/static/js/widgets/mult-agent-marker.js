@@ -162,11 +162,13 @@ define(['jquery', 'underscore', 'handlebars', 'kineticjs', 'text!templates/agent
                     'pointer-events': 'auto',
                 });
                 var strokeWidth = this._getStrokeWidth(data[agent.id]);
+                var line = agent2line[agent.id];
                 if (strokeWidth > 0) {
-                    var line = agent2line[agent.id];
                     line.show();
                     line.strokeWidth(strokeWidth);
                     line.dash([(5 - strokeWidth) * 2, (5 - strokeWidth) * 2]);
+                } else {
+                    line.hide();    
                 }
             } else {
                 markerTag.hide();
