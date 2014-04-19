@@ -3,7 +3,7 @@ from fabric import operations
 import os.path
 from plumbum import cmd
 
-env.hosts=["cloudwarrior.org"]
+env.hosts=["106.187.93.89"]
 env.passwords={"cloudwarrior.org": "cloudwarrior"}
 env.user="cloudwarrior"
 
