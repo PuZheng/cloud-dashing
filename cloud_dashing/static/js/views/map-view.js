@@ -11,7 +11,8 @@ define(['backbone', 'handlebars', 'collections/agents', 'widgets/mult-agent-mark
 
         drawMap: function () {
             if (this.$el.is(":visible") && this._map == undefined) {
-                var chinaGeoCenter = new BMap.Point(103.336594, 37.849248);
+                //var chinaGeoCenter = new BMap.Point(103.336594, 37.849248);
+                var chinaGeoCenter = new BMap.Point(103.336594, 27.849248);
                 var map = new BMap.Map(this.$('.map-block')[0]);
                 map.centerAndZoom(chinaGeoCenter, 4);
                 var mapStyle = {
