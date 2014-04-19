@@ -68,7 +68,7 @@ define(['backbone', 'views/map-view', 'views/control-panel', 'views/timeline', '
                         if (!!this._tl) {
                             this._tl.makePlot(this._viewpoint);
                         }
-                        if (!!this._map) {
+                        if (!!this._map && !!this._viewpoint) {
                             setTimeout(_.bind(function () {
                                 this._map.updateViewpoint(this._viewpoint);
                             }, this), 10);

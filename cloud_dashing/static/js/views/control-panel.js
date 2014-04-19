@@ -28,7 +28,7 @@ define(['jquery', 'backbone', 'handlebars', 'text',
         });
         
         Handlebars.default.registerHelper("eq", function (target, source, options) {
-            if (target === source) {
+            if (target == source) {
                 return options.fn(this);
             } else {
                 return options.inverse(this);
@@ -41,12 +41,6 @@ define(['jquery', 'backbone', 'handlebars', 'text',
             render: function (filter) {
                 this.$el.html(this._template({
                     agents: agents.toJSON().sort(function (a, b) {
-                        if (a.id >=255) {
-                            return -1;
-                        }
-                        if (b.id >= 255) {
-                            return 1;
-                        }
                         if (a.id > b.id) {
                             return 1;
                         } 
