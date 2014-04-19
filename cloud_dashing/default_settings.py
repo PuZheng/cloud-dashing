@@ -25,4 +25,4 @@ MAIL_USERNAME = 'username'
 MAIL_PASSWORD = 'password'
 MAIL_DEFAULT_SENDER = 'user@foo.com'
 
-FREEZER_RELATIVE_URLS = True
+FREEZER_RELATIVE_URLS = False
