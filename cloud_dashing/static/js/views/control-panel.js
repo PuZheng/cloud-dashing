@@ -49,6 +49,7 @@ define(['jquery', 'backbone', 'handlebars', 'text',
                         }
                         return 0;
                     })}));
+                this.$('input[name="viewpoint"]:first').attr('checked', '');
                 filter = filter || 'map';
                 this.toggleSelect(filter != 'map');
                 this.toggleDelayType(filter == 'map');
