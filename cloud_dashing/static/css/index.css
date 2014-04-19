@@ -148,6 +148,10 @@
         margin-left: 10px;
     }
 
+    .control-panel .clouds-list .list-group {
+        max-height: 350px;
+        overflow-y: scroll;
+    }
 }
 
 
