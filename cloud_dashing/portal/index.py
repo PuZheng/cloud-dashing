@@ -13,6 +13,11 @@ def index():
 def cloud_dashing():
     return render_template('cloud-dashing.html', time=time.time())
 
+@app.route('/embeded-cloud-dashing.html')
+def embeded_cloud_dashing():
+    return render_template('cloud-dashing.html', time=time.time(),
+                           embeded=True)
+
 
 @app.route('/faq.html')
 def faq():
