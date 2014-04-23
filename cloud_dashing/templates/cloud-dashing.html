@@ -6,6 +6,7 @@
     <script type="text/javascript" src="{{ url_for('static', filename='components/flot/excanvas.min.js') }}"></script>
     <![endif]-->
     <link rel="stylesheet" href="{{ url_for('static', filename='css/index.css') }}"/>
+    <!--<link rel="stylesheet" href="{{ url_for('static', filename='css/offcanvas.css') }}"/>-->
   {% else %}
     <!--[if lte IE 8]>
       <script type="text/javascript" src="{{ url_for('static', filename='dist/components/flot/excanvas.min.js') }}"></script>
@@ -13,15 +14,30 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='dist/css/index.css') }}"/>
   {% endif %}
   <link rel="stylesheet" href="//cdn.staticfile.org/toastr.js/latest/css/toastr.min.css"/>
+  <style type="text/css">
+    {% if embeded %}
+    .control-panel .clouds-list {
+      display: none !important;
+    }
+    {% endif %}
+  </style>
 {% endblock %}
 {% block main %}
   <div class="container-fluid">
 
     <div id="main">
-      <div class="row">
-        <div name="display" class="col-md-10">
+      
+      {% if not embeded %}
+      <ul class="nav nav-tabs visible-xs visible-sm">
+        <li class="map-li"><a href="#map">地图</a></li>
+        <li class="table-li"><a href="#table">列表</a></li>
+        <li class="stat-li"><a href="#stat">统计</a></li>
+      </ul>
+      {% endif %}
+      <div class="row row-offcanvas row-offcanvas-right">
+        <div name="display" class='col-sm-12 col-xs-12 col-md-10'>
           {% if not embeded %}
-          <div class="col-md-1">
+          <div class="col-md-1 visible-md visible-lg">
             <ul class="view-switcher nav nav-pills nav-stacked pull-left text-center">
               <li class="map-li"><a href="#map">地图</a></li>
               <li class="table-li"><a href="#table">列表</a></li>
@@ -29,7 +45,13 @@
             </ul>
           </div>
           {% endif %}
-          <div {%if not embeded%}class="col-md-11"{% endif %}>
+
+          <div class={%if embeded%}"col-xs-12 col-sm-12"{% else %}"col-xs-12 col-sm-12 col-md-11"{% endif %}>
+            <!--<span class="pull-right visible-sm visible-xs">-->
+              <!--<button type="button" class="pull-right btn btn-primary btn-xs" data-toggle="offcanvas">-->
+                <!--<i class="fa fa-cog"></i>-->
+              <!--</button>-->
+            <!--</span>-->
             <div class="map"></div>
             <div class="table-view"></div>
             <div class="stat" style='display: none'></div>
@@ -40,7 +62,8 @@
             </div>
           </div>
         </div>
-        <div class="control-panel col-md-2 text-cener">
+
+        <div class="control-panel col-md-2 text-cener col-xs-8">
           <div class='mask text-center'>
             <i class="fa fa-spinner fa-spin fa-4x" style='vertical-align: middle'></i>
           </div>

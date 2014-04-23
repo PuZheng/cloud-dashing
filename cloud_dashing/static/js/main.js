@@ -61,7 +61,7 @@ require.config({
         'router/app-router': 'js/router/app-router'
     },
     //urlArgs: "bust=" + new Date().getTime(),
-    urlArgs: "bust=>fb522c106f0217533e354bacc69c09b70c5fb29d",
+    urlArgs: "bust=>df71179ddbf3d0e6e18845a903d6a0ff43e3d4c0",
     shim: {
         'jquery.plot': {
             deps: ['jquery'],

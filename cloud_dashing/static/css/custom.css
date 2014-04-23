@@ -1,13 +1,19 @@
+@media screen and (max-width: 992px) {
+    body {
+        /* for nav bar */
+        padding-top: 30px !important;
+    }
+    .container-fluid {
+        padding-left: 0px !important;
+        padding-right: 0px !important;
+    }
+}
 @media screen and (min-width: 979px) {
     body {
         /* for nav bar */
         padding-top: 60px !important;
     }
 
-    .container {
-        margin: 0 auto;
-        width: 100%;
-    }
 }
 
 

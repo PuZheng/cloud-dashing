@@ -1,5 +1,23 @@
 define(['backbone', 'handlebars', 'collections/agents', 'widgets/mult-agent-marker', 'widgets/map-help-button', 'underscore', 'text!templates/map-help-modal.hbs', 'kineticjs'], function (Backbone, Handlebars, agents, MultAgentMarker, MapHelpButton, _, helpModalTemplate, Kinetic) {
 
+    var ConfigBtn = function () {
+        this.defaultAnchor = BMAP_ANCHOR_TOP_RIGHT;
+        this.defaultOffset = new BMap.Size(0, 0);
+    }
+
+
+    ConfigBtn.prototype = new BMap.Control();
+
+    ConfigBtn.prototype.initialize = function (map) {
+        this._map = map;
+        this._tag = $("<button type='button' class='btn btn-primary btn-sm config-btn'><i class='fa fa-cog'></i></button>");
+        map.getContainer().appendChild(this._tag[0]);
+        this._tag.click(function (e) {
+            $('#main .row-offcanvas').toggleClass('active');
+        });
+        return this._tag[0];
+    }
+
     var MapView = Backbone.View.extend({
 
         _helpModalTemplate: Handlebars.default.compile(helpModalTemplate),
@@ -30,6 +48,7 @@ define(['backbone', 'handlebars', 'collections/agents', 'widgets/mult-agent-mark
                     left: mapPos.left,
                     top: mapPos.top,
                 });
+                this._map.addControl(new ConfigBtn());
             }
             if (this._map && _.isEmpty(this._markers)) {
                 var that = this;
