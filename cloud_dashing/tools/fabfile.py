@@ -1,11 +1,13 @@
+import os.path
+from paramiko import RSAKey
 from fabric.api import run, cd, prefix, env, sudo
 from fabric import operations
-import os.path
 from plumbum import cmd
+from cloud_dashing.basemain import app
 
 env.hosts=["106.187.93.89"]
-env.passwords={"cloudwarrior.org": "cloudwarrior"}
-env.user="cloudwarrior"
+env.key_filename = app.config['FAB_PRIVATE_KEY_FILE']
+env.user= app.config['FAB_USER']
 
 def deploy():
     cmd.tar['zcf', 'build.tar.gz', 'build']()

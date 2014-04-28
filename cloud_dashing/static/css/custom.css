@@ -1,7 +1,7 @@
 @media screen and (max-width: 992px) {
     body {
         /* for nav bar */
-        padding-top: 30px !important;
+        padding-top: 50px !important;
     }
     .container-fluid {
         padding-left: 0px !important;
