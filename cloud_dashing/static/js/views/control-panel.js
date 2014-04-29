@@ -3,30 +3,7 @@ define(['jquery', 'backbone', 'handlebars', 'text',
     'text!templates/control-panel.hbs', 'select2'],
     function ($, Backbone, Handlebars, text, agents, controlPanelTemplate) {
 
-        Handlebars.default.registerHelper("ge", function (target, source, options) {
-            if (target >= source) {
-                return options.fn(this);
-            } else {
-                return options.inverse(this);
-            }
-        });
 
-        Handlebars.default.registerHelper("neq", function (target, source, options) {
-            if (target != source) {
-                return options.fn(this);
-            } else {
-                return options.inverse(this);
-            }
-        });
-
-        Handlebars.default.registerHelper("in", function (target, lower, upper, options) {
-            if (target < upper && target >= lower) {
-                return options.fn(this);
-            } else {
-                return options.inverse(this);
-            }
-        });
-        
         Handlebars.default.registerHelper("eq", function (target, source, options) {
             if (target == source) {
                 return options.fn(this);
@@ -39,16 +16,33 @@ define(['jquery', 'backbone', 'handlebars', 'text',
             _template: Handlebars.default.compile(controlPanelTemplate),
 
             render: function (filter) {
+                var clouds = agents.chain().filter(function(agent) {
+                    return agent.get('type') != 1
+                }).sortBy(function (agent) { 
+                    return agent.get('id');
+                }).map(function (agent) {
+                    return agent.toJSON();
+                }).value();
+                var viewpoints = agents.chain().filter(function (agent) {
+                    return agent.get('type') == 1 || agent.get('type') == 2;
+                }).map(function (agent) {
+                    return agent.toJSON();
+                }).sort(function (a, b) {
+                    if (a.default == 1) {
+                        return -1;
+                    }
+                    if (a.id < b.id) {
+                        return -1;
+                    } 
+                    if (a.id > b.id) {
+                        return 1;
+                    }
+                    return 0;
+                }).value();
                 this.$el.html(this._template({
-                    agents: agents.toJSON().sort(function (a, b) {
-                        if (a.id > b.id) {
-                            return 1;
-                        } 
-                        if (a.id < b.id) {
-                            return -1
-                        }
-                        return 0;
-                    })}));
+                    clouds: clouds,
+                    viewpoints: viewpoints
+                }));
                 this.$('input[name="viewpoint"]:first').attr('checked', '');
                 filter = filter || 'map';
                 this.toggleSelect(filter != 'map');

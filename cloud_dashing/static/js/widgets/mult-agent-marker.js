@@ -80,11 +80,12 @@ define(['jquery', 'underscore', 'handlebars', 'kineticjs', 'text!templates/agent
         $.each(this._agents, function (idx, agent) {
             var markerTag = agent2markerTag[agent.id];
             var line = new Kinetic.Line({
-                stroke: agent.get('color'),
+                stroke: agent.get('color').trim(),
                 strokeWidth: 0,
                 lineCap: 'round',
                 lineJoin: 'round',
             });                                
+            console.log(agent.get('id') + ' ' + agent.get('color'));
             line.hide();
             layer.add(line);
             agent2line[agent.id] = line;
