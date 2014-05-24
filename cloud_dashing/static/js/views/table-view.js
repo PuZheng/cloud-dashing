@@ -116,9 +116,9 @@ define(['jquery', 'backbone', 'handlebars', 'views/maskerable-view', 'text!templ
                         }
                     }
                     if (!!current_report) {
-                        this.$("table").append(this._renderService("计算性能", current_report.get("data")["计算性能"]));
-                        this.$("table").append(this._renderService("存储性能", current_report.get("data")["存储性能"]));
-                        this.$("table").append(this._renderService("网络性能", current_report.get("data")["网络性能"]));
+                        this.$("table").append(this._renderService("计算性能", current_report.get("data")[0]["计算性能"]));
+                        this.$("table").append(this._renderService("存储性能", current_report.get("data")[0]["存储性能"]));
+                        this.$("table").append(this._renderService("网络性能", current_report.get("data")[0]["网络性能"]));
                     }
                 }
                 return null;
@@ -138,7 +138,7 @@ define(['jquery', 'backbone', 'handlebars', 'views/maskerable-view', 'text!templ
             _updateReports: function () {
                 if (this._viewpoint && this._cloud) {
                     this.mask();
-                    this._reports = new DetailReports(this._viewpoint, this._cloud, this._start, this._end);
+                    this._reports = new DetailReports(this._viewpoint, [this._cloud], this._start, this._end);
                     this._reports.fetch({"reset": true});
                     this._reports.on('reset', this._renderDetail, this);
                 }

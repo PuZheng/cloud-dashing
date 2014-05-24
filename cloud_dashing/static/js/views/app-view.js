@@ -1,6 +1,6 @@
-define(['backbone', 'views/map-view', 'views/control-panel', 'views/timeline', 'views/table-view',
+define(['backbone', 'views/map-view', 'views/control-panel', 'views/timeline', 'views/table-view', 'views/matrix-view',
     'collections/agents', 'collections/timespots', 'router/app-router', 'views/stat-view', 'views/toast-view'],
-    function (Backbone, MapView, ControlPanel, Timeline, TableView, agents, timespots, router, StatView, ToastView) {
+    function (Backbone, MapView, ControlPanel, Timeline, TableView, MatrixView, agents, timespots, router, StatView, ToastView) {
         Backbone.Notifications = {};
         _.extend(Backbone.Notifications, Backbone.Events);
         var AppView = Backbone.View.extend({
@@ -56,10 +56,11 @@ define(['backbone', 'views/map-view', 'views/control-panel', 'views/timeline', '
                 this._filter = param;
                 switch (param) {
                     case 'map':
-                        this.$('div.map').show();
-                        this.$('div.timeline').show();
-                        this.$('div.table-view').hide();
-                        this.$('div.stat').hide();
+                        this.$('.map').show();
+                        this.$('.timeline').show();
+                        this.$('.table-view').hide();
+                        this.$('.stat').hide();
+                        this.$('.matrix-view').hide();
                         if (!!this._cp) {
                             this._cp.toggleSelect(false);
                             this._cp.toggleDelayType(true);
@@ -75,10 +76,11 @@ define(['backbone', 'views/map-view', 'views/control-panel', 'views/timeline', '
                         }
                         break;
                     case 'table':
-                        this.$('div.map').hide();
-                        this.$('div.timeline').show();
-                        this.$('div.table-view').show();
-                        this.$('div.stat').hide();
+                        this.$('.map').hide();
+                        this.$('.timeline').show();
+                        this.$('.table-view').show();
+                        this.$('.stat').hide();
+                        this.$('.matrix-view').hide();
                         if (!!this._cp) {
                             this._cp.toggleSelect(true);
                             this._cp.toggleCheckClouds(false);
@@ -89,10 +91,11 @@ define(['backbone', 'views/map-view', 'views/control-panel', 'views/timeline', '
                         }
                         break;
                     case 'stat':
-                        this.$('div.map').hide();
-                        this.$('div.timeline').hide();
-                        this.$('div.table-view').hide();
-                        this.$('div.stat').show();
+                        this.$('.map').hide();
+                        this.$('.timeline').hide();
+                        this.$('.table-view').hide();
+                        this.$('.stat').show();
+                        this.$('.matrix-view').hide();
                         if (!!this._stat) {
                             // 展示后必须重画
                             this._stat.updateViewpoint(this._viewpoint);
@@ -105,6 +108,21 @@ define(['backbone', 'views/map-view', 'views/control-panel', 'views/timeline', '
                             this._cp.toggleCheckClouds(false);
                         }
                         break;
+                    case 'matrix':
+                        this.$('div.map').hide();
+                        this.$('div.timeline').show();
+                        this.$('div.table-view').hide();
+                        this.$('div.stat').hide();
+                        this.$('.matrix-view').show();
+                        if (!!this._cp) {
+                            this._cp.toggleSelect(true);
+                            this._cp.toggleCheckClouds(true);
+                            this._cp.toggleDelayType(false);
+                        }
+                        if (!!this._tl) {
+                            this._tl.makePlot(this._viewpoint);
+                        }
+
                     default:
                         break;
                 }
@@ -116,6 +134,7 @@ define(['backbone', 'views/map-view', 'views/control-panel', 'views/timeline', '
                 if (!!this._map) {
                     this._map.drawMap();
                 }
+                this._matrixView = new MatrixView({el: this.$('.matrix-view')}).render();
                 this.$(".table-view").append(this._table.el);
                 this._stat = new StatView({el: this.$('.stat')});
                 this._tl = new Timeline({el: this.$('.timeline')});
@@ -126,6 +145,7 @@ define(['backbone', 'views/map-view', 'views/control-panel', 'views/timeline', '
                     }
                     this._map.updateLatency(data);
                     this._table.updateTimeSpot(data);
+                    this._matrixView.updateTimeSpot(data);
                 }, this);
                 this._cp.on('viewpoint-set', this._onViewpointSet, this);
                 this._cp.on('agent-toggle', this._onAgentToggle, this);
@@ -152,11 +172,13 @@ define(['backbone', 'views/map-view', 'views/control-panel', 'views/timeline', '
                 }
                 this._stat.updateViewpoint(viewpoint);
                 this._table.updateViewpoint(viewpoint);
+                this._matrixView.updateViewpoint(viewpoint);
             },
 
             _onAgentToggle: function (agent) {
                 this._tl.toggleAgent(agent);
                 this._map.toggleAgent(agent);
+                this._matrixView.toggleAgent(agent);
             }
 
         });

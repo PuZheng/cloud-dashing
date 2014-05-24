@@ -136,6 +136,7 @@ define(['jquery', 'backbone', 'handlebars', 'text',
 
             _toggleAgent: function (els) {
                 var data = {};
+                var data = [];
                 els.each(function () {
                     var el = $(this);
                     var enabled = !el.attr('data-enabled');
@@ -153,8 +154,9 @@ define(['jquery', 'backbone', 'handlebars', 'text',
                     }
                     var agent = agents.get(el.val());
                     agent.set('selected', enabled);
+                    data.push(agent);
                 });
-                this.trigger('agent-toggle');
+                this.trigger('agent-toggle', data);
             },
 
             updateLatency: function (data) {

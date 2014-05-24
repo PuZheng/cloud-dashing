@@ -6,3 +6,6 @@ MAIL_SERVER = 'smtp.163.com'
 MAIL_USERNAME = 'lite_mms@163.com'
 MAIL_PASSWORD = 'ahKee7ic'
 MAIL_DEFAULT_SENDER = 'lite_mms@163.com'
+
+FAB_USER = 'cloudwarrior'
+FAB_PRIVATE_KEY_FILE = "../../tokyo.pem"

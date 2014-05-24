@@ -5,6 +5,7 @@ require.config({
         jquery: 'components/jquery/dist/jquery.min',
         'jquery-map': 'components/jquery/jquery.min.map',
         underscore: 'components/underscore/underscore',
+        'underscore.string': 'components/underscore.string/dist/underscore.string.min',
         kineticjs: 'components/kineticjs/kinetic.min',
         backbone: 'components/backbone/backbone',
         handlebars: 'components/handlebars/handlebars.amd.min',
@@ -38,6 +39,7 @@ require.config({
         'views/hd-score-view': 'js/views/hd-score-view',
         'views/stable-view': 'js/views/stable-view',
         'views/toast-view': 'js/views/toast-view',
+        'views/matrix-view': 'js/views/matrix-view',
         'views/maskerable-view': 'js/views/maskerable-view',
         'collections/agents': 'js/collections/agents',
         'collections/reports': 'js/collections/reports',
@@ -60,9 +62,11 @@ require.config({
         'widgets/mult-agent-marker': 'js/widgets/mult-agent-marker',
         'router/app-router': 'js/router/app-router'
     },
-    urlArgs: "bust=" + new Date().getTime(),
-    //urlArgs: "bust=>72e1fe5a06596395c1cb531c2f3e3bdef03171c4",
+    urlArgs: "bust=>e1ce56a5eb3b23706947ebed0f315544020505e9",
     shim: {
+        'underscore.string': {
+            deps: ['underscore'],
+        },
         'jquery.plot': {
             deps: ['jquery'],
             exports: '$.plot'

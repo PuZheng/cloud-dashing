@@ -1,7 +1,7 @@
-@import url("/static/dist/css/bootstrap.min.css");
-@import url("/static/dist/components/fancybox/source/jquery.fancybox.css");
-@import url("/static/dist/components/normalize-css/normalize.css");
-@import url("/static/dist/components/select2/select2.css");
-@import url("/static/dist/components/Font-Awesome/css/font-awesome.min.css");
-@import url("/static/dist/components/toastr/toastr.min.css");
-@import url('/static/dist/css/custom.css');
+@import url("bootstrap.min.css");
+@import url("../components/fancybox/source/jquery.fancybox.css");
+@import url("../components/normalize-css/normalize.css");
+@import url("../components/select2/select2.css");
+@import url("../components/Font-Awesome/css/font-awesome.min.css");
+@import url("../components/toastr/toastr.min.css");
+@import url('custom.css');

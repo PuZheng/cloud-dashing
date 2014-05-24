@@ -36,6 +36,7 @@
         'views/hd-score-view': 'js/views/hd-score-view',
         'views/stable-view':'js/views/stable-view',
         'views/toast-view':'js/views/toast-view',
+        'views/matrix-view':'js/views/matrix-view',
         'views/maskerable-view':'js/views/maskerable-view',
         'collections/agents': 'js/collections/agents',
         'collections/reports': 'js/collections/reports',
@@ -97,5 +98,5 @@
     ],
     removeCombined: true,
     preserveLicenseComments: false,
-    optimizeCss: "standard",
+    optimizeCss: "standard.keeplines",
 })
