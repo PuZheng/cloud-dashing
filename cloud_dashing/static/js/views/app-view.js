@@ -117,7 +117,7 @@ define(['backbone', 'views/map-view', 'views/control-panel', 'views/timeline', '
                         if (!!this._cp) {
                             this._cp.toggleSelect(true);
                             this._cp.toggleCheckClouds(true);
-                            this._cp.toggleDelayType(false);
+                            this._cp.toggleDelayType(true);
                         }
                         if (!!this._tl) {
                             this._tl.makePlot(this._viewpoint);
