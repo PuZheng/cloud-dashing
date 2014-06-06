@@ -115,7 +115,7 @@ define(['backbone', 'views/map-view', 'views/control-panel', 'views/timeline', '
                         this.$('div.stat').hide();
                         this.$('.matrix-view').show();
                         if (!!this._cp) {
-                            this._cp.toggleSelect(true);
+                            this._cp.toggleSelect(false);
                             this._cp.toggleCheckClouds(true);
                             this._cp.toggleDelayType(true);
                         }
