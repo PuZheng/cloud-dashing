@@ -63,7 +63,7 @@ require.config({
         'router/app-router': 'js/router/app-router'
     },
     //urlArgs: "bust=" + (new Date()).getTime(),
-    urlArgs: "bust=>5511796a8c2f2adf6cccedcf9538dd2dcec49db5",
+    urlArgs: "bust=>de78fb6d08eadd3488e7bc8cadab93bb57ab20d8",
     shim: {
         'underscore.string': {
             deps: ['underscore'],
