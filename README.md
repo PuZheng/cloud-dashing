@@ -17,7 +17,9 @@ we want following features:
 4. `$ sudo apt-get install node npm` 
 5. `$ sudo npm install -g bower`
 6. `$ bower install`
+7. `$ python runserver.py`
 
+visit http://127.0.0.1:5000, you will see the result
 
 ## deployment
 
