@@ -11,13 +11,12 @@ we want following features:
 
 ## quick start
 
-
-`$ git clone https://github.com/PuZheng/cloud-dashing.git`
-`$ cd cloud-dashing/cloud_dashing`
-`$ pip install -r ../requirements.txt   # you'd better in virtual env`
-`$ sudo apt-get install node npm` 
-`$ sudo npm install -g bower`
-`$ bower install`
+1. `$ git clone https://github.com/PuZheng/cloud-dashing.git`
+2. `$ cd cloud-dashing/cloud_dashing`
+3. `$ pip install -r ../requirements.txt   # you'd better in virtual env`
+4. `$ sudo apt-get install node npm` 
+5. `$ sudo npm install -g bower`
+6. `$ bower install`
 
 
 ## deployment
