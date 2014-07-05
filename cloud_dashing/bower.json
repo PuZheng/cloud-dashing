@@ -21,6 +21,7 @@
     "text": "~2.0.10",
     "jquery": "~2.1.0",
     "kineticjs": "~5.0.1",
-    "underscore.string": "~2.3.3"
+    "underscore.string": "~2.3.3",
+    "flot.tooltip": "~0.7.1"
   }
 }
