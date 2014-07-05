@@ -89,7 +89,6 @@
             exclude: [
                 'jquery.plot.crosshair', 
                 'jquery.plot.time', 
-                'jquery.plot.tooltip', 
                 'jquery.plot.symbol'
                     ],
         },
