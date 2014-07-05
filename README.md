@@ -27,8 +27,8 @@ visit http://127.0.0.1:5000, you will see the result
 
 1. change file config.py, set "CONFIG" to False, assuming that you set "CONFIG" to True in development cycle.
 2. update static/js/main.js, set "urlArgs" to a new bust, eg "bust=><new bust>",
-3. `$ node tools/r.js -o build.js`
-4. `$ python tools/freeze.py`
+3. `$ python tools/freeze.py`, untils you see `INFO:werkzeug: * Restarting with reloader`
+4. `$ node tools/r.js -o build.js`
 5. `$ fab tools/fabfile.py deploy` 
 
 `
