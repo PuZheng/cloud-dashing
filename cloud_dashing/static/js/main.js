@@ -13,7 +13,6 @@ require.config({
         bootstrap: 'components/bootstrap/dist/js/bootstrap.min',
         'jquery.plot': 'components/flot/jquery.flot',
         'jquery.plot.crosshair': 'components/flot/jquery.flot.crosshair',
-        'jquery.plot.tooltip': 'components/flot.tooltip/js/jquery.flot.tooltip.min',
         'jquery.plot.symbol': 'components/flot/jquery.flot.symbol',
         'moment': 'components/moment/min/moment.min',
         'toastr': 'components/toastr/toastr.min',

@@ -12,7 +12,6 @@
         bootstrap: 'empty:',
         'jquery.plot': 'empty:',
         'jquery.plot.crosshair': 'empty:',
-        'jquery.plot.tooltip': 'components/flot.tooltip/js/jquery.flot.tooltip.min',
         'jquery.plot.symbol': 'empty:',
         'moment': 'empty:',
         'toastr': 'empty:',
