@@ -73,7 +73,6 @@ require.config({
         },
         'jquery.plot.crosshair': ['jquery.plot'],
         'jquery.plot.time': ['jquery.plot'],
-        'jquery.plot.tooltip': ['jquery.plot'],
         'jquery.plot.symbol': ['jquery.plot'],
         'toastr': {
             exports: 'toastr',
