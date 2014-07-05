@@ -6,3 +6,4 @@ Flask-SQLAlchemy
 Flask-WTF
 Flask-Babel
 Flask-Mail>=0.9
+Frozen-Flask==0.11
