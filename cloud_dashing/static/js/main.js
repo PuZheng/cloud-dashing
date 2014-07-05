@@ -14,6 +14,7 @@ require.config({
         'jquery.plot': 'components/flot/jquery.flot',
         'jquery.plot.crosshair': 'components/flot/jquery.flot.crosshair',
         'jquery.plot.symbol': 'components/flot/jquery.flot.symbol',
+        'jquery.plot.tooltip': 'components/flot.tooltip/js/jquery.flot.tooltip.min',
         'moment': 'components/moment/min/moment.min',
         'toastr': 'components/toastr/toastr.min',
         //text库如果使用CDN， 则无法打包
@@ -74,6 +75,7 @@ require.config({
         'jquery.plot.crosshair': ['jquery.plot'],
         'jquery.plot.time': ['jquery.plot'],
         'jquery.plot.symbol': ['jquery.plot'],
+        'jquery.plot.tooltip': ['jquery.plot'],
         'toastr': {
             exports: 'toastr',
         },
