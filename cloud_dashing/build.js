@@ -12,7 +12,6 @@
         bootstrap: 'empty:',
         'jquery.plot': 'empty:',
         'jquery.plot.crosshair': 'empty:',
-        'jquery.plot.tooltip': 'components/flot.tooltip/js/jquery.flot.tooltip.min',
         'jquery.plot.symbol': 'empty:',
         'moment': 'empty:',
         'toastr': 'empty:',
@@ -66,7 +65,6 @@
         },
         'jquery.plot.crosshair': ['jquery.plot'],
         'jquery.plot.time': ['jquery.plot'],
-        'jquery.plot.tooltip': ['jquery.plot'],
         'jquery.plot.symbol': ['jquery.plot'],
         'underscore': {
             exports: '_',
@@ -91,7 +89,6 @@
             exclude: [
                 'jquery.plot.crosshair', 
                 'jquery.plot.time', 
-                'jquery.plot.tooltip', 
                 'jquery.plot.symbol'
                     ],
         },
