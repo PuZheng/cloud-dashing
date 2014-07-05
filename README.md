@@ -12,12 +12,13 @@ we want following features:
 ## quick start
 
 1. `$ git clone https://github.com/PuZheng/cloud-dashing.git`
-2. `$ cd cloud-dashing/cloud_dashing`
+2. `$ cd cloud-dashing`
 3. `$ python setup.py develop   # you'd better in virtual env`
-4. `$ sudo apt-get install node npm` 
-5. `$ sudo npm install -g bower`
-6. `$ bower install`
-7. `$ python runserver.py`
+4. `$ cd cloud_dashing``
+5. `$ sudo apt-get install node npm` 
+6. `$ sudo npm install -g bower`
+7. `$ bower install`
+8. `$ python runserver.py`
 
 visit http://127.0.0.1:5000, you will see the result
 
