@@ -13,7 +13,7 @@ we want following features:
 
 1. `$ git clone https://github.com/PuZheng/cloud-dashing.git`
 2. `$ cd cloud-dashing/cloud_dashing`
-3. `$ pip install -r ../requirements.txt   # you'd better in virtual env`
+3. `$ python setup.py develop   # you'd better in virtual env`
 4. `$ sudo apt-get install node npm` 
 5. `$ sudo npm install -g bower`
 6. `$ bower install`
